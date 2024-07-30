@@ -1,0 +1,7 @@
+@import "../css/bootstrap/bootstrap.min.css";
+
+/* Your custom styles */
+body {
+    font-family: "Nunito", sans-serif;
+    background-color: #f8f9fa;
+}

@@ -1,0 +1,191 @@
+<div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
+                <h4 class="mb-0">
+                    @if ($isEditing)
+                        Edit Segment
+                    @elseif (!$viewSegments)
+                        Create Segment
+                    @else
+                        Segments List
+                    @endif
+                </h4>
+                @if ($viewSegments)
+                    <button wire:click="createSegment" class="btn btn-outline-secondary btn-wave">
+                        Create Segment
+                    </button>
+                @elseif($isEditing)
+                    <button wire:click="toggleView" class="btn btn-outline-secondary btn-wave">
+                        Cancel Editing
+                    </button>
+                @else
+                    <button wire:click="toggleView" class="btn btn-outline-secondary btn-wave">
+                        Segment Lists
+                    </button>
+                @endif
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="container">
+                <div class="col-md-12 shadow">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- Segment Form (Create/Edit) -->
+                            @if (!$viewSegments)
+                                <form wire:submit.prevent="store">
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label fs-14 text-dark">Enter name</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-text"><i class="ri-user-line"></i></div>
+                                            <input wire:model="name" type="text" class="form-control" id="name" placeholder="Enter name">
+                                            @error('name') <span class="text-danger">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p>Status</p>
+                                        <label for="active" class="switch fs-14 text-dark">
+                                            <input wire:model="active" type="checkbox" id="active">
+                                            <span class="slider round"></span>
+                                        </label>
+                                        @error('active') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <button class="btn btn-dark">Submit</button>
+                                    </div>
+                                </form>
+                            @endif
+
+                            <!-- Segments Table -->
+                            @if ($viewSegments)
+                                <div class="table-responsive">
+                                    <table class="table text-nowrap table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <input type="checkbox" wire:model.live.debounce.300ms="selectAll">
+                                                </th>
+                                                <th scope="col" wire:click="setSortBy('name')">
+                                                    Name
+                                                    @if ($sortBy === 'name')
+                                                        @if ($sortDir === 'asc')
+                                                            <i class="ri-arrow-up-s-line"></i>
+                                                        @else
+                                                            <i class="ri-arrow-down-s-line"></i>
+                                                        @endif
+                                                    @else
+                                                        <i class="ri-expand-up-down-fill"></i>
+                                                    @endif
+                                                </th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col" wire:click="setSortBy('created_at')">Created On
+                                                    @if ($sortBy === 'created_at')
+                                                        @if ($sortDir === 'asc')
+                                                            <i class="ri-arrow-up-s-line"></i>
+                                                        @else
+                                                            <i class="ri-arrow-down-s-line"></i>
+                                                        @endif
+                                                    @else
+                                                        <i class="ri-expand-up-down-fill"></i>
+                                                    @endif
+                                                </th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse($segments as $segment)
+                                                <tr wire:key="{{ $segment->id }}">
+                                                    <td>
+                                                        <input type="checkbox" wire:model.live.debounce.300ms="selectedLeadSources" value="{{ $segment->id }}">
+                                                    </td>
+                                                    <td>{{ $segment->name }}</td>
+                                                    <td>
+                                                        <label class="switch">
+                                                            <input type="checkbox" 
+                                                                   wire:click="toggleStatus({{ $segment->id }})" 
+                                                                   {{ $segment->active ? 'checked' : '' }}>
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>{{ \Carbon\Carbon::parse($segment->created_at)->format('d M, Y') }}</td>
+                                                    <td>
+                                                        <a wire:click="edit({{ $segment->id }})" class="text-info fs-14 lh-1"><i class="ri-edit-line"></i></a>
+                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#deleteSegmentModal" wire:click="confirmDelete({{ $segment->id }})" class="btn btn-link text-danger fs-14 lh-1 p-0">
+                                                            <i class="ri-delete-bin-5-line"></i>
+                                                        </button>
+
+                                                        <!-- Delete Modal -->
+                                                        <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="deleteSegmentModal" tabindex="-1" aria-labelledby="deleteSegmentModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="deleteSegmentModalLabel">Delete</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <form wire:submit.prevent="deleteConfirmed">
+                                                                        <div class="modal-body">
+                                                                            <h6>Are you sure you want to delete this segment?</h6>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                            <button type="submit" class="btn btn-primary">Delete</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-center">No segments found.</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- Bulk Delete Button -->
+                                <div class="mt-2">
+                                    @if($selectedLeadSources)
+                                        <button class="btn btn-outline-danger btn-wave" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal" >
+                                            Delete
+                                        </button>
+                                        <!-- Bulk Delete Confirmation Modal -->
+                                    <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="bulkDeleteConfirmationModalLabel">Confirm Bulk Delete</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <h6>Are you sure you want to delete the selected leads?</h6>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-danger" wire:click="bulkDelete">
+                                                        Confirm Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="mb-3">
+                                    {{ $segments->links('custom-pagination-links') }}
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

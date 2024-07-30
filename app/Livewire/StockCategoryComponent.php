@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\StockCategory;
+
+class StockCategoryComponent extends Component
+{
+    use WithPagination;
+
+    public $search = '';
+    public $perPage = 10;
+    public $sortBy = 'name';
+    public $sortDir = 'asc';
+    public $selectAll = false;
+    public $selectedCategoryIds = [];
+    public $deleteId;
+
+    protected $listeners = ['confirmDelete'];
+
+    public function render()
+    {
+        $categories = StockCategory::with('parent')
+            ->where('name', 'like', '%' . $this->search . '%')
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage);
+
+        return view('livewire.stock-category-component', compact('categories'));
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatePerPage($size)
+    {
+        $this->perPage = $size;
+        $this->resetPage();
+    }
+
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->selectedCategoryIds = StockCategory::pluck('id')->toArray();
+        } else {
+            $this->selectedCategoryIds = [];
+        }
+    }
+
+    public function setSortBy($field)
+    {
+        if ($this->sortBy === $field) {
+            $this->sortDir = $this->sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $field;
+            $this->sortDir = 'asc';
+        }
+        $this->resetPage();
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->deleteId = $id;
+    }
+
+    public function deleteConfirmed()
+    {
+        StockCategory::find($this->deleteId)->delete();
+        $this->reset(['deleteId']);
+        toastr()->closeButton(true)->success('Deleted successfully.');
+    }
+
+    public function bulkDelete()
+    {
+        StockCategory::whereIn('id', $this->selectedCategoryIds)->delete();
+        $this->selectedCategoryIds = [];
+        toastr()->closeButton(true)->success('Deleted successfully.');
+    }
+}
