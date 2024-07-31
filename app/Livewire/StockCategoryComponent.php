@@ -20,6 +20,14 @@ class StockCategoryComponent extends Component
 
     protected $listeners = ['confirmDelete'];
 
+    public function mount()
+    {
+        $this->search = session()->get('search', '');
+        $this->perPage = session()->get('perPage', 10);
+        $this->sortBy = session()->get('sortBy', 'name');
+        $this->sortDir = session()->get('sortDir', 'asc');
+    }
+
     public function render()
     {
         $categories = StockCategory::with('parent')
@@ -30,14 +38,16 @@ class StockCategoryComponent extends Component
         return view('livewire.stock-category-component', compact('categories'));
     }
 
-    public function updatedSearch()
+    public function updatedSearch($value)
     {
+        session()->put('search', $value);
         $this->resetPage();
     }
 
     public function updatePerPage($size)
     {
         $this->perPage = $size;
+        session()->put('perPage', $this->perPage);
         $this->resetPage();
     }
 
@@ -58,6 +68,8 @@ class StockCategoryComponent extends Component
             $this->sortBy = $field;
             $this->sortDir = 'asc';
         }
+        session()->put('sortBy', $this->sortBy);
+        session()->put('sortDir', $this->sortDir);
         $this->resetPage();
     }
 

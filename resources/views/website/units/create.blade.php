@@ -11,14 +11,14 @@
 </div>
 <div class="container">
     <div class="row d-flex justify-content-center">
-        <div class="col-6 mt-5 bg-white p-5 shadow">
+        <div class="col-12 mt-5 bg-white p-5 shadow">
             <form action="{{ route('units.store') }}" method="POST">
                 @csrf
                 <div class="mb-3">
                     <label for="form-text1" class="form-label fs-14 text-dark">Symbol</label>
                     <div class="input-group">
                         <div class="input-group has-validation">
-                            <span class="input-group-text" id="inputGroupPrepend">@</span>
+                            <span class="input-group-text" id="inputGroupPrepend"><i class="ri-apps-2-add-line"></i></span>
                             <input  name="symbol" type="text" class="form-control" placeholder="Eg-Kg,Gr" id="validationCustomUsername"
                                 aria-describedby="inputGroupPrepend" required>
                             <div class="invalid-feedback">
@@ -34,7 +34,7 @@
                     <label for="form-text1" class="form-label fs-14 text-dark">Formula Name</label>
                     <div class="input-group">
                         <div class="input-group has-validation">
-                            <span class="input-group-text" id="inputGroupPrepend">@</span>
+                            <span class="input-group-text" id="inputGroupPrepend"><i class="ri-formula"></i></span>
                             <input  name="formula_name" type="text" class="form-control" placeholder="Formula Name" id="validationCustomUsername"
                                 aria-describedby="inputGroupPrepend" required>
                             <div class="invalid-feedback">

@@ -37,7 +37,7 @@
                 </li>
                 <!-- End::slide -->
                 <!-- Start::User -->
-                @can('view user')
+                {{-- @can('view user') --}}
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item d-flex  align-items-center">
                         <i class="bi bi-person side-menu__icon mb-0 me-2"></i>
@@ -54,11 +54,11 @@
                         
                     </ul>
                 </li>
-                @endcan
+                {{-- @endcan --}}
                 
                 <!-- End::User -->
                 <!-- Start::Roles & Management -->
-                @can('view permissions')
+                {{-- @can('view permissions') --}}
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item d-flex  align-items-center">
                         <i class="bi bi-gear side-menu__icon mb-0 me-2"></i>
@@ -69,24 +69,19 @@
                         <li class="slide side-menu__label1">
                             <a href="javascript:void(0)">Roles & Management</a>
                         </li>
-                        @can('view permissions')
+                        {{-- @can('view permissions') --}}
                         <li class="slide">
                             <a href="{{ route('permissions.index') }}" class="side-menu__item">Permissions</a>
                         </li>
-                        @endcan
-                        @can('view roles')
+                        {{-- @endcan --}}
+                        {{-- @can('view roles') --}}
                         <li class="slide">
                             <a href="{{ route('roles.index') }}" class="side-menu__item">Roles</a>
                         </li>
-                        @endcan
-                        @can('view articles')
-                        <li class="slide">
-                            <a href="{{ route('articles.index') }}" class="side-menu__item">Articles</a>
-                        </li>
-                        @endcan
+                        {{-- @endcan --}}
                     </ul>
                 </li>
-                @endcan
+                {{-- @endcan --}}
                 <!-- End::Roles & Management -->
                 <!-- Start::Segment -->
                 <li class="slide has-sub">
@@ -110,10 +105,10 @@
                             <a href="{{ route('leads.index') }}" class="side-menu__item">Lead source</a>
                         </li>
                         <li class="slide">
-                            <a href="{{ route('workshops.index') }}" class="side-menu__item">Workshop</a>
+                            <a href="{{ route('branches.index') }}" class="side-menu__item">Branch</a>
                         </li>
                         <li class="slide">
-                            <a href="{{ route('branches.index') }}" class="side-menu__item">Branch</a>
+                            <a href="{{ route('workshops.index') }}" class="side-menu__item">Workshop</a>
                         </li>
                         <li class="slide">
                             <a href="{{ route('units.index') }}" class="side-menu__item">Unit Of Measurement</a>

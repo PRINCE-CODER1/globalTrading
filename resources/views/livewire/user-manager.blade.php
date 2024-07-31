@@ -95,7 +95,7 @@
                                                 @if ($user->roles->isNotEmpty())
                                                 <div class="d-flex flex-wrap gap-2" style="max-width:300px">
                                                     @foreach ($user->roles as $role)
-                                                        <span class="badge bg-secondary mb-2">{{ $role->name }}</span>
+                                                        <span class="badge bg-secondary">{{ $role->name }}</span>
                                                     @endforeach
                                                 </div>
                                                 @else
@@ -135,7 +135,7 @@
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="4" class="text-center">No permissions found.</td>
+                                                <td colspan="6" class="text-center">No permissions found.</td>
                                             </tr>
                                         @endforelse
                                             

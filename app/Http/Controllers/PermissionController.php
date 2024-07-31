@@ -5,26 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Routing\Controllers\HasMiddleware;
 
-class PermissionController extends Controller implements HasMiddleware
+class PermissionController extends Controller 
 {
-    public static function middleware(): array{
-        return [
-            new Middleware('permission:view permissions', only: ['index']),
-            new Middleware('permission:edit permissions', only: ['edit']),
-            new Middleware('permission:create permissions', only: ['create']),
-            new Middleware('permission:delete permissions', only: ['destroy']),
-        ];
-    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $permissions = Permission::orderBy('created_at','ASC')->paginate(10);
-        return view('website.permissions.list',compact('permissions'));
+        
+        return view('website.permissions.list');
     }
 
     /**
@@ -40,28 +30,22 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required|unique:permissions|min:3'
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:permissions|min:3',
+            'category' => 'nullable|string|max:255',
         ]);
-        if($validator->passes()){
+
+        if ($validator->passes()) {
             Permission::create([
-                'name' => $request->name
+                'name' => $request->name,
+                'category' => $request->input('category'),
             ]);
             toastr()->closeButton(true)->success('Permission Added Successfully');
             return redirect()->route('permissions.index');
+        } else {
+            toastr()->closeButton(true)->error('Validation error.');
+            return redirect()->route('permissions.create')->withErrors($validator)->withInput();
         }
-        else{
-            toastr()->closeButton(true)->error('sorry');
-            return redirect()->route('permissions.create');
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -70,7 +54,9 @@ class PermissionController extends Controller implements HasMiddleware
     public function edit(string $id)
     {
         $permissions = Permission::findOrFail($id);
-        return view('website.permissions.edit',compact('permissions'));
+        // Get unique categories from the permissions, filter out empty values
+        $categories = $permissions->pluck('category')->unique()->filter()->values();
+        return view('website.permissions.edit', compact('permissions','categories'));
     }
 
     /**
@@ -79,17 +65,21 @@ class PermissionController extends Controller implements HasMiddleware
     public function update(Request $request, string $id)
     {
         $permissions = Permission::findOrFail($id);
-        $validator = Validator::make($request->all(),[
-            'name'=> 'required|min:3|unique:permissions,name,'.$id.',id',
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:3|unique:permissions,name,' . $id . ',id',
+            'category' => 'nullable|string|max:255',
         ]);
-        if($validator->passes()){
+
+        if ($validator->passes()) {
             $permissions->name = $request->name;
+            $permissions->category = $request->input('category');
             $permissions->save();
             toastr()->closeButton(true)->success('Permission Updated Successfully');
             return redirect()->route('permissions.index');
-        }else{
-            toastr()->closeButton(true)->error('sorry name is too short');
-            return redirect()->route('permissions.edit',$id);
+        } else {
+            toastr()->closeButton(true)->error('Validation error.');
+            return redirect()->route('permissions.edit', $id)->withErrors($validator)->withInput();
         }
     }
 
@@ -98,6 +88,9 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        //
+        $permission = Permission::findOrFail($id);
+        $permission->delete();
+        toastr()->closeButton(true)->success('Permission Deleted Successfully');
+        return redirect()->route('permissions.index');
     }
 }

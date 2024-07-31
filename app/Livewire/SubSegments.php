@@ -21,8 +21,9 @@ class SubSegments extends Component
     public $isEditing = false;
     public $subSegmentIdToDelete;
     public $selectAll = false;
-    public $selectedLeadSources = [];
-    public $viewSubSegments = false;
+    public $selectedSegments = [];
+    public $viewSubSegments = true; // Default to true to show list first
+    public $parentSegments = []; // Used for dropdown in create/edit form
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -58,7 +59,7 @@ class SubSegments extends Component
         toastr()->closeButton(true)->success($message);
 
         $this->resetInputFields();
-        $this->viewSubSegments = true; 
+        $this->viewSubSegments = true; // Switch back to list view
         $this->resetPage();
     }
 
@@ -72,19 +73,21 @@ class SubSegments extends Component
         $this->isEditing = true;
         $this->viewSubSegments = false; 
     }
+
     public function updatedSelectAll($value)
     {
         if ($value) {
-            $this->selectedLeadSources = Segment::pluck('id')->toArray();
+            $this->selectedSegments = Segment::pluck('id')->toArray();
         } else {
-            $this->selectedLeadSources = [];
+            $this->selectedSegments = [];
         }
     }
+
     public function bulkDelete()
     {
-        Segment::whereIn('id', $this->selectedLeadSources)->delete();
-        $this->selectedLeadSources = [];
-        toastr()->closeButton(true)->success('Selected Lead Sources deleted successfully.');
+        Segment::whereIn('id', $this->selectedSegments)->delete();
+        $this->selectedSegments = [];
+        toastr()->closeButton(true)->success('Selected sub-segments deleted successfully.');
         $this->resetPage();
     }
 
@@ -129,7 +132,7 @@ class SubSegments extends Component
     {
         $this->viewSubSegments = !$this->viewSubSegments;
     }
-    
+
     public function createSubSegment()
     {
         $this->resetInputFields();
@@ -165,8 +168,7 @@ class SubSegments extends Component
 
         return view('livewire.sub-segments', [
             'segments' => $segments,
-            'parentSegments' => Segment::whereNull('parent_id')->get(), 
+            'parentSegments' => $this->parentSegments,
         ]);
     }
 }
-

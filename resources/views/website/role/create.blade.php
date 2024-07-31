@@ -12,8 +12,9 @@
     </div>
 </div>
 <div class="container">
-    <div class="row">
-        <form action="{{route('roles.store')}}" method="post" >
+    <div class="row d-flex justify-content-center">
+        <div class="col-12 mt-5 bg-white p-5 shadow">
+            <form action="{{route('roles.store')}}" method="post" >
             @csrf
             <div class="col-12">
                 <div class="mb-3">
@@ -36,7 +37,8 @@
                 </div>
                 <button class="btn btn-primary" type="submit">Submit</button>
             </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 @endsection

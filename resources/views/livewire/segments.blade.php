@@ -25,7 +25,6 @@
                     </button>
                 @endif
             </div>
-            
         </div>
     </div>
 
@@ -50,7 +49,7 @@
                                     <div class="mb-3">
                                         <p>Status</p>
                                         <label for="active" class="switch fs-14 text-dark">
-                                            <input wire:model="active" type="checkbox" id="active">
+                                            <input wire:model.defer="active" type="checkbox" id="active" {{ $active ? 'checked' : '' }}>
                                             <span class="slider round"></span>
                                         </label>
                                         @error('active') <span class="text-danger">{{ $message }}</span> @enderror
@@ -102,7 +101,7 @@
                                             @forelse($segments as $segment)
                                                 <tr wire:key="{{ $segment->id }}">
                                                     <td>
-                                                        <input type="checkbox" wire:model.live.debounce.300ms="selectedLeadSources" value="{{ $segment->id }}">
+                                                        <input type="checkbox" wire:model.live.debounce.300ms="selectedSegments" value="{{ $segment->id }}">
                                                     </td>
                                                     <td>{{ $segment->name }}</td>
                                                     <td>
@@ -115,13 +114,13 @@
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($segment->created_at)->format('d M, Y') }}</td>
                                                     <td>
-                                                        <a wire:click="edit({{ $segment->id }})" class="text-info fs-14 lh-1"><i class="ri-edit-line"></i></a>
+                                                        <a wire:click="edit({{ $segment->id }})" class="text-info fs-14 lh-1" style="cursor: pointer;"><i class="ri-edit-line"></i></a>
                                                         <button type="button" data-bs-toggle="modal" data-bs-target="#deleteSegmentModal" wire:click="confirmDelete({{ $segment->id }})" class="btn btn-link text-danger fs-14 lh-1 p-0">
                                                             <i class="ri-delete-bin-5-line"></i>
                                                         </button>
-
+                                                        
                                                         <!-- Delete Modal -->
-                                                        <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="deleteSegmentModal" tabindex="-1" aria-labelledby="deleteSegmentModalLabel" aria-hidden="true">
+                                                        <div wire:ignore.self class="modal fade" id="deleteSegmentModal" tabindex="-1" aria-labelledby="deleteSegmentModalLabel" aria-hidden="true">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
@@ -140,11 +139,12 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="4" class="text-center">No segments found.</td>
+                                                    <td colspan="5" class="text-center">No segments found.</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -152,30 +152,31 @@
                                 </div>
                                 <!-- Bulk Delete Button -->
                                 <div class="mt-2">
-                                    @if($selectedLeadSources)
+                                    @if($selectedSegments)
                                         <button class="btn btn-outline-danger btn-wave" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal" >
                                             Delete
                                         </button>
                                         <!-- Bulk Delete Confirmation Modal -->
-                                    <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="bulkDeleteConfirmationModalLabel">Confirm Bulk Delete</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <h6>Are you sure you want to delete the selected leads?</h6>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-danger" wire:click="bulkDelete">
-                                                        Confirm Delete
-                                                    </button>
+                                        <div wire:ignore.self class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="bulkDeleteConfirmationModalLabel">Confirm Bulk Delete</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <h6>Are you sure you want to delete the selected segments?</h6>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" wire:click="bulkDelete">
+                                                            Confirm Delete
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+
                                     @endif
                                 </div>
                                 <div class="mb-3">
@@ -189,3 +190,4 @@
         </div>
     </div>
 </div>
+

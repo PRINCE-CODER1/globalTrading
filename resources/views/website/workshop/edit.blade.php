@@ -11,36 +11,48 @@
         </div>
     </div>
     <div class="container">
-    
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+        <div class="row d-flex justify-content-center">
+            <div class="col-12 my-5 bg-white p-5 shadow">
+                <form action="{{ route('workshops.update', $workshop->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+        
+                    <div class="mb-3">
+                        <label for="form-text1" class="form-label fs-14 text-dark">Workshop Name</label>
+                        <div class="input-group">
+                            <div class="input-group has-validation">
+                                <span class="input-group-text" id="inputGroupPrepend"><i class="ri-phone-line"></i></span>
+                                <input value="{{ old('name', $workshop->name) }}"  name="name" type="text" class="form-control" placeholder="enter mobile" id="validationCustomUsername"
+                                    aria-describedby="inputGroupPrepend" required>
+                                <div class="invalid-feedback">
+                                    Please fill the title.
+                                </div>
+                            </div>
+                            @error('name')
+                                <p class="text-danger">{{$message}}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="form-text1" class="form-label fs-14 text-dark">Branch</label>
+                        <div class="input-group">
+                            <select class="form-control mb-3" id="branch_id" name="branch_id" required>
+                                @foreach($branches as $branch)
+                                    <option value="{{ $branch->id }}" {{ old('branch_id', $workshop->branch_id) == $branch->id ? 'selected' : '' }}>
+                                        {{ $branch->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Update</button>
+                </form>
             </div>
-        @endif
-    
-        <form action="{{ route('workshops.update', $workshop->id) }}" method="POST">
-            @csrf
-            @method('PUT')
-            <div class="form-group">
-                <label for="name">Workshop Name</label>
-                <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $workshop->name) }}" required>
-            </div>
-            <div class="form-group">
-                <label for="branch_id">Branch</label>
-                <select class="form-control" id="branch_id" name="branch_id" required>
-                    @foreach($branches as $branch)
-                        <option value="{{ $branch->id }}" {{ old('branch_id', $workshop->branch_id) == $branch->id ? 'selected' : '' }}>
-                            {{ $branch->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Update</button>
-        </form>
+        </div>
+    </div>
+        
+        
     </div>
 </div>
 @endsection

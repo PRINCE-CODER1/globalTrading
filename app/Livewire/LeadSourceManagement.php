@@ -59,6 +59,16 @@ class LeadSourceManagement extends Component
     {
         session()->put('search', $value); 
     }
+    public function toggleStatus($id)
+    {
+        $LeadSource = LeadSource::find($id);
+        
+        if ($LeadSource) {
+            $LeadSource->active = !$LeadSource->active;
+            $LeadSource->save();
+            toastr()->closeButton(true)->success('Status updated successfully.');
+        }
+    }
     public function render()
     {
         $leadSources = LeadSource::query()

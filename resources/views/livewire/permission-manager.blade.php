@@ -57,6 +57,18 @@
                                                         <i class="ri-expand-up-down-fill"></i>
                                                     @endif
                                                 </th>
+                                                <th scope="col" wire:click="setSortBy('category')">
+                                                    Category
+                                                    @if ($sortBy === 'category')
+                                                        @if ($sortDir === 'asc')
+                                                            <i class="ri-arrow-up-s-line"></i>
+                                                        @else
+                                                            <i class="ri-arrow-down-s-line"></i>
+                                                        @endif
+                                                    @else
+                                                        <i class="ri-expand-up-down-fill"></i>
+                                                    @endif
+                                                </th>
                                                 <th scope="col" wire:click="setSortBy('created_at')" >Created On
                                                     @if ($sortBy === 'created_at')
                                                         @if ($sortDir === 'asc')
@@ -78,6 +90,7 @@
                                                     <input type="checkbox" wire:model.live="permissionId" value="{{ $permission->id }}">
                                                 </td>
                                                 <td>{{ $permission->name }}</td>
+                                                <td><p class="mb-0 badge bg-secondary">{{ $permission->category }}</p></td>
                                                 <td>{{ \Carbon\Carbon::parse($permission->created_at)->format('d M, Y') }}</td>
                                                 <td>
                                                     <div class="hstack gap-2 flex-wrap">

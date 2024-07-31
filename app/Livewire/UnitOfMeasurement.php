@@ -13,10 +13,11 @@ class UnitOfMeasurement extends Component
 
     public $search = '';
     public $perPage = 5;
-    public $sortBy = 'created_at';
-    public $sortDir = 'DESC'; 
+    public $sortBy = 'symbol';
+    public $sortDir = 'asc'; 
     public $selectedUnitIds = [];
-    public $selectAll = false;  
+    public $selectAll = false;   
+    public $deleteId = null;
     protected $listeners = ['deleteUnit' => 'deleteConfirmed'];
 
     public function mount()
@@ -26,22 +27,25 @@ class UnitOfMeasurement extends Component
         $this->sortBy = session()->get('sortBy', 'symbol');
         $this->sortDir = session()->get('sortDir', 'asc');
     }
+
     public function render()
     {
+           // Ensure $sortBy is a valid column name
+        $validSortColumns = ['symbol', 'formula_name', 'decimal_places'];
+        if (!in_array($this->sortBy, $validSortColumns)) {
+            $this->sortBy = 'symbol'; 
+        }
         $units = UnitMeasure::orderBy($this->sortBy, $this->sortDir)
-                    ->where('symbol', 'like', '%' . $this->search . '%')
-                    ->orWhere('formula_name', 'like', '%' . $this->search . '%')
-                    ->paginate($this->perPage);
+                            ->where('symbol', 'like', '%' . $this->search . '%')
+                            ->paginate($this->perPage);
 
         return view('livewire.unit-of-measurement', ['units' => $units]);
     }
+
     public function updatedSearch($value)
     {
-        session()->put('search', $value); 
-    }
-    public function checkPermission($permission)
-    {
-        return Gate::allows($permission);
+        session()->put('search', $value);
+        $this->resetPage();
     }
 
     public function updatePerPage($value)
@@ -61,6 +65,7 @@ class UnitOfMeasurement extends Component
         }
         session()->put('sortBy', $this->sortBy);
         session()->put('sortDir', $this->sortDir);
+        $this->resetPage();
     }
 
     public function updatedSelectAll($value)
@@ -76,21 +81,21 @@ class UnitOfMeasurement extends Component
     {
         UnitMeasure::whereIn('id', $this->selectedUnitIds)->delete();
         $this->selectedUnitIds = [];
-        toastr()->closeButton(true)->success('Units Deleted Successfully.');
+        session()->flash('success', 'Units Deleted Successfully.');
         $this->resetPage();
     }
 
     public function confirmDelete($id)
     {
-        $this->selectedUnitIds = $id;
+        $this->deleteId = $id;
     }
 
     public function deleteConfirmed()
     {
-        if ($this->selectedUnitIds) {
-            UnitMeasure::find($this->selectedUnitIds)->delete();
-            toastr()->closeButton(true)->success('Unit Deleted Successfully.');
-            $this->selectedUnitIds = null;
+        if ($this->deleteId) {
+            UnitMeasure::find($this->deleteId)->delete();
+            toastr()->closeButton(true)->success('Units Deleted Successfully.');
+            $this->deleteId = null;
             $this->resetPage();
         }
     }

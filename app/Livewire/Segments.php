@@ -18,12 +18,11 @@ class Segments extends Component
     public $active = true;
     public $parentId;
     public $selectAll = false;
-    public $selectedLeadSources = [];
-    public $segmentId; // For edit operations
-    public $viewSegments = false; // Set to false to show form first
-    public $isEditing = false; // Check if editing
+    public $selectedSegments = [];
+    public $segmentId; 
+    public $viewSegments = true; 
+    public $isEditing = false; 
     public $segmentIdToDelete;
-
     public $parentSegments = [];
 
     protected $rules = [
@@ -99,19 +98,21 @@ class Segments extends Component
             toastr()->closeButton(true)->success('Status updated successfully.');
         }
     }
+    
     public function updatedSelectAll($value)
     {
         if ($value) {
-            $this->selectedLeadSources = Segment::pluck('id')->toArray();
+            $this->selectedSegments = Segment::pluck('id')->toArray();
         } else {
-            $this->selectedLeadSources = [];
+            $this->selectedSegments = [];
         }
     }
+    
     public function bulkDelete()
     {
-        Segment::whereIn('id', $this->selectedLeadSources)->delete();
-        $this->selectedLeadSources = [];
-        toastr()->closeButton(true)->success('Selected Lead Sources deleted successfully.');
+        Segment::whereIn('id', $this->selectedSegments)->delete();
+        $this->selectedSegments = [];
+        toastr()->closeButton(true)->success('Selected segments deleted successfully.');
         $this->resetPage();
     }
 
@@ -123,7 +124,7 @@ class Segments extends Component
     public function deleteConfirmed()
     {
         if ($this->segmentIdToDelete) {
-            Segment::find($this->segmentIdToDelete)->delete();
+            Segment::findOrFail($this->segmentIdToDelete)->delete();
             toastr()->closeButton(true)->success('Segment deleted successfully.');
             $this->segmentIdToDelete = null;
             $this->resetPage();

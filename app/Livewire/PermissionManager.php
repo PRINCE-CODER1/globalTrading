@@ -36,11 +36,15 @@ class PermissionManager extends Component
 
     public function render()
     {
+        $permissionGroups = Permission::orderBy($this->sortBy, $this->sortDir)
+        ->where('name', 'like', '%' . $this->search . '%')
+        ->get()
+        ->groupBy('category');
         $permissions = Permission::orderBy($this->sortBy, $this->sortDir)
             ->where('name', 'like', '%' . $this->search . '%')
             ->paginate($this->perPage);
 
-        return view('livewire.permission-manager', compact('permissions'));
+        return view('livewire.permission-manager', compact('permissions','permissionGroups'));
     }
 
     public function updatedSelectAll($value)

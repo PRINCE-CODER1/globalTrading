@@ -38,7 +38,7 @@ class BranchController extends Controller
         ]);
 
         Branch::create($validatedData);
-
+        toastr()->closeButton(true)->success('Branch Created Successfully');
         return redirect()->route('branches.index')->with('success', 'Branch created successfully.');
     }
 
@@ -56,8 +56,7 @@ class BranchController extends Controller
     public function edit(string $id)
     {
         $branch = Branch::findOrFail($id);
-        $users = User::all();
-        return view('website.branch.edit', compact('branch', 'users')); 
+        return view('website.branch.edit',compact('branch')); 
     }
 
     /**
@@ -73,7 +72,7 @@ class BranchController extends Controller
         ]);
 
         $branch->update($validatedData);
-
+        toastr()->closeButton(true)->success('Branch Updated Successfully');
         return redirect()->route('branches.index')->with('success', 'Branch updated successfully.');
     }
 

@@ -68,7 +68,7 @@
                                             </th>
                                             <th scope="col">Has Decimals</th>
                                             <th scope="col" scope="col" wire:click="setSortBy('decimal_places')">Decimal Places
-                                                @if ($sortBy === 'symbol')
+                                                @if ($sortBy === 'decimal_places')
                                                 @if ($sortDir === 'asc')
                                                     <i class="ri-arrow-up-s-line"></i>
                                                 @else

@@ -43,7 +43,7 @@
                                     <table class="table text-nowrap table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>
+                                                <th scope="col">
                                                     <input type="checkbox" wire:model.live="selectAll">
                                                 </th>
                                                 <th scope="col" wire:click="setSortBy('name')">
@@ -58,6 +58,7 @@
                                                         <i class="ri-expand-up-down-fill"></i>
                                                     @endif
                                                 </th>
+                                                <th scope="col">Status</th>
                                                 <th scope="col" wire:click="setSortBy('created_at')" >Created On
                                                     @if ($sortBy === 'created_at')
                                                         @if ($sortDir === 'asc')
@@ -79,6 +80,14 @@
                                                     <input type="checkbox" wire:model.live.debounce.300ms="selectedLeadSources" value="{{ $leadSource->id }}">
                                                 </td>
                                                 <td>{{ $leadSource->name }}</td>
+                                                <td>
+                                                    <label class="switch">
+                                                        <input type="checkbox" 
+                                                               wire:click="toggleStatus({{ $leadSource->id }})" 
+                                                               {{ $leadSource->active ? 'checked' : '' }}>
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                </td>
                                                 <td>{{ \Carbon\Carbon::parse($leadSource->created_at)->format('d M, Y') }}</td>
                                                 <td>
                                                     <div class="hstack gap-2 flex-wrap">

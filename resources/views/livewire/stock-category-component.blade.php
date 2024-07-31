@@ -114,6 +114,9 @@
                                         @endforelse
                                     </tbody>
                                 </table>
+                                <div class="mb-3">
+                                    {{ $categories->links('custom-pagination-links') }}
+                                </div>
                                 <!-- Bulk Delete Button -->
                                 <div class="mt-2">
                                     @if($selectedCategoryIds)
@@ -148,9 +151,5 @@
                 </div>
             </div>
         </div>
-    </div>
-      
-    
-        {{ $categories->links('custom-pagination-links') }}
     </div>
 </div>

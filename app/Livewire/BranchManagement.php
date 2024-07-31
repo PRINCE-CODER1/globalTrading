@@ -60,7 +60,7 @@ class BranchManagement extends Component
             Branch::whereIn('id', $this->selectedBranches)->delete();
             $this->selectedBranches = [];
         }
-
+        toastr()->closeButton(true)->success('Branch Deleted Successfully');
         $this->resetPage();
     }
 
@@ -70,7 +70,7 @@ class BranchManagement extends Component
             Branch::whereIn('id', $this->selectedBranches)->delete();
             $this->selectedBranches = [];
         }
-
+        toastr()->closeButton(true)->success('Branches Deleted Successfully');
         $this->resetPage();
     }
 }

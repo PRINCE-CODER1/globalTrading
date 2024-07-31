@@ -7,19 +7,19 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Routing\Controllers\HasMiddleware;
+// use Illuminate\Routing\Controllers\Middleware;
+// use Illuminate\Routing\Controllers\HasMiddleware;
 
-class UserController extends Controller implements HasMiddleware
+class UserController extends Controller 
 {
-    public static function middleware(): array{
-        return [
-            new Middleware('permission:view user', only: ['index']),
-            new Middleware('permission:edit user', only: ['edit']),
-            new Middleware('permission:create user', only: ['create']),
-            new Middleware('permission:delete user', only: ['destroy']),
-        ];
-    }
+    // public static function middleware(): array{
+    //     return [
+    //         new Middleware('permission:view user', only: ['index']),
+    //         new Middleware('permission:edit user', only: ['edit']),
+    //         new Middleware('permission:create user', only: ['create']),
+    //         new Middleware('permission:delete user', only: ['destroy']),
+    //     ];
+    // }
     /**
      * Display a listing of the resource.
      */
@@ -46,9 +46,8 @@ class UserController extends Controller implements HasMiddleware
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3|unique:users,name',
             'email' => 'required|email|unique:users,email',
-            'password' => 'nullable|min:8', // Ensure password confirmation
-            'role' => 'nullable|array', // Ensure roles are provided as an array
-            'role.*' => 'exists:roles,id' // Ensure each role ID exists
+            'password' => 'required|min:8',
+            'role' => 'nullable|exists:roles,id' // Ensure role ID exists
         ]);
 
         if ($validator->fails()) {
@@ -62,18 +61,22 @@ class UserController extends Controller implements HasMiddleware
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Hash the password
+            'password' => $request->password ? Hash::make($request->password) : null,
         ]);
 
-        // Assign roles to the user
+        // Assign role to the user
         if ($request->has('role')) {
-            $roles = Role::whereIn('id', $request->role)->pluck('name')->toArray();
-            $user->syncRoles($roles);
+            $role = Role::find($request->role);
+            if ($role) {
+                $user->assignRole($role);
+            }
         }
 
         toastr()->closeButton(true)->success('User created successfully.');
         return redirect()->route('users.index');
     }
+
+
 
 
     /**
@@ -106,9 +109,8 @@ class UserController extends Controller implements HasMiddleware
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3|unique:users,name,' . $id,
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|min:6|confirmed', // Ensure password confirmation
-            'role' => 'nullable|array', // Ensure roles are provided as an array
-            'role.*' => 'exists:roles,id' // Ensure each role ID exists
+            'password' => 'nullable|min:6|confirmed',
+            'role' => 'nullable|exists:roles,id' // Ensure role ID exists
         ]);
 
         if ($validator->fails()) {
@@ -129,10 +131,12 @@ class UserController extends Controller implements HasMiddleware
 
         $user->save();
 
-        // Assign roles to the user
+        // Assign role to the user
         if ($request->has('role')) {
-            $roles = Role::whereIn('id', $request->role)->pluck('name')->toArray();
-            $user->syncRoles($roles);
+            $role = Role::find($request->role);
+            if ($role) {
+                $user->syncRoles($role);
+            }
         } else {
             $user->syncRoles([]);
         }
@@ -140,6 +144,9 @@ class UserController extends Controller implements HasMiddleware
         toastr()->closeButton(true)->success('User updated successfully.');
         return redirect()->route('users.index');
     }
+
+
+
 
     
 

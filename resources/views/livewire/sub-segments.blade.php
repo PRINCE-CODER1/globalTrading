@@ -50,7 +50,7 @@
                                     <div class="mb-3">
                                         <p>Status</p>
                                         <label for="active" class="switch fs-14 text-dark">
-                                            <input wire:model="active" type="checkbox" id="active">
+                                            <input wire:model.defer="active" type="checkbox" id="active" {{ $active ? 'checked' : '' }}>
                                             <span class="slider round"></span>
                                         </label>
                                         @error('active') <span class="text-danger">{{ $message }}</span> @enderror
@@ -106,7 +106,17 @@
                                                         <i class="ri-expand-up-down-fill"></i>
                                                     @endif
                                                 </th>
-                                                <th scope="col">Parent Segment</th>
+                                                <th scope="col" wire:click="setSortBy('parent_id')">Parent Segment
+                                                    @if ($sortBy === 'parent_id ')
+                                                        @if ($sortDir === 'asc')
+                                                            <i class="ri-arrow-up-s-line"></i>
+                                                        @else
+                                                            <i class="ri-arrow-down-s-line"></i>
+                                                        @endif
+                                                    @else
+                                                        <i class="ri-expand-up-down-fill"></i>
+                                                    @endif
+                                                </th>
                                                 <th scope="col">Actions</th>
                                             </tr>
                                         </thead>
@@ -114,7 +124,7 @@
                                             @forelse($segments as $segment)
                                                 <tr wire:key="{{ $segment->id }}">
                                                     <td>
-                                                        <input type="checkbox" wire:model.live.debounce.300ms="selectedLeadSources" value="{{ $segment->id }}">
+                                                        <input type="checkbox" wire:model.live.debounce.300ms="selectedSegments" value="{{ $segment->id }}">
                                                     </td>
                                                     <td>{{ $segment->name }}</td>
                                                     <td>
@@ -165,30 +175,30 @@
                                 </div>
                                 <!-- Bulk Delete Button -->
                                 <div class="mt-2">
-                                    @if($selectedLeadSources)
+                                    @if($selectedSegments)
                                         <button class="btn btn-outline-danger btn-wave" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal" >
                                             Delete
                                         </button>
                                         <!-- Bulk Delete Confirmation Modal -->
-                                    <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="bulkDeleteConfirmationModalLabel">Confirm Bulk Delete</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <h6>Are you sure you want to delete the selected leads?</h6>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-danger" wire:click="bulkDelete">
-                                                        Confirm Delete
-                                                    </button>
+                                        <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="bulkDeleteConfirmationModalLabel">Confirm Bulk Delete</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <h6>Are you sure you want to delete the selected leads?</h6>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" wire:click="bulkDelete">
+                                                            Confirm Delete
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
                                     @endif
                                 </div>
                                 <div class="mb-3">

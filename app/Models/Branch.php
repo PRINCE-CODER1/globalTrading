@@ -12,7 +12,7 @@ class Branch extends Model
     protected $fillable = [
         'name', 'user_id', 'mobile', 'address',
     ];
-    
+
     public function workshops()
     {
         return $this->hasMany(Workshop::class);

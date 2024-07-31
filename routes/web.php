@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function() {
     Route::get('sub-segments', function(){
         return view('website.segments.sub-segments');
     })->name('sub-segments.index');
-    
+
     // Role Route
     Route::resource('users',UserController::class);
 
@@ -59,24 +59,6 @@ Route::middleware('auth')->group(function() {
 
     // Units Of Measurments  Route
     Route::resource('stocks-categories',StockCategoryController::class);
-
-    // Units Of Measurments  Route
-    Route::resource('articles',ArticleController::class);
-
- 
-
-    
-
-
-    // Article Routes
-    // Route::get('articles', [ArticleController::class, 'index'])->name('articles.index');
-    // Route::get('articles/create', [ArticleController::class, 'create'])->name('articles.create');
-    // Route::post('articles', [ArticleController::class, 'store'])->name('articles.store');
-    // Route::get('articles/{id}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
-    // Route::post('articles/{id}', [ArticleController::class, 'update'])->name('articles.update');
-    // Route::post('articles/{id}/delete', [ArticleController::class, 'destroy'])->name('articles.destroy');
-
-    
 
     
 
