@@ -24,15 +24,15 @@ class StockCategoryComponent extends Component
     {
         $this->search = session()->get('search', '');
         $this->perPage = session()->get('perPage', 10);
-        $this->sortBy = session()->get('sortBy', 'name');
-        $this->sortDir = session()->get('sortDir', 'asc');
+       // $this->sortBy = session()->get('sortBy', 'name');
+        //$this->sortDir = session()->get('sortDir', 'asc');
     }
 
     public function render()
     {
         $categories = StockCategory::with('parent')
             ->where('name', 'like', '%' . $this->search . '%')
-            ->orderBy($this->sortBy, $this->sortDir)
+            //->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
         return view('livewire.stock-category-component', compact('categories'));

@@ -3,15 +3,28 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
+        <div class="col-12 mt-5 d-flex align-items-center justify-content-between">
         <h4>Create Unit of Measurement</h4>
         <a href="{{route('units.index')}}" class="btn btn-outline-secondary btn-wave float-end">Back</a>
         </div>
     </div>
 </div>
 <div class="container">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style2 mb-0">
+                    <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{route('units.index')}}"><i class="ti ti-apps me-1 fs-15"></i>Units</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Units</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="container">
     <div class="row d-flex justify-content-center">
-        <div class="col-12 mt-5 bg-white p-5 shadow">
+        <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
             <form action="{{ route('units.store') }}" method="POST">
                 @csrf
                 <div class="mb-3">
@@ -66,7 +79,7 @@
                 </div>
                 <div class="col-12">
                     <div class="my-3">
-                        <button type="submit" class="btn btn-dark">Submit</button>
+                        <button type="submit" class="btn btn-secondary">Submit</button>
                     </div>
                 </div>
             </form>

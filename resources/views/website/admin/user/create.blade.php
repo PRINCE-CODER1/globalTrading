@@ -2,16 +2,29 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-12 d-flex justify-content-between mt-5 mb-3">
+        <div class="col-12 d-flex justify-content-between mt-5 ">
             <h4 class="mb-0">Create User</h4>
             <a href="{{ route('users.index') }}" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style2 mb-0">
+                    <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{route('users.index')}}"><i class="ti ti-apps me-1 fs-15"></i>User</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create User</li>
+                </ol>
+            </nav>
         </div>
     </div>
 </div>
 
 <div class="container">
     <div class="row d-flex justify-content-center">
-        <div class="col-12 my-5 bg-white p-5 shadow">
+        <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
             <form action="{{ route('users.store') }}" method="POST">
                 @csrf
                 <div class="mb-3">
@@ -48,7 +61,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="roles" class="form-label">Roles</label>
+                    <label for="roles" class="form-label fs-14 text-dark">Roles</label>
                     <select id="roles" name="role[]" class="form-control @error('role') is-invalid @enderror" >
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}" {{ in_array($role->id, old('role', [])) ? 'selected' : '' }}>

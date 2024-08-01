@@ -4,15 +4,28 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
+            <div class="col-12 mt-5 d-flex align-items-center justify-content-between ">
             <h4>Create Lead Source</h4>
             <a href="{{route('leads.index')}}" class="btn btn-outline-secondary btn-wave float-end">Back</a>
             </div>
         </div>
     </div>
     <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style2 mb-0">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('leads.index')}}"><i class="ti ti-apps me-1 fs-15"></i>Leads</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Create Lead</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="container">
         <div class="row d-flex justify-content-center">
-            <div class="col-12 my-5 bg-white p-5 shadow">
+            <div class="col-12 mt-3 mb-5 bg-white p-5 shadow">
                 <form action="{{ route('leads.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">

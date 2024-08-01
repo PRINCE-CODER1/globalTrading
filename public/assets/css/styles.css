@@ -7029,7 +7029,7 @@
     font-family: "tabler-icons" !important;
 }
 .breadcrumb .breadcrumb-item a {
-    color: var(--primary-color);
+    color: rgb(var(--secondary-rgb));
 }
 .breadcrumb .breadcrumb-item.active {
     color: var(--default-text-color);

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-12 d-flex justify-content-between mt-5 mb-3">
+        <div class="col-12 d-flex justify-content-between mt-5 ">
             <h4 class="mb-0">
                 Edit Permission
             </h4>
@@ -12,8 +12,21 @@
     </div>
 </div>
 <div class="container">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style2 mb-0">
+                    <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{route('roles.index')}}"><i class="ti ti-apps me-1 fs-15"></i>Roles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Roles</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="container">
     <div class="row d-flex justify-content-center">
-        <div class="col-12 my-5 bg-white p-5 shadow">
+        <div class="col-12 mt-3 mb-5 bg-white p-5 shadow">
             <form method="POST" action="{{ route('roles.update', $role->id) }}">
                 @csrf
                 @method('PUT')
@@ -36,7 +49,7 @@
                 <div class="row border rounded py-4 mb-3">
                     @foreach($permissionGroups as $category => $permissions)
                         <div class="col-12 mb-3">
-                            <p class="mb-0 d-inline-block px-3 py-1 rounded text-white bg-danger">{{ ucfirst($category) ?: 'General Permissions' }}</p>
+                            <p class="mb-0 d-inline-block px-3 py-1 rounded text-white bg-primary">{{ ucfirst($category) ?: 'General Permissions' }}</p>
                         </div>
                         @foreach($permissions as $permission)
                             <div class="col-md-4">

@@ -6,15 +6,28 @@
 <div>
     <div class="container">
         <div class="row">
-            <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
-            <h4 class="mb-0">Create Lead Source</h4>
+            <div class="col-12 mt-5 d-flex align-items-center justify-content-between ">
+            <h4 class="mb-0">Edit Lead Source</h4>
             <a href="{{route('leads.index')}}" class="btn btn-secondary btn-wave float-end">Back</a>
             </div>
         </div>
     </div>
     <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style2 mb-0">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('leads.index')}}"><i class="ti ti-apps me-1 fs-15"></i>Leads</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Lead</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="container">
         <div class="row d-flex justify-content-center">
-            <div class="col-12 my-5 bg-white p-5 shadow">
+            <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
                 <form action="{{ route('leads.update', $leadSource->id  ) }}" method="POST">
                     @csrf
                     @method('PUT')

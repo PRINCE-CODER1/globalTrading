@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-12 d-flex justify-content-between mt-5 mb-3">
+        <div class="col-12 d-flex justify-content-between mt-5">
             <h4>
                 Create Roles
             </h4>
@@ -12,8 +12,21 @@
     </div>
 </div>
 <div class="container">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-style2 mb-0">
+                    <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{route('roles.index')}}"><i class="ti ti-apps me-1 fs-15"></i>Roles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Roles</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="container">
     <div class="row d-flex justify-content-center">
-        <div class="col-12 mt-5 bg-white p-5 shadow">
+        <div class="col-12  mb-5 mt-3 bg-white p-5 shadow">
             <form action="{{route('roles.store')}}" method="post" >
             @csrf
             <div class="col-12">
@@ -35,7 +48,7 @@
                     @endforeach   
                     @endif
                 </div>
-                <button class="btn btn-primary" type="submit">Submit</button>
+                <button class="btn btn-secondary" type="submit">Submit</button>
             </div>
             </form>
         </div>

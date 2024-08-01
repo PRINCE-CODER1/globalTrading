@@ -1,7 +1,7 @@
 <div>
     <div class="container">
         <div class="row">
-            <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
+            <div class="col-12 mt-5 d-flex align-items-center justify-content-between">
                 <h4 class="mb-0">
                     @if ($isEditing)
                         Edit Sub-Segment
@@ -24,15 +24,32 @@
                         Show Sub-Segments
                     </button>
                 @endif
-            </div>
-                       
+            </div>           
         </div>
     </div>
-
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style2 mb-0">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('sub-segments.index')}}"><i class="ti ti-apps me-1 fs-15"></i>Segments</a></li>
+                        @if ($isEditing)
+                            <li class="breadcrumb-item active" aria-current="page">Edit Sub-Segment</li>
+                        @elseif (!$viewSubSegments)
+                            <li class="breadcrumb-item active" aria-current="page">Create Sub-Segment</li>
+                        @else
+                            <li class="breadcrumb-item active" aria-current="page">Sub-Segments List</li>
+                        @endif
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="row justify-content-center">
             <div class="container">
-                <div class="col-md-12 shadow">
+                <div class="col-md-12 mt-3 mb-5 shadow">
                     <div class="card">
                         <div class="card-body">
                             <!-- Sub-Segment Form -->
@@ -68,7 +85,7 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <button class="btn btn-dark">Submit</button>
+                                        <button class="btn btn-secondary">Submit</button>
                                     </div>
                                 </form>
                             @endif
