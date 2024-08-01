@@ -27,12 +27,16 @@
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
                         <i class="bi bi-house side-menu__icon mb-0"></i>
                         <span class="side-menu__label">Dashboards</span>
-                        {{-- <i class="fe fe-chevron-right side-menu__angle"></i> --}}
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
-                    <ul class="slide-menu child1" style="position: relative; left: 0px; top: 0px; margin: 0px; transform: translate3d(127.2px, 524.8px, 0px);" data-popper-placement="bottom">
+                    <ul class="slide-menu child1 pages-ul">
                         <li class="slide side-menu__label1">
                             <a href="javascript:void(0)">Dashboards</a>
                         </li>
+                        <li class="slide">
+                            <a href="{{route('dashboard.index')}}" class="side-menu__item">Dashboards</a>
+                        </li>
+                        
                     </ul>
                 </li>
                 <!-- End::slide -->

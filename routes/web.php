@@ -20,8 +20,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth','verified'])->group(function() {
     Route::get('/dashboard', function () {
-        return view('website.master');
-    })->name('dashboard');
+        return view('website.main-erp.index');
+    })->name('dashboard.index');
 });     
 
 Route::middleware('auth')->group(function() {

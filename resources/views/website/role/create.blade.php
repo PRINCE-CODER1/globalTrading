@@ -26,31 +26,33 @@
 </div>
 <div class="container">
     <div class="row d-flex justify-content-center">
-        <div class="col-12  mb-5 mt-3 bg-white p-5 shadow">
-            <form action="{{route('roles.store')}}" method="post" >
-            @csrf
-            <div class="col-12">
-                <div class="mb-3">
-                    <label for="form-text1" class="form-label fs-14 text-dark">Enter name</label>
-                    <div class="input-group">
-                        <div class="input-group-text"><i class="ri-user-line"></i></div>
-                        <input value="{{old('name')}}" type="text" name="name" class="form-control" id="form-text1" placeholder="">
-                        @error('name')
-                            <p class="text-danger">{{$message}}</p>
-                        @enderror
+        <div class="conatiner">
+            <div class="col-12  mb-5 mt-3 bg-white p-5 shadow">
+                <form action="{{route('roles.store')}}" method="post" >
+                @csrf
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label for="form-text1" class="form-label fs-14 text-dark">Enter name</label>
+                        <div class="input-group">
+                            <div class="input-group-text"><i class="ri-user-line"></i></div>
+                            <input value="{{old('name')}}" type="text" name="name" class="form-control" id="form-text1" placeholder="">
+                            @error('name')
+                                <p class="text-danger">{{$message}}</p>
+                            @enderror
+                        </div>
                     </div>
+                    <div class="mb-3">
+                        @if ($permissions->isNotEmpty())
+                        @foreach ($permissions as $permission)
+                            <input id="permission-{{$permission->id}}" type="checkbox" class="rounded" name="permission[]" value="{{$permission->name}}">
+                            <label for="permission-{{$permission->id}}">{{$permission->name}}</label>
+                        @endforeach   
+                        @endif
+                    </div>
+                    <button class="btn btn-secondary" type="submit">Submit</button>
                 </div>
-                <div class="mb-3">
-                    @if ($permissions->isNotEmpty())
-                    @foreach ($permissions as $permission)
-                        <input id="permission-{{$permission->id}}" type="checkbox" class="rounded" name="permission[]" value="{{$permission->name}}">
-                        <label for="permission-{{$permission->id}}">{{$permission->name}}</label>
-                    @endforeach   
-                    @endif
-                </div>
-                <button class="btn btn-secondary" type="submit">Submit</button>
+                </form>
             </div>
-            </form>
         </div>
     </div>
 </div>
