@@ -27,34 +27,36 @@
     </div>
     <div class="container">
         <div class="row d-flex justify-content-center">
-            <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
-                <form action="{{ route('leads.update', $leadSource->id  ) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-            
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $leadSource->name) }}" required>
-                    </div>
-            
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description">{{ old('description', $leadSource->description) }}</textarea>
-                    </div>
-            
-                    <div class="mb-3">
-                        <label class="form-label me-3" for="active">Active</label>
-                        <input type="hidden" name="active" value="0">
-                        <label class="switch">
-                            <input type="checkbox" id="active" name="active" value="1" 
-                                {{ old('active', $leadSource->active ?? false) ? 'checked' : '' }}>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                    
-            
-                    <button type="submit" class="btn btn-secondary">Update</button>
-                </form>
+            <div class="container">
+                <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
+                    <form action="{{ route('leads.update', $leadSource->id  ) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                
+                        <div class="mb-3">
+                            <label for="name" class="form-label fs-14 text-dark">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $leadSource->name) }}" required>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label for="description" class="form-label fs-14 text-dark">Description</label>
+                            <textarea class="form-control" id="description" name="description">{{ old('description', $leadSource->description) }}</textarea>
+                        </div>
+                
+                        <div class="mb-3">
+                            <label class="form-label fs-14 text-dark me-3" for="active">Active</label>
+                            <input type="hidden" name="active" value="0">
+                            <label class="switch">
+                                <input type="checkbox" id="active" name="active" value="1" 
+                                    {{ old('active', $leadSource->active ?? false) ? 'checked' : '' }}>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                
+                        <button type="submit" class="btn btn-secondary">Update</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

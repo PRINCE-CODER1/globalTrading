@@ -124,7 +124,7 @@
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">No permissions found.</td>
+                                                <td colspan="5" class="text-center">No Units found.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>

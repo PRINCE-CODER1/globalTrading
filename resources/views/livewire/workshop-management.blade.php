@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
             <h4>Workshops</h4>
-            <a href="{{route('workshops.create')}}" class="btn btn-secondary btn-wave float-end">Create User</a>
+            <a href="{{route('workshops.create')}}" class="btn btn-secondary btn-wave float-end">Create Workshop</a>
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">No permissions found.</td>
+                                                <td colspan="5" class="text-center">No Workshop found.</td>
                                             </tr>
                                         @endforelse
                                             

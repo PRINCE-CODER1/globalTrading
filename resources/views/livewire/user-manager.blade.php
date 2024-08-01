@@ -135,7 +135,7 @@
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center">No permissions found.</td>
+                                                <td colspan="6" class="text-center">No Users found.</td>
                                             </tr>
                                         @endforelse
                                             

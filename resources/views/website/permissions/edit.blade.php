@@ -13,6 +13,7 @@
 </div>
 <div class="container">
     <div class="row d-flex justify-content-center">
+       <div class="container">
         <div class="col-12 my-5 bg-white p-5 shadow">
             <form method="POST" action="{{ route('permissions.update', $permissions->id) }}">
                 @csrf
@@ -47,6 +48,7 @@
                 
             </form>
         </div>
+       </div>
     </div>
 </div>
 @endsection
