@@ -13583,7 +13583,7 @@ caption {
     height: auto;
 }
 .authentication .authentication-cover {
-    background-image: url("media-82-DHGT5EJT.png");
+    background-image: url("../images/gtimage/login-back.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -13604,7 +13604,8 @@ caption {
     inset-inline-end: 0;
     inset-block-start: 0;
     inset-block-end: 0;
-    background-color: var(--primary08);
+    background-color: #00b388;
+    opacity: 0.6;
     z-index: -1;
 }
 .authentication .authentication-cover .aunthentication-cover-content {
@@ -21980,7 +21981,7 @@ code[class*="language-"] {
     white-space: nowrap;
     color: var(--menu-prime-color);
     position: relative;
-    font-size: 0.85rem;
+    font-size: 0.77rem;
     line-height: 1;
     vertical-align: middle;
     display: flex;
@@ -26886,4 +26887,24 @@ input:checked + .slider:before {
 }
 input:checked + .slider {
     background-color: #45d65b;
+}
+/* custom-h of master dropdown */
+.custom-h {
+    height: 400px;
+    overflow-y: auto;
+}
+.custom-h::-webkit-scrollbar {
+    width: 3px;
+}
+
+.custom-h::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.custom-h::-webkit-scrollbar-thumb {
+    background: #dadada;
+}
+
+.custom-h::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

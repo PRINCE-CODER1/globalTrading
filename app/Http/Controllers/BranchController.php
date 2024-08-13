@@ -13,7 +13,7 @@ class BranchController extends Controller
      */
     public function index()
     {
-        return view('website.branch.list');
+        return view('website.master.branch.list');
     }
 
     /**
@@ -22,7 +22,7 @@ class BranchController extends Controller
     public function create()
     {
         $users = User::all(); // Fetch all users for dropdown
-        return view('website.branch.create', compact('users'));
+        return view('website.master.branch.create', compact('users'));
     }
 
     /**
@@ -56,7 +56,7 @@ class BranchController extends Controller
     public function edit(string $id)
     {
         $branch = Branch::findOrFail($id);
-        return view('website.branch.edit',compact('branch')); 
+        return view('website.master.branch.edit',compact('branch')); 
     }
 
     /**

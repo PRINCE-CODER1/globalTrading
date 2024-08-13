@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stock_categories', function (Blueprint $table) {
-            $table->id(); // Primary key
-            $table->string('name'); // Category name
-            $table->text('description')->nullable(); // Optional description
-            $table->foreignId('parent_id')->nullable() // Parent category
-                  ->constrained('stock_categories') // Self-referencing
-                  ->onDelete('cascade'); // Cascade delete if parent is deleted
+            $table->id(); 
+            $table->string('name'); 
+            $table->text('description')->nullable(); 
+            $table->foreignId('parent_id')->nullable() 
+                  ->constrained('stock_categories') 
+                  ->onDelete('cascade'); 
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');      
             $table->timestamps();
         });
     }

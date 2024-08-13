@@ -11,9 +11,14 @@ class Workshop extends Model
     protected $fillable = [
         'name',
         'branch_id',
+        'user_id'
     ];
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

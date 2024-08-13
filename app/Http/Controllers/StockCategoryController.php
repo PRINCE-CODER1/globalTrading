@@ -6,30 +6,31 @@ use App\Models\StockCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Auth;
 
 class StockCategoryController extends Controller
 {
     public function index()
     {
         // $categories = StockCategory::with('parent')->paginate(10);
-        return view('website.stock-category.list');
+        return view('website.master.stock-category.list');
     }
 
     public function create()
     {
         $categories = StockCategory::all();
-        return view('website.stock-category.create', compact('categories'));
+        return view('website.master.stock-category.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData =  $request->validate([
             'parent_id' => 'nullable|exists:stock_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
-
-        StockCategory::create($request->all());
+        $validatedData['user_id'] = Auth::id();
+        StockCategory::create($validatedData);
         toastr()->closeButton(true)->success('Category Created successfully.');
         return redirect()->route('stocks-categories.index')->with('success', 'Category created successfully.');
     }
@@ -39,7 +40,7 @@ class StockCategoryController extends Controller
 
         $stockCategory = StockCategory::findOrFail($id);
         $categories = StockCategory::where('id', '!=', $id)->get();
-        return view('website.stock-category.edit', compact('stockCategory', 'categories'));
+        return view('website.master.stock-category.edit', compact('stockCategory', 'categories'));
     }
     
     public function update(Request $request, $id)
@@ -62,6 +63,7 @@ class StockCategoryController extends Controller
         $stockCategory->name = $request->name;
         $stockCategory->description = $request->description;
         $stockCategory->parent_id = $request->parent_id;
+        $stockCategory->user_id = Auth::id();
         $stockCategory->save();
 
         toastr()->closeButton(true)->success('Stock Category updated successfully.');
@@ -69,10 +71,10 @@ class StockCategoryController extends Controller
     }
     
 
-    public function destroy(StockCategory $stockCategory)
-    {
-        $stockCategory->delete();
+    // public function destroy(StockCategory $stockCategory)
+    // {
+    //     $stockCategory->delete();
 
-        return redirect()->route('stocks-categories.index')->with('success', 'Category deleted successfully.');
-    }
+    //     return redirect()->route('stocks-categories.index')->with('success', 'Category deleted successfully.');
+    // }
 }

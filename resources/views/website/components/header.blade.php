@@ -7,13 +7,13 @@
     <meta charset="UTF-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> Global Trading </title>
-    <meta name="Description" content="Bootstrap Responsive Admin Web Dashboard HTML5 Template">
-    <meta name="Author" content="Spruko Technologies Private Limited">
-	<meta name="keywords" content="admin dashboard,admin template,admin panel,bootstrap admin dashboard,html template,sales dashboard,dashboard,template dashboard,admin,html and css template,admin dashboard bootstrap,personal dashboard,crypto dashboard,stocks dashboard,admin panel template">
+    <title>@yield('title', 'Global Trading')</title>
+    <meta name="Description" content="Bootstrap Responsive Admin Web Dashboard">
+    <meta name="Author" content="Global Trading">
+	<meta name="keywords" content="global trading ,crm ,erp">
     
 <!-- Favicon -->
-<link rel="icon" href="https://spruko.com/demo/udon/dist/assets/images/brand-logos/favicon.ico" type="image/x-icon">
+<link rel="icon" href="{{asset('../assets/images/gtimage/logo_icon.png')}}" type="image/x-icon">
     
 <!-- Choices JS -->
 <script src="{{asset('assets/libs/choices.js/public/assets/scripts/choices.min.js')}}"></script>
@@ -51,6 +51,7 @@
 
 {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 @livewireStyles
+
 </head>
 
 <body>

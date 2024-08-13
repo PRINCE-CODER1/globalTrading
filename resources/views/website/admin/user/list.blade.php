@@ -1,4 +1,6 @@
 @extends('website.master')
+
+@section('title', 'Users List')
 @section('content')
 
 <div>

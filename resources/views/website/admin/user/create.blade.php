@@ -1,4 +1,5 @@
 @extends('website.master')
+@section('title', 'Create User')
 @section('content')
 <div class="container">
     <div class="row">

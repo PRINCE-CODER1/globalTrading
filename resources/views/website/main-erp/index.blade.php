@@ -1,4 +1,5 @@
 @extends('website.master')
+@section('title', 'Dashboard')
 @section('content')
 <div class="container my-5">
     <div class="row justify-content-center">

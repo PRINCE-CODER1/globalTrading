@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Models\LeadSource;
 
@@ -15,7 +16,7 @@ class LeadSourceController extends Controller
     public function index()
     {
         $leadSources = LeadSource::all();
-        return view('website.leads.list', compact('leadSources'));
+        return view('website.master.leads.list', compact('leadSources'));
     }
 
     /**
@@ -23,12 +24,12 @@ class LeadSourceController extends Controller
      */
     public function create()
     {
-        return view('website.leads.create');
+        return view('website.master.leads.create');
     }
     public function edit(string $id)
     {
         $leadSource = LeadSource::findOrFail($id);
-        return view('website.leads.edit', compact('leadSource'));
+        return view('website.master.leads.edit', compact('leadSource'));
     }
     /**
      * Store a newly created resource in storage.
@@ -46,6 +47,7 @@ class LeadSourceController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'active' => $request->active,
+                'user_id' => Auth::id(),
             ]);
 
             toastr()->closeButton(true)->success('Lead Source Added Successfully');

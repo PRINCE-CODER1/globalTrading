@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class UnitOfMeasurement extends Model
 {
     use HasFactory;
-    protected $fillable = ['symbol', 'formula_name', 'decimal_places'];
+    protected $fillable = ['symbol', 'formula_name', 'decimal_places','user_id'];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

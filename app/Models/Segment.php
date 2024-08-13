@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Segment extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'active','parent_id'];
+    protected $fillable = ['name', 'active','parent_id','user_id'];
 
     public function parent()
     {
@@ -18,5 +18,9 @@ class Segment extends Model
     public function children()
     {
         return $this->hasMany(Segment::class, 'parent_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

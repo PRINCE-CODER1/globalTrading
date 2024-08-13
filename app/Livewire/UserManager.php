@@ -85,7 +85,7 @@ class UserManager extends Component
 
     public function render()
     {
-        $users = User::orderBy($this->sortBy, $this->sortDir)
+        $users = User::with('roles')->orderBy($this->sortBy, $this->sortDir)
                     ->where('name', 'like', '%' . $this->search . '%')
                     ->paginate($this->perPage);
 

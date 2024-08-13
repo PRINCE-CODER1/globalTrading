@@ -9,7 +9,7 @@ class StockCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'parent_id'];
+    protected $fillable = ['name', 'description', 'parent_id','user_id'];
 
     public function parent()
     {
@@ -19,5 +19,9 @@ class StockCategory extends Model
     public function children()
     {
         return $this->hasMany(StockCategory::class, 'parent_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

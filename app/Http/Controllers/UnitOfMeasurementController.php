@@ -3,24 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\UnitOfMeasurement;
 
 class UnitOfMeasurementController extends Controller
 {
     public function index()
     {
-        $units = UnitOfMeasurement::all();
-        return view('website.units.list', compact('units'));
+        return view('website.master.units.list');
     }
 
     public function create()
     {
-        return view('website.units.create');
+        return view('website.master.units.create');
     }
 
     public function edit(UnitOfMeasurement $unit)
     {
-        return view('website.units.edit', compact('unit'));
+        return view('website.master.units.edit', compact('unit'));
     }
 
     public function store(Request $request)
@@ -37,6 +37,7 @@ class UnitOfMeasurementController extends Controller
         $unit->formula_name = $validated['formula_name'];
         $unit->has_decimals = $validated['has_decimals'] ?? 0;
         $unit->decimal_places = $unit->has_decimals ? $validated['decimal_places'] : 0;
+        $unit->user_id = Auth::id();
         $unit->save();
         return redirect()->route('units.index');
     }
@@ -63,9 +64,9 @@ class UnitOfMeasurementController extends Controller
         return redirect()->route('units.index');
     }
 
-    public function destroy(UnitOfMeasurement $unit)
-    {
-        $unit->delete();
-        return redirect()->route('units.index')->with('success', 'Unit deleted successfully.');
-    }
+    // public function destroy(UnitOfMeasurement $unit)
+    // {
+    //     $unit->delete();
+    //     return redirect()->route('units.index')->with('success', 'Unit deleted successfully.');
+    // }
 }

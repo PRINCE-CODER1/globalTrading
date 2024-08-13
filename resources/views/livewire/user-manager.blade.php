@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
-            <h4>User's List</h4>
+            <h4 class="mb-0">User's List</h4>
             <a href="{{route('users.create')}}" class="btn btn-secondary btn-wave float-end">Create User</a>
             </div>
         </div>
@@ -123,7 +123,7 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                            <button type="submit" class="btn btn-primary">Delete</button>
+                                                                            <button type="submit" class="btn btn-danger">Delete</button>
                                                                         </div>
                                                                     </form>
                                                                 </div>

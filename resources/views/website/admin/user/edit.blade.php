@@ -1,5 +1,6 @@
 @extends('website.master')
 
+@section('title', 'Edit User')
 @section('content')
 <div class="container">
     <div class="row">
@@ -74,16 +75,16 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label fs-14 text-dark" for="permissions">Roles</label>
-                    @foreach($roles as $role)
+                    @foreach($roles as $roles)
                         <div class="mb-3">
-                            <label for="role-{{ $role->id }}">{{ $role->name }}</label>
+                            <label for="role-{{ $roles->id }}">{{ $roles->name }}</label>
                             <label class="switch">
                                 <input type="checkbox" 
-                                       {{ $hasRoles->contains($role->id) ? 'checked' : '' }} 
-                                       id="role-{{ $role->id }}" 
+                                       {{ $hasRoles->contains($roles->id) ? 'checked' : '' }} 
+                                       id="role-{{ $roles->id }}" 
                                        name="role[]" 
                                        class="role-checkbox" 
-                                       value="{{ $role->id }}">
+                                       value="{{ $roles->id }}">
                                 <span class="slider round"></span>
                             </label>
                         </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -24,7 +25,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        return view('website.role.list');
+        return view('website.admin.role.list');
     }
 
     /**
@@ -33,7 +34,7 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = Permission::orderBy('name', 'ASC')->get();
-        return view('website.role.create', compact('permissions'));
+        return view('website.admin.role.create', compact('permissions'));
     }
 
     /**
@@ -53,7 +54,10 @@ class RoleController extends Controller
                              ->withInput();
         }
 
-        $role = Role::create(['name' => $request->name]);
+        $role = Role::create([
+            'name' => $request->name,
+            'user_id' => Auth::id(),
+        ]);
 
         if (!empty($request->permission)) {
             $role->givePermissionTo($request->permission);
@@ -62,25 +66,14 @@ class RoleController extends Controller
         toastr()->closeButton(true)->success('Role added successfully');
         return redirect()->route('roles.index');
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         $role = Role::findOrFail($id);
         $hasPermissions = $role->permissions->pluck('name');
         $permissions = Permission::orderBy('name', 'ASC')->get();
         $permissionGroups = $permissions->groupBy('category');
-        return view('website.role.edit', compact('role', 'hasPermissions', 'permissions', 'permissionGroups'));
+        return view('website.admin.role.edit', compact('role', 'hasPermissions', 'permissions', 'permissionGroups'));
     }
 
 
@@ -117,14 +110,5 @@ class RoleController extends Controller
 
         toastr()->closeButton(true)->success('Role updated successfully.');
         return redirect()->route('roles.index', $id);
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

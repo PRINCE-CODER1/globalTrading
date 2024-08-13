@@ -12,6 +12,22 @@ use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\UnitOfMeasurementController;
 use App\Http\Controllers\StockCategoryController;
+use App\Http\Controllers\GodownController;
+use App\Http\Controllers\TaxController;
+use App\Http\Controllers\FinancialYearController;
+use App\Http\Controllers\SaleTypeController;
+use App\Http\Controllers\ChallanTypeController;
+use App\Http\Controllers\CustomerSupplierController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AssemblyController;
+use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\StockAgingController;
+use App\Http\Controllers\VisitController;
+use App\Http\Controllers\SeriesController;
+use App\Http\Controllers\LeadStatusController;
+
+use App\Mail\StockAgingNotificationEmail;
+use Illuminate\Support\Facades\Mail;
 
 
 Route::get('/', function () {
@@ -28,12 +44,12 @@ Route::middleware('auth')->group(function() {
 
    // Segments Route
    Route::get('segments', function(){
-    return view('website.segments.segments');
+    return view('website.master.segments.segments');
     })->name('segments.index');
 
     // Sub-Segments Route
     Route::get('sub-segments', function(){
-        return view('website.segments.sub-segments');
+        return view('website.master.segments.sub-segments');
     })->name('sub-segments.index');
 
     // Role Route
@@ -57,11 +73,50 @@ Route::middleware('auth')->group(function() {
     // Units Of Measurments  Route
     Route::resource('units',UnitOfMeasurementController::class);
 
-    // Units Of Measurments  Route
+    // Stock Category  Route
     Route::resource('stocks-categories',StockCategoryController::class);
 
-    
+    // Godowns  Route
+    Route::resource('godowns',GodownController::class);
 
+    //Tax Route
+    Route::resource('taxes',TaxController::class);
+
+    //Master Numbering Route
+    Route::resource('master_numbering',FinancialYearController::class);
+
+    //Master Numbering Route
+    Route::resource('sale-types',SaleTypeController::class);
+
+    //Challan Types Route
+    Route::resource('challan-types', ChallanTypeController::class);
+
+    //customer supplier Route
+    Route::resource('customer-supplier', CustomerSupplierController::class);
+
+    //customer supplier Route
+    Route::resource('products', ProductController::class);
+
+    //Assembly Route
+    Route::resource('assemblies', AssemblyController::class);
+
+    //Assembly Route
+    Route::resource('purchase_orders', PurchaseOrderController::class);
+
+    //Stockaging Route
+    Route::resource('/stock-aging', StockAgingController::class);
+
+    //Purpose of visit Route
+    Route::resource('visits', VisitController::class);
+
+    //Purpose of visit Route
+    Route::resource('series', SeriesController::class);
+
+    //Purpose of lead status Route
+    Route::resource('leads-status', LeadStatusController::class);
+
+
+    
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

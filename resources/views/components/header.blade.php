@@ -8,13 +8,12 @@
     <meta charset="UTF-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> UDON - Bootstrap 5 Premium Admin & Dashboard Template </title>
-    <meta name="Description" content="Bootstrap Responsive Admin Web Dashboard HTML5 Template">
-    <meta name="Author" content="Spruko Technologies Private Limited">
-	<meta name="keywords" content="admin,admin dashboard,admin panel,admin template,bootstrap,clean,dashboard,flat,jquery,modern,responsive,premium admin templates,responsive admin,ui,ui kit.">
-
+    <title>@yield('title', 'Global Trading')</title>
+    <meta name="Description" content="Bootstrap Responsive Admin Web Dashboard">
+    <meta name="Author" content="Global Trading">
+	<meta name="keywords" content="global trading ,crm ,erp">
     <!-- Favicon -->
-    <link rel="icon" href="https://spruko.com/demo/udon/dist/assets/images/brand-logos/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{{asset('../assets/images/gtimage/logo_icon.png')}}" type="image/x-icon">
 
     <!-- Main Theme Js -->
     <script src="{{asset('assets/js/authentication-main.js')}}"></script>

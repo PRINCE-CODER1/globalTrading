@@ -112,7 +112,7 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                            <button type="submit" class="btn btn-primary">Delete</button>
+                                                                            <button type="submit" class="btn btn-danger">Delete</button>
                                                                         </div>
                                                                     </form>
                                                                 </div>
@@ -123,7 +123,7 @@
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="4" class="text-center">No roles found.</td>
+                                                <td colspan="5" class="text-center">No roles found.</td>
                                             </tr>
                                         @endforelse
                                             

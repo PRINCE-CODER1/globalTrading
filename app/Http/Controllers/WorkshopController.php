@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Workshop;
 use App\Models\Branch;
 
@@ -14,7 +15,7 @@ class WorkshopController extends Controller
     public function index()
     {
         
-        return view('website.workshop.list');
+        return view('website.master.workshop.list');
     }
 
     /**
@@ -23,7 +24,7 @@ class WorkshopController extends Controller
     public function create()
     {
         $branches = Branch::all();
-        return view('website.workshop.create', compact('branches'));
+        return view('website.master.workshop.create', compact('branches'));
     }
 
     /**
@@ -31,22 +32,16 @@ class WorkshopController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'branch_id' => 'required|exists:branches,id',
         ]);
 
-        Workshop::create($request->all());
+        $workshop = new Workshop($validatedData);
+        $workshop->user_id = Auth::id();
+        $workshop->save();
         toastr()->closeButton(true)->success('Workshop Created successfully');
         return redirect()->route('workshops.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -56,7 +51,7 @@ class WorkshopController extends Controller
     {
         $workshop = Workshop::findOrFail($id);
         $branches = Branch::all();
-        return view('website.workshop.edit', compact('workshop', 'branches'));
+        return view('website.master.workshop.edit', compact('workshop', 'branches'));
     }
 
     /**
@@ -64,12 +59,15 @@ class WorkshopController extends Controller
      */
     public function update(Request $request, Workshop $workshop)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'branch_id' => 'required|exists:branches,id',
         ]);
-
-        $workshop->update($request->all());
+        $workshop->update([
+            'name' => $validated['name'],
+            'branch_id' => $validated['branch_id'],
+            'user_id' => Auth::id(), 
+        ]);
         toastr()->closeButton(true)->success('Workshop Updated successfully');
         return redirect()->route('workshops.index');
     }

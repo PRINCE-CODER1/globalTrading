@@ -14,7 +14,7 @@ class PermissionController extends Controller
     public function index()
     {
         
-        return view('website.permissions.list');
+        return view('website.admin.permissions.list');
     }
 
     /**
@@ -22,7 +22,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('website.permissions.create');
+        return view('website.admin.permissions.create');
     }
 
     /**
@@ -56,7 +56,7 @@ class PermissionController extends Controller
         $permissions = Permission::findOrFail($id);
         // Get unique categories from the permissions, filter out empty values
         $categories = $permissions->pluck('category')->unique()->filter()->values();
-        return view('website.permissions.edit', compact('permissions','categories'));
+        return view('website.admin.permissions.edit', compact('permissions','categories'));
     }
 
     /**

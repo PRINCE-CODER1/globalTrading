@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('unit_of_measurements', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');      
             $table->string('symbol');
             $table->string('formula_name');
             $table->boolean('has_decimals')->default(false);

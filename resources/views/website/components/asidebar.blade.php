@@ -87,16 +87,19 @@
                 </li>
                 {{-- @endcan --}}
                 <!-- End::Roles & Management -->
-                <!-- Start::Segment -->
+                <!-- Start::Master -->
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item d-flex  align-items-center">
                         <i class="bi bi-grid side-menu__icon mb-0 me-2"></i>
                             <span class="side-menu__label">Master</span>
                         <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
-                    <ul class="slide-menu child1 pages-ul">
+                    <ul class="slide-menu child1 pages-ul custom-h">
                         <li class="slide side-menu__label1">
                             <a href="javascript:void(0)">Master</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('customer-supplier.index') }}" class="side-menu__item">Customer/Supplier</a>
                         </li>
                         <li class="slide">
                             <a href="{{ route('segments.index') }}" class="side-menu__item">Segments</a>
@@ -120,10 +123,62 @@
                         <li class="slide">
                             <a href="{{ route('stocks-categories.index') }}" class="side-menu__item">Stock Categories</a>
                         </li>
+                        <li class="slide">
+                            <a href="{{ route('godowns.index') }}" class="side-menu__item">Godowns</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('taxes.index') }}" class="side-menu__item">Tax</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('master_numbering.index') }}" class="side-menu__item">Master Numbering</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('sale-types.index') }}" class="side-menu__item">Sale Types</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('challan-types.index') }}" class="side-menu__item">Challan Types</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('stock-aging.index') }}" class="side-menu__item">Stock Aging</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('visits.index') }}" class="side-menu__item">Purpose Of Visit</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('series.index') }}" class="side-menu__item">Add Series</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('leads-status.index') }}" class="side-menu__item">Lead Status</a>
+                        </li>
                         
                     </ul>
                 </li>
-                <!-- End::Segment -->
+                <!-- End::Master -->
+                <!-- Start::Inventory Management -->
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex fs-5  align-items-center">
+                        <i class="ri-store-2-line"></i>
+                            <span class="side-menu__label">Inventory Management</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1 fs-13">
+                            <a href="javascript:void(0)">Inventory Management</a>
+                        </li>
+                        
+                        <li class="slide">
+                            <a href="{{ route('products.index') }}" class="side-menu__item">Products</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('assemblies.index') }}" class="side-menu__item">Assembly</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('purchase_orders.index') }}" class="side-menu__item">Purchase Order</a>
+                        </li>
+                        
+                    </ul>
+                </li>
+                <!-- End::Inventory Management -->
                 
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24" viewBox="0 0 24 24"> <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path> </svg></div>

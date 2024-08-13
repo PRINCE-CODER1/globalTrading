@@ -7,8 +7,8 @@
                                 <div class="card-body p-4">
                                     <div class="mb-3 d-flex justify-content-center">
                                         <a href="index-2.html">
-                                            <img src="{{asset('assets/images/brand-logos/desktop-logo.png')}}" alt="logo" class="authentication-brand desktop-logo">
-                                            <img src="{{asset('assets/images/brand-logos/desktop-dark.png')}}" alt="logo" class="authentication-brand desktop-dark">
+                                            <img src="{{asset('../assets/images/gtimage/logo_icon.png')}}" alt="logo" class="authentication-brand desktop-logo">
+                                            <img src="{{asset('../assets/images/gtimage/logo_icon.png')}}" alt="logo" class="authentication-brand desktop-dark">
                                         </a>
                                     </div>
                                 <p class="h5 mb-2 text-center">Sign In</p>
@@ -54,10 +54,10 @@
                                     </div>
                                 </div>                            
                                 <div class="d-grid mt-4">
-                                        <button type="submit" class="btn btn-lg btn-primary" wire:navigate>Sign In</button>
+                                        <button type="submit" class="btn btn-lg btn-secondary" wire:navigate>Sign In</button>
                                 </div>
                                 <div class="text-center">
-                                        <p class="text-muted mt-3 mb-0">Dont have an account? <a href="{{ route('register') }}" class="text-primary">Sign Up</a></p>
+                                        <p class="text-muted mt-3 mb-0">Dont have an account? <a href="{{ route('register') }}" class="text-danger">Sign Up</a></p>
                                 </div>
                             </div>
                         </div>

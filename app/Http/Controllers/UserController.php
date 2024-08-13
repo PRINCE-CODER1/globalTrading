@@ -57,11 +57,13 @@ class UserController extends Controller
                             ->withInput();
         }
 
-        // Create a new user
+        // Create a new user``
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password ? Hash::make($request->password) : null,
+            'password' => Hash::make($request->password),
+            // 'role' => $request->role
+            'role' => $request->role ? Role::find($request->role)->pluck('name')->first() : user,
         ]);
 
         // Assign role to the user
@@ -128,7 +130,8 @@ class UserController extends Controller
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
-
+        // $user->role = $request->role;
+        $user->role = $request->role ? Role::find($request->role)->pluck('name')->first() : null;
         $user->save();
 
         // Assign role to the user

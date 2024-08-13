@@ -9,12 +9,12 @@
                                 <div class="mb-3 d-flex justify-content-center">
                                     <a href="index-2.html">
                                         <img
-                                        src="../assets/images/brand-logos/desktop-logo.png"
+                                        src="{{asset('../assets/images/gtimage/logo_icon.png')}}"
                                         alt="logo"
                                         class="authentication-brand desktop-logo"
                                         />
                                         <img
-                                        src="../assets/images/brand-logos/desktop-dark.png"
+                                        src="{{asset('../assets/images/gtimage/logo_icon.png')}}"
                                         alt="logo"
                                         class="authentication-brand desktop-dark"
                                         />
@@ -66,12 +66,12 @@
                                     </div>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-lg btn-primary">Create Account</button>
+                                    <button type="submit" class="btn btn-lg btn-secondary">Create Account</button>
                                 </div>      
                                 <div class="text-center">
                                     <p class="text-muted mt-3 mb-0">
                                         Already have an account?
-                                        <a href="{{ route('login') }}" class="text-primary"
+                                        <a href="{{ route('login') }}" class="text-danger"
                                         >Sign In</a
                                         >
                                     </p>
