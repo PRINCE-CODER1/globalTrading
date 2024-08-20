@@ -9,46 +9,30 @@ class Assembly extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'challan_no',
-        'date',
-        'user_id',
-        'product_id',
-        'branch_id',
-        'godown_id',
-        'quantity',
-        'price',
-    ];
+    protected $fillable = ['challan_no', 'date', 'user_id'];
 
-    /**
-     * Get the product associated with the assembly.
-     */
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    /**
-     * Get the branch associated with the assembly.
-     */
     public function branch()
     {
         return $this->belongsTo(Branch::class);
     }
 
-    /**
-     * Get the godown associated with the assembly.
-     */
     public function godown()
     {
         return $this->belongsTo(Godown::class);
     }
 
-    /**
-     * Get the user who created the assembly.
-     */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function assembleDetails()
+    {
+        return $this->hasMany(AssembleDetail::class);
     }
 }

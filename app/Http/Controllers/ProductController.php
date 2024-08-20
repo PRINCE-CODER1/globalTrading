@@ -7,6 +7,7 @@ use App\Models\StockCategory;
 use App\Models\Branch;
 use App\Models\Godown;
 use App\Models\Series;
+use App\Models\Tax;
 use App\Models\UnitOfMeasurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,8 @@ class ProductController extends Controller
         $godowns = Godown::all();
         $units = UnitOfMeasurement::all();
         $series = Series::all();
-        return view('website.inventory-management.products.create', compact('categories', 'branches', 'godowns', 'units','series'));
+        $tax = Tax::all();
+        return view('website.inventory-management.products.create', compact('categories', 'branches', 'godowns', 'units','series','tax'));
     }
 
     /**
@@ -79,7 +81,8 @@ class ProductController extends Controller
         $godowns = Godown::all();
         $units = UnitOfMeasurement::all();
         $series = Series::all();
-        return view('website.inventory-management.products.edit', compact('product', 'categories', 'branches', 'godowns', 'units','series'));
+        $tax = Tax::all();
+        return view('website.inventory-management.products.edit', compact('product', 'categories', 'branches', 'godowns', 'units','series','tax'));
     }
 
     /**

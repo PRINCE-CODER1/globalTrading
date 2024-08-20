@@ -3,7 +3,7 @@
         <div class="row mt-5 mb-3">
             <div class="col-12 d-flex align-items-center justify-content-between">
                 <h4>Lead Status</h4>
-                <a href="{{ route('leads-status.create') }}" class="btn btn-secondary">Create Lead Status</a>
+                <a href="{{ route('leads-status.create') }}" class="btn btn-secondary">Lead Status</a>
             </div>
         </div>
     </div>

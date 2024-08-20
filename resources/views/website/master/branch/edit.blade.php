@@ -46,8 +46,8 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fs-14 text-dark" for="user_id">User Name:</label>
-                            <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
+                            {{-- <label class="form-label fs-14 text-dark" for="user_id">User Name:</label>
+                            <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly> --}}
                             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                         </div>
                         <div class="mb-3">

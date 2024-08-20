@@ -58,7 +58,7 @@
                                             <td><input type="checkbox" wire:model.live="selectedAging" value="{{ $stock->id }}"></td>
                                             <td>{{ $stock->product->product_name }}</td>
                                             <td>{{ $stock->quantity }}</td>
-                                            <td>{{ $stock->received_at->format('Y-m-d') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($stock->received_at)->format('Y-m-d') }}</td>
                                             <td>{{ $stock->age_days }}</td>
                                             <td>{{ $stock->age_category }}</td>
                                             <td>

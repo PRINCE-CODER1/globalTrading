@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-12 d-flex justify-content-between mt-5">
             <h2 class="mb-0">Create Assembly</h2>
-            <a href="{{route('assemblies.index')}}" type="button" class="btn btn-outline-secondary">Back</a>
+            <a href="{{ route('assemblies.index') }}" type="button" class="btn btn-outline-secondary">Back</a>
         </div>
     </div>
 </div>
@@ -16,7 +16,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-style2 mb-0">
                     <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{route('assemblies.index')}}"><i class="ti ti-apps me-1 fs-15"></i>Assembly</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('assemblies.index') }}"><i class="ti ti-apps me-1 fs-15"></i>Assembly</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Create Assembly</li>
                 </ol>
             </nav>
@@ -31,14 +31,14 @@
                     @csrf
                     <div class="mb-3">
                         <label for="challan_no">Challan No</label>
-                        <input type="text" name="challan_no" id="challan_no" class="form-control" value="{{ $purchaseOrderNo }}" readonly style="cursor:not-allowed;">
+                        <input type="text" name="challan_no" id="challan_no" class="form-control" value="{{ old('challan_no', $purchaseOrderNo) }}" readonly style="cursor:not-allowed;">
                     </div>
                     <div class="mb-3">
                         <label for="date">Date</label>
-                        <input type="date" name="date" class="form-control" required>
+                        <input type="date" name="date" id="date" class="form-control" required>
                     </div>
             
-                    <table class="table table-bordered" id="assemblyTable">
+                    <table class="table table-bordered nowrap mb-3" id="assemblyTable">
                         <thead>
                             <tr>
                                 <th>Product</th>
@@ -74,12 +74,12 @@
                                 </td>
                                 <td><input type="number" name="quantity[]" class="form-control" step="0.01" required></td>
                                 <td><input type="number" name="price[]" class="form-control" step="0.01" required></td>
-                                <td><button type="button" class="btn btn-danger remove-row">Remove</button></td>
+                                <td><button type="button" class="btn btn-dark-outline fs-5 remove-row float-end"><i class="me-3 ri-close-circle-fill"></i>Remove</button></td>
                             </tr>
                         </tbody>
                     </table>
-                    <button type="button" id="addRow" class="btn btn-success">Add Row</button>
-                    <button type="submit" class="btn btn-primary">Save Assembly</button>
+                    <button type="button" id="addRow" class="btn btn-primary-outline fs-5 text-danger">Add Row<i class="ms-3 ri-add-circle-fill"></i></button>
+                    <button type="submit" class="btn btn-secondary float-end">Save Assembly</button>
                 </form>
             </div>
         </div>
@@ -118,21 +118,16 @@
                 </td>
                 <td><input type="number" name="quantity[]" class="form-control" step="0.01" required></td>
                 <td><input type="number" name="price[]" class="form-control" step="0.01" required></td>
-                <td><button type="button" class="btn btn-danger remove-row">Remove</button></td>
+                <td><button type="button" class="btn btn-dark-outline fs-5 remove-row"><i class="me-3 ri-close-circle-fill"></i>Remove</button></td>
             `;
             assemblyBody.appendChild(newRow);
-
-            // Add event listener to the new remove button
-            newRow.querySelector('.remove-row').addEventListener('click', function() {
-                this.closest('tr').remove();
-            });
         });
 
-        // Remove row
-        document.querySelectorAll('.remove-row').forEach(button => {
-            button.addEventListener('click', function() {
-                this.closest('tr').remove();
-            });
+        // Delegate event listener for removing rows
+        assemblyBody.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-row')) {
+                event.target.closest('tr').remove();
+            }
         });
     });
 </script>

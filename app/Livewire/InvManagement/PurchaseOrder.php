@@ -26,15 +26,15 @@ class PurchaseOrder extends Component
     {
         $this->search = session()->get('search', '');
         $this->perPage = session()->get('perPage', 10);
-        $this->sortBy = session()->get('sortBy', 'created_at');
-        $this->sortDir = session()->get('sortDir', 'asc');
+        // $this->sortBy = session()->get('sortBy', 'created_at');
+        // $this->sortDir = session()->get('sortDir', 'asc');
     }
 
     public function render()
     {
         $userId = Auth::id();
 
-        $purchaseOrders = PurchaseOrders::with(['supplier', 'customer', 'agent', 'segment', 'orderBranch', 'deliveryBranch', 'user'])
+        $purchaseOrders = PurchaseOrders::with(['supplier', 'customer', 'agent', 'segment', 'orderBranch', 'deliveryBranch', 'user','items'])
             ->where('user_id', $userId)
             ->where(function ($query) {
                 $query->where('purchase_order_no', 'like', '%' . $this->search . '%')

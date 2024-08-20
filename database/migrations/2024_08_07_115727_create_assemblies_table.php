@@ -15,15 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('challan_no');
             $table->date('date');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            
-            // Item-specific columns
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->foreignId('branch_id')->constrained()->onDelete('cascade');
-            $table->foreignId('godown_id')->constrained()->onDelete('cascade');
-            $table->decimal('quantity', 10, 2);
-            $table->decimal('price', 10, 2);
-            
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');         
             $table->timestamps();
         });
     }

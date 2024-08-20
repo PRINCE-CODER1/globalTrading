@@ -46,7 +46,6 @@
                                         <th scope="col">
                                             <input type="checkbox" wire:model.live="selectAll">
                                         </th>
-                                        <th scope="col">User Name</th>
                                         <th scope="col" wire:click="setSortBy('name')">Branch Name
                                             @if ($sortBy === 'name')
                                                 @if ($sortDir === 'asc')
@@ -60,6 +59,7 @@
                                         </th>
                                         <th scope="col">Contact</th>
                                         <th scope="col">Address</th>
+                                        <th scope="col">Created By</th>
                                         <th scope="col" wire:click="setSortBy('created_at')">Created At
                                             @if ($sortBy === 'created_at')
                                                 @if ($sortDir === 'asc')
@@ -80,10 +80,10 @@
                                             <td>
                                                 <input type="checkbox" wire:model.live="selectedBranches" value="{{ $branch->id }}">
                                             </td>
-                                            <td>{{ $branch->user->name }}</td>
-                                            <td><p class="mb-0 badge bg-secondary">{{ $branch->name }}</p></td>
+                                            <td>{{ $branch->name }}</td>
                                             <td>{{ $branch->mobile }}</td>
                                             <td>{{ $branch->address }}</td>
+                                            <td>{{ $branch->user->name }}</td>
                                             <td>{{ $branch->created_at->format('d M, Y') }}</td>
                                             <td>
                                                 <div class="btn-group">

@@ -47,7 +47,7 @@
                                         <th scope="col">Name</th>
                                         <th scope="col">Description</th>
                                         <th scope="col">Discount Rate (%)</th>
-                                        <th scope="col">Dismantling Required</th>
+                                        {{-- <th scope="col">Dismantling Required</th> --}}
                                         <th scope="col">Tax Rate (%)</th>
                                         <th scope="col">Created By</th>
                                         <th scope="col">Actions</th>
@@ -60,7 +60,7 @@
                                             <td>{{ $ser->name }}</td>
                                             <td>{{ $ser->description }}</td>
                                             <td>{{ $ser->discount_rate ?? 'N/A' }}</td>
-                                            <td>{{ $ser->dismantling_required ? 'Yes' : 'No' }}</td>
+                                            {{-- <td>{{ $ser->dismantling_required ? 'Yes' : 'No' }}</td> --}}
                                             <td>{{ $ser->tax_rate ?? 'N/A' }}</td>
                                             <td>{{ $ser->user->name ?? 'Unknown' }}</td>
                                             <td>

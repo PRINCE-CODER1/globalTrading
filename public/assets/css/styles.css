@@ -26889,22 +26889,4 @@ input:checked + .slider {
     background-color: #45d65b;
 }
 /* custom-h of master dropdown */
-.custom-h {
-    height: 400px;
-    overflow-y: auto;
-}
-.custom-h::-webkit-scrollbar {
-    width: 3px;
-}
 
-.custom-h::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.custom-h::-webkit-scrollbar-thumb {
-    background: #dadada;
-}
-
-.custom-h::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}

@@ -54,7 +54,7 @@
                         @enderror
                     </div>
     
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label for="dismantling_required" class="form-label fs-14 text-dark me-3">Dismantling</label>
                         <label class="switch">
                             <input type="checkbox" name="dismantling_required" id="dismantling_required" value="1" {{ old('dismantling_required', $series->dismantling_required) ? 'checked' : '' }}>
@@ -63,7 +63,7 @@
                         @error('dismantling_required')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
-                    </div>
+                    </div> --}}
             
                     <div class="mb-3">
                         <label for="tax_rate" class="form-label fs-14 text-dark">Tax Rate (%)</label>

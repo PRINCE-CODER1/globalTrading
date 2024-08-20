@@ -2,7 +2,7 @@
     <div class="container mt-5 mb-3">
         <div class="d-flex justify-content-between">
             <h4 class="mb-0">Customer/Supplier List</h4>
-            <a href="{{route('customer-supplier.create')}}" class="btn btn-secondary"> create sup/cust</a>
+            <a href="{{route('customer-supplier.create')}}" class="btn btn-secondary"> create supplier/customer</a>
         </div>
     </div>
     <div class="container">     

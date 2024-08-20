@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row mt-5 mb-3">
             <div class="col-12 d-flex align-items-center justify-content-between">
-                <h4>Assembly</h4>
+                <h4>Assemblies</h4>
                 <a href="{{ route('assemblies.create') }}" class="btn btn-secondary">Create Assembly</a>
             </div>
         </div>
@@ -27,12 +27,13 @@
                         <label for="search" class="col-form-label">Search</label>
                     </div>
                     <div class="col-auto">
-                        <input wire:model.live.debounce.300ms="search" type="text" id="search" class="form-control" placeholder="Search">
+                        <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
@@ -47,12 +48,8 @@
                                         </th>
                                         <th>Challan No</th>
                                         <th>Date</th>
-                                        <th>Product</th>
-                                        <th>Branch</th>
-                                        <th>Godown</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
                                         <th>Created By</th>
+                                        <th>Product Details</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -64,12 +61,10 @@
                                             </td>
                                             <td>{{ $assembly->challan_no }}</td>
                                             <td>{{ \Carbon\Carbon::parse($assembly->date)->format('Y-m-d') }}</td>
-                                            <td>{{ $assembly->product->product_name }}</td>
-                                            <td>{{ $assembly->branch->name }}</td>
-                                            <td>{{ $assembly->godown->godown_name }}</td>
-                                            <td>{{ $assembly->quantity }}</td>
-                                            <td>{{ number_format($assembly->price, 2) }}</td>
                                             <td>{{ $assembly->user->name }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal" wire:click="setSelectedAssembly({{ $assembly->id }})">View</button>
+                                            </td>
                                             <td>
                                                 <button class="btn btn-link text-danger fs-14 lh-1 p-0" data-bs-toggle="modal" data-bs-target="#deleteModal" wire:click="confirmDelete({{ $assembly->id }})">
                                                     <i class="ri-delete-bin-5-line"></i>
@@ -78,16 +73,17 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="10" class="text-center">No assemblies found.</td>
+                                            <td colspan="6" class="text-center">No assemblies found.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
                             </table>
                         </div>
-                         <!-- Bulk Delete Button -->
+
+                        <!-- Bulk Delete Button -->
                         <div class="container mt-2">
-                            @if($selectedAssemblies)
-                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal">Delete </button>
+                            @if(count($selectedAssemblies) > 0)
+                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal">Delete</button>
                             @endif
                         </div>
 
@@ -101,8 +97,52 @@
         </div>
     </div>
 
+    <!-- Details Modal -->
+    <div wire:ignore.self class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Assembly Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if ($selectedAssembly)
+                        <h5>Products in Assembly</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Branch</th>
+                                    <th>Godown</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($assemblies->find($selectedAssembly)->assembleDetails as $detail)
+                                    <tr>
+                                        <td>{{ $detail->product->product_name }}</td>
+                                        <td>{{ $detail->branch->name }}</td>
+                                        <td>{{ $detail->godown->godown_name }}</td>
+                                        <td>{{ $detail->quantity }}</td>
+                                        <td>{{ $detail->price }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <p>No details available.</p>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Modal -->
-    <div wire:ignore.self class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -121,7 +161,7 @@
     </div>
 
     <!-- Bulk Delete Confirmation Modal -->
-    <div wire:ignore.self class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
+    <div wire:ignore.self data-bs-dismiss="modal" class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

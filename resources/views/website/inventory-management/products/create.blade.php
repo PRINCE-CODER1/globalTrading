@@ -55,7 +55,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="tax" class="form-label">Tax</label>
-                            <input type="number" step="0.01" class="form-control" id="tax" name="tax">
+                            <select class="form-control" id="tax" name="tax" required>
+                                @foreach($tax as $tax)
+                                    <option value="{{ $tax->value }}">{{ $tax->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="product_model" class="form-label">Product Model</label>

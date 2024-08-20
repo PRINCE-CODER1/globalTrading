@@ -185,7 +185,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-dark-outline fs-2 remove-item mt-3">Remove<i class="ms-3 ri-close-circle-fill"></i></button>
+                                <button type="button" class="btn btn-dark-outline fs-5 remove-item mt-3 float-end"><i class="ms-3 ri-close-circle-fill"></i>Remove</button>
                             </div>
                         </div>
                     </div>
@@ -193,7 +193,7 @@
             </div>
 
             <!-- Add New Item Button -->
-            <button type="button" id="add-item" class="btn btn-primary-outline mb-3 fs-2 text-danger" id="add-item">Add Product<i class="ms-3 ri-add-circle-fill"></i></button>
+            <button type="button" id="add-item" class="btn btn-primary-outline mb-3 fs-5 text-danger" id="add-item">Add Product<i class="ms-3 ri-add-circle-fill"></i></button>
 
             <!-- Subtotal Field -->
             <div class="mb-3">
@@ -257,7 +257,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <button type="button" class="btn btn-dark-outline fs-2 remove-item mt-3">Remove<i class="ms-3 ri-close-circle-fill"></i></button>
+                    <button type="button" class="btn btn-dark-outline fs-5 remove-item mt-3 float-end"><i class="ms-3 ri-close-circle-fill"></i>Remove</button>
                 </div>
             </div>
         `;
