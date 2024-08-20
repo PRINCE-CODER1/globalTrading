@@ -11,8 +11,7 @@ class StockAging extends Model
 
     protected $fillable = [
         'product_id',
-        'quantity',
-        'received_at',
+        'title',
         'age_days',
         'age_category'
     ];

@@ -52,21 +52,21 @@
                         <tbody id="assemblyBody">
                             <tr>
                                 <td>
-                                    <select name="product_id[]" class="form-control" required>
+                                    <select name="product_id[]"  class="form-select" required>
                                         @foreach($products as $product)
                                             <option value="{{ $product->id }}">{{ $product->product_name }}</option>
                                         @endforeach
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="branch_id[]" class="form-control" required>
+                                    <select name="branch_id[]"  class="form-select" required>
                                         @foreach($branches as $branch)
                                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                         @endforeach
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="godown_id[]" class="form-control" required>
+                                    <select name="godown_id[]"  class="form-select" required>
                                         @foreach($godowns as $godown)
                                             <option value="{{ $godown->id }}">{{ $godown->godown_name }}</option>
                                         @endforeach
@@ -74,11 +74,19 @@
                                 </td>
                                 <td><input type="number" name="quantity[]" class="form-control" step="0.01" required></td>
                                 <td><input type="number" name="price[]" class="form-control" step="0.01" required></td>
-                                <td><button type="button" class="btn btn-dark-outline fs-5 remove-row float-end"><i class="me-3 ri-close-circle-fill"></i>Remove</button></td>
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <span class="me-1">Remove</span>
+                                        <button type="button" class="btn btn-icon btn-danger-light rounded-pill btn-wave  "><i class="remove-row ri-close-circle-fill"></i></button>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
-                    <button type="button" id="addRow" class="btn btn-primary-outline fs-5 text-danger">Add Row<i class="ms-3 ri-add-circle-fill"></i></button>
+                    <div>
+                        <span class="me-1">Add</span>
+                        <button type="button" id="addRow" class="btn btn-icon btn-secondary-light rounded-pill btn-wave"><i class=" ri-add-circle-fill"></i></button>
+                    </div>
                     <button type="submit" class="btn btn-secondary float-end">Save Assembly</button>
                 </form>
             </div>
@@ -118,7 +126,7 @@
                 </td>
                 <td><input type="number" name="quantity[]" class="form-control" step="0.01" required></td>
                 <td><input type="number" name="price[]" class="form-control" step="0.01" required></td>
-                <td><button type="button" class="btn btn-dark-outline fs-5 remove-row"><i class="me-3 ri-close-circle-fill"></i>Remove</button></td>
+                <td><button type="button" class="btn btn-icon btn-danger-light rounded-pill btn-wave mt-3 "><i class="remove-row ri-close-circle-fill"></i></button></td>
             `;
             assemblyBody.appendChild(newRow);
         });

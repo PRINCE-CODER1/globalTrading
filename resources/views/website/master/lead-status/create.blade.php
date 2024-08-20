@@ -41,7 +41,7 @@
                         <label for="details" class="form-label">Details</label>
                         <textarea class="form-control" id="details" name="details">{{ old('details') }}</textarea>
                     </div>
-                    <button type="submit" class="btn btn-secondary">Create Lead</button>
+                    <button type="submit" class="btn btn-secondary">Create Lead Status</button>
                 </form>
             </div>
         </div>

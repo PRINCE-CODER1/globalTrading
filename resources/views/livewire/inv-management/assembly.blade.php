@@ -63,7 +63,7 @@
                                             <td>{{ \Carbon\Carbon::parse($assembly->date)->format('Y-m-d') }}</td>
                                             <td>{{ $assembly->user->name }}</td>
                                             <td>
-                                                <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#detailsModal" wire:click="setSelectedAssembly({{ $assembly->id }})">View</button>
+                                                <button class="btn btn-icon btn-secondary btn-wave" data-bs-toggle="modal" data-bs-target="#detailsModal" wire:click="setSelectedAssembly({{ $assembly->id }})"><i class="ri-eye-line"></i></button>
                                             </td>
                                             <td>
                                                 <button class="btn btn-link text-danger fs-14 lh-1 p-0" data-bs-toggle="modal" data-bs-target="#deleteModal" wire:click="confirmDelete({{ $assembly->id }})">

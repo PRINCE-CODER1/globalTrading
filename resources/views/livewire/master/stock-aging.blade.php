@@ -45,8 +45,6 @@
                                     <tr>
                                         <th><input type="checkbox" wire:model.live="selectAll"></th>
                                         <th scope="col">Product</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Received At</th>
                                         <th scope="col">Age Days</th>
                                         <th scope="col">Age Category</th>
                                         <th scope="col">Actions</th>
@@ -57,8 +55,6 @@
                                         <tr wire:key="{{$stock->id}}">
                                             <td><input type="checkbox" wire:model.live="selectedAging" value="{{ $stock->id }}"></td>
                                             <td>{{ $stock->product->product_name }}</td>
-                                            <td>{{ $stock->quantity }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($stock->received_at)->format('Y-m-d') }}</td>
                                             <td>{{ $stock->age_days }}</td>
                                             <td>{{ $stock->age_category }}</td>
                                             <td>

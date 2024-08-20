@@ -138,12 +138,12 @@
                         <li class="slide">
                             <a href="{{ route('challan-types.index') }}" class="side-menu__item">Challan Types</a>
                         </li>
-                        <li class="slide">
+                        {{-- <li class="slide">
                             <a href="{{ route('stock-aging.index') }}" class="side-menu__item">Stock Aging</a>
-                        </li>
-                        <li class="slide">
+                        </li> --}}
+                        {{-- <li class="slide">
                             <a href="{{ route('visits.index') }}" class="side-menu__item">Purpose Of Visit</a>
-                        </li>
+                        </li> --}}
                         <li class="slide">
                             <a href="{{ route('series.index') }}" class="side-menu__item">Add Series</a>
                         </li>

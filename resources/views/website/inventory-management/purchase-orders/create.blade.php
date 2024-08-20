@@ -181,14 +181,23 @@
                         </div>
 
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-dark-outline fs-5 remove-item mt-3 float-end"><i class=" ri-close-circle-fill"></i>Remove</button>
+                            <div class="d-flex justify-content-end align-items-center mt-3">
+                                <span class="me-1">Remove</span>
+                                <button type="button" class="btn btn-icon btn-danger-light rounded-pill btn-wave   "><i class="remove-item ri-close-circle-fill"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Button to Add More Items -->
-            <button type="button" class="btn btn-primary-outline mb-3 fs-5 text-danger" id="add-item">Add Product<i class="ms-3 ri-add-circle-fill"></i></button>
+            {{-- <button type="button" class="d-flex justify-content-center align-items-center  btn btn-icon btn-secondary-light rounded-pill btn-wave fs-5 text-secondary" id="add-item"><i class=" ri-add-circle-fill"></i></button> --}}
+            <div class="d-flex align-items-center my-3">
+                <span class="me-2">Add</span>
+                <button type="button" class=" btn btn-icon btn-secondary-light rounded-pill btn-wave" id="add-item">
+                    <i class=" ri-add-circle-fill"></i>
+                </button>
+            </div>
 
             <!-- Subtotal Field -->
             <div class="mb-3">
@@ -252,7 +261,10 @@
                         </div>
 
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-dark-outline fs-5 remove-item mt-3 float-end"><i class="ms-3 ri-close-circle-fill"></i>Remove</button>
+                            <div class="d-flex justify-content-end align-items-center mt-3">
+                                <span class="me-1">Remove</span>
+                                <button type="button" class="btn btn-icon btn-danger-light rounded-pill btn-wave"><i class="remove-item ri-close-circle-fill"></i></button>
+                            </div>
                         </div>
                     </div>
                 `;
