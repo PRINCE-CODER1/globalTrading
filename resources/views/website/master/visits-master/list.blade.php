@@ -2,7 +2,7 @@
 @section('content')
 
     <div>
-        @livewire('master.visits')
+        @livewire('master.visits-master')
     </div>
 
 @endsection

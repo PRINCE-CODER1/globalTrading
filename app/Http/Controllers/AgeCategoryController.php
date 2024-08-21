@@ -29,4 +29,22 @@ class AgeCategoryController extends Controller
 
         return redirect()->route('age_categories.index')->with('success', 'Age category created successfully.');
     }
+    public function edit($id)
+    {
+        $category = StockAgingMaster::findOrFail($id);
+        return view('website.master.stock-aging-manage.edit', compact('category'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'days' => 'required|string|max:255',
+        ]);
+
+        $category = StockAgingMaster::findOrFail($id);
+        $category->update($request->all());
+
+        return redirect()->route('age_categories.index')->with('success', 'Age category updated successfully.');
+    }
 }

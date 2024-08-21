@@ -25,7 +25,9 @@ use App\Http\Controllers\StockAgingController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\LeadStatusController;
-// use App\Http\Controllers\AgeCategoryController;
+use App\Http\Controllers\AgeCategoryController;
+use App\Http\Controllers\VisitMasterController;
+
 
 use App\Mail\StockAgingNotificationEmail;
 use Illuminate\Support\Facades\Mail;
@@ -105,13 +107,15 @@ Route::middleware('auth')->group(function() {
     Route::resource('purchase_orders', PurchaseOrderController::class);
 
     //Stockaging Route
-    Route::resource('/stock-aging', StockAgingController::class);
+    // Route::resource('/stock-aging', StockAgingController::class);
 
     //Stockaging Route
-    // Route::resource('age_categories', AgeCategoryController::class);
+    Route::resource('age_categories', AgeCategoryController::class);
 
     //Purpose of visit Route
-    Route::resource('visits', VisitController::class);
+    // Route::resource('visits', VisitController::class);
+    //Visit Route
+    Route::resource('visits', VisitMasterController::class);
 
     //Purpose of visit Route
     Route::resource('series', SeriesController::class);
