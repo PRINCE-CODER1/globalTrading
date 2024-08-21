@@ -23,8 +23,8 @@ class SubSegments extends Component
     public $subSegmentIdToDelete;
     public $selectAll = false;
     public $selectedSegments = [];
-    public $viewSubSegments = true; // Default to true to show list first
-    public $parentSegments = []; // Used for dropdown in create/edit form
+    public $viewSubSegments = true;
+    public $parentSegments = [];
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -34,9 +34,21 @@ class SubSegments extends Component
 
     public function mount()
     {
+        $this->search = session()->get('search', $this->search);
+        $this->perPage = session()->get('perPage', $this->perPage);
         $this->parentSegments = Segment::whereNull('parent_id')->get(); 
     }
 
+    public function updatedSearch($value)
+    {
+        session()->put('search', $value);
+    }
+    public function updatePerPage($count)
+    {
+        $this->perPage = $count;
+        session()->put('perPage', $count);
+        $this->resetPage();
+    }
     public function resetInputFields()
     {
         $this->name = '';
@@ -61,7 +73,7 @@ class SubSegments extends Component
         toastr()->closeButton(true)->success($message);
 
         $this->resetInputFields();
-        $this->viewSubSegments = true; // Switch back to list view
+        $this->viewSubSegments = true;
         $this->resetPage();
     }
 
@@ -106,12 +118,6 @@ class SubSegments extends Component
             $this->subSegmentIdToDelete = null;
             $this->resetPage();
         }
-    }
-
-    public function updatePerPage($count)
-    {
-        $this->perPage = $count;
-        $this->resetPage();
     }
 
     public function backToCreate()

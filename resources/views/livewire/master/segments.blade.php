@@ -1,7 +1,7 @@
 <div>
     <div class="container">
         <div class="row">
-            <div class="col-12 mt-5 d-flex align-items-center justify-content-between ">
+            <div class="col-12 mt-5 d-flex align-items-center justify-content-between">
                 <h4 class="mb-0">
                     @if ($isEditing)
                         Edit Segment
@@ -12,16 +12,16 @@
                     @endif
                 </h4>
                 @if ($viewSegments)
-                    <button wire:click="createSegment" class="btn btn-outline-secondary btn-wave">
-                        Create Segment
+                    <button wire:click="createSegment" class="btn btn-outline-secondary">
+                        <i class="bi bi-plus-circle"></i> Create Segment
                     </button>
                 @elseif($isEditing)
-                    <button wire:click="toggleView" class="btn btn-outline-secondary btn-wave">
-                        Cancel Editing
+                    <button wire:click="toggleView" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Cancel Editing
                     </button>
                 @else
-                    <button wire:click="toggleView" class="btn btn-outline-secondary btn-wave">
-                        Segment Lists
+                    <button wire:click="toggleView" class="btn btn-outline-secondary">
+                        <i class="bi bi-list"></i> Segment Lists
                     </button>
                 @endif
             </div>
@@ -32,8 +32,8 @@
             <div class="col-12">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-style2 mb-0">
-                        <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="ti ti-home-2 me-1 fs-15"></i>Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{route('segments.index')}}"><i class="ti ti-apps me-1 fs-15"></i>Segments</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="bi bi-house-door"></i> Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{route('segments.index')}}"><i class="bi bi-grid"></i> Segments</a></li>
                         @if ($isEditing)
                             <li class="breadcrumb-item active" aria-current="page">Edit Segment</li>
                         @elseif (!$viewSegments)
@@ -56,14 +56,14 @@
                             @if (!$viewSegments)
                                 <form wire:submit.prevent="store">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label fs-14 text-dark">Enter name</label>
+                                        <label for="name" class="form-label fs-14 text-dark">Enter Name</label>
                                         <div class="input-group mb-3">
-                                            <div class="input-group-text"><i class="ri-user-line"></i></div>
+                                            <div class="input-group-text"><i class="bi bi-person"></i></div>
                                             <input wire:model="name" type="text" class="form-control" id="name" placeholder="Enter name">
                                             @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                                         </div>
                                     </div>
-
+    
                                     <div class="mb-3">
                                         <p>Status</p>
                                         <label for="active" class="switch fs-14 text-dark">
@@ -72,13 +72,13 @@
                                         </label>
                                         @error('active') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
-
+    
                                     <div class="mb-3">
-                                        <button class="btn btn-secondary">Submit</button>
+                                        <button class="btn btn-secondary"><i class="bi bi-check2"></i> Submit</button>
                                     </div>
                                 </form>
                             @endif
-
+    
                             <!-- Segments Table -->
                             @if ($viewSegments)
                                 <div class="table-responsive">
@@ -92,24 +92,24 @@
                                                     Name
                                                     @if ($sortBy === 'name')
                                                         @if ($sortDir === 'asc')
-                                                            <i class="ri-arrow-up-s-line"></i>
+                                                            <i class="bi bi-arrow-up"></i>
                                                         @else
-                                                            <i class="ri-arrow-down-s-line"></i>
+                                                            <i class="bi bi-arrow-down"></i>
                                                         @endif
                                                     @else
-                                                        <i class="ri-expand-up-down-fill"></i>
+                                                        <i class="bi bi-sort-down-alt"></i>
                                                     @endif
                                                 </th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col" wire:click="setSortBy('created_at')">Created On
                                                     @if ($sortBy === 'created_at')
                                                         @if ($sortDir === 'asc')
-                                                            <i class="ri-arrow-up-s-line"></i>
+                                                            <i class="bi bi-arrow-up"></i>
                                                         @else
-                                                            <i class="ri-arrow-down-s-line"></i>
+                                                            <i class="bi bi-arrow-down"></i>
                                                         @endif
                                                     @else
-                                                        <i class="ri-expand-up-down-fill"></i>
+                                                        <i class="bi bi-sort-down-alt"></i>
                                                     @endif
                                                 </th>
                                                 <th scope="col">Actions</th>
@@ -132,9 +132,11 @@
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($segment->created_at)->format('d M, Y') }}</td>
                                                     <td>
-                                                        <a wire:click="edit({{ $segment->id }})" class="text-info fs-14 lh-1" style="cursor: pointer;"><i class="ri-edit-line"></i></a>
+                                                        <a wire:click="edit({{ $segment->id }})" class="text-info fs-14 lh-1" style="cursor: pointer;">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
                                                         <button type="button" data-bs-toggle="modal" data-bs-target="#deleteSegmentModal" wire:click="confirmDelete({{ $segment->id }})" class="btn btn-link text-danger fs-14 lh-1 p-0">
-                                                            <i class="ri-delete-bin-5-line"></i>
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                         
                                                         <!-- Delete Modal -->
@@ -157,7 +159,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
+    
                                                     </td>
                                                 </tr>
                                             @empty
@@ -171,8 +173,8 @@
                                 <!-- Bulk Delete Button -->
                                 <div class="mt-2">
                                     @if($selectedSegments)
-                                        <button class="btn btn-outline-danger btn-wave" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal" >
-                                            Delete
+                                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal">
+                                            <i class="bi bi-trash"></i> Delete
                                         </button>
                                         <!-- Bulk Delete Confirmation Modal -->
                                         <div wire:ignore.self class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
@@ -194,7 +196,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
                                     @endif
                                 </div>
                                 <div class="mb-3">
@@ -208,4 +209,3 @@
         </div>
     </div>
 </div>
-

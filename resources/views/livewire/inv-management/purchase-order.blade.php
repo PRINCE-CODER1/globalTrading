@@ -146,8 +146,13 @@
                                             <td>{{ $order->customer->name ?? 'N/A' }}</td>
                                             <td class="text-center">
                                                 <!-- View Button -->
-                                                <button class="btn btn-secondary btn-sm " data-bs-toggle="modal" data-bs-target="#viewPurchaseOrderModal{{ $order->id }}">View</button>
-                                                <!-- Modal for Viewing Purchase Order Details -->
+                                                <div class="d-flex justify-content-center">
+                                                    <!-- View Button -->
+                                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#viewPurchaseOrderModal{{ $order->id }}">
+                                                        <i class="me-1 ri-eye-line"></i>View
+                                                    </button>
+                                                </div>                                               
+                                            <!-- Modal for Viewing Purchase Order Details -->
                                             <div wire:igonre.self class="modal fade" id="viewPurchaseOrderModal{{ $order->id }}" tabindex="-1" aria-labelledby="viewPurchaseOrderModalLabel{{ $order->id }}" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">

@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12 d-flex justify-content-between mt-5 ">
             <h4 class="mb-0">Create User</h4>
-            <a href="{{ route('users.index') }}" class="btn btn-secondary">Back</a>
+            <a href="{{ route('users.index') }}" class="btn btn-secondary"><i class="bi bi-chevron-left me-1"></i> Back</a>
         </div>
     </div>
 </div>
@@ -75,7 +75,9 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-secondary">Create User</button>
+                <button type="submit" class="btn btn-secondary">
+                    <i class="bi bi-save me-1"></i> Create User
+                </button>
             </form> 
         </div>
     </div>

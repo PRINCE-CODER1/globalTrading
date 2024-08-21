@@ -22,9 +22,9 @@
                     </ul>
                 </div>
 
-                <div class="row g-3 align-items-center">
-                    <div class="col-auto">
-                        <label for="search" class="col-form-label">Search</label>
+                <div class="d-flex align-items-center">
+                    <div class="col-auto ">
+                        <label for="search" class="form-label">Search</label>
                     </div>
                     <div class="col-auto">
                         <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
@@ -89,7 +89,7 @@
 
                         <!-- Pagination Links -->
                         <div class="container mt-3">
-                            {{ $assemblies->links() }}
+                            {{ $assemblies->links('custom-pagination-links') }}
                         </div>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                     <h5 class="modal-title" id="detailsModalLabel">Assembly Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body table-responsive">
                     @if ($selectedAssembly)
                         <h5>Products in Assembly</h5>
                         <table class="table table-bordered">

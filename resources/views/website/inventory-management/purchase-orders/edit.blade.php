@@ -185,16 +185,22 @@
                             </div>
 
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-dark-outline fs-5 remove-item mt-3 float-end"><i class="ms-3 ri-close-circle-fill"></i>Remove</button>
+                                <button type="button" class="btn btn-danger btn-sm remove-item mt-3 float-end">
+                                    <i class="ri-close-circle-fill me-2"></i> Remove
+                                </button>
                             </div>
+                            
                         </div>
                     </div>
                 @endforeach
             </div>
 
             <!-- Add New Item Button -->
-            <button type="button" id="add-item" class="btn btn-primary-outline mb-3 fs-5 text-danger" id="add-item">Add Product<i class="ms-3 ri-add-circle-fill"></i></button>
-
+            <button type="button" id="add-item" class="btn btn-secondary btn-sm mb-3 ">
+                Add Product
+                <i class="ri-add-circle-fill ms-3"></i>
+            </button>
+            
             <!-- Subtotal Field -->
             <div class="mb-3">
                 <label for="subtotal" class="form-label">Subtotal</label>
@@ -257,8 +263,11 @@
                 </div>
 
                 <div class="col-md-6">
-                    <button type="button" class="btn btn-dark-outline fs-5 remove-item mt-3 float-end"><i class="ms-3 ri-close-circle-fill"></i>Remove</button>
+                    <button type="button" class="btn btn-danger btn-sm remove-item mt-3 float-end">
+                        <i class="ri-close-circle-fill me-2"></i> Remove
+                    </button>
                 </div>
+
             </div>
         `;
         itemsContainer.appendChild(newItemRow);

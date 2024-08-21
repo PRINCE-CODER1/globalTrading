@@ -7,7 +7,7 @@
             <h4 class="mb-0">
                 Edit Cust/Supp
             </h4>
-            <a href="{{route('customer-supplier.index')}}" type="button" class="btn btn-secondary">Back</a>
+            <a href="{{route('customer-supplier.index')}}" type="button" class="btn btn-secondary"><i class="bi bi-chevron-left me-1"></i> Back</a>
         </div>
     </div>
 </div>
@@ -150,7 +150,9 @@
                         </div>
                         
                     </div>
-                    <button type="submit" class="btn btn-secondary">Update</button>
+                    <button type="submit" class="btn btn-secondary mt-3">
+                        <i class="bi bi-pencil-square me-1"></i> Update
+                    </button>
                 </form>
             </div>
         </div>

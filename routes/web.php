@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function() {
 
     //Purpose of visit Route
     // Route::resource('visits', VisitController::class);
+    
     //Visit Route
     Route::resource('visits', VisitMasterController::class);
 

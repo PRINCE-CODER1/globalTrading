@@ -3,7 +3,7 @@
             <div class="row">
                 <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
                     <h4>Manage Lead Sources</h4>
-                    <a href="{{route('leads.create')}}" class="btn btn-secondary btn-wave float-end" >Create Lead Source</a>
+                    <a href="{{route('leads.create')}}" class="btn btn-secondary btn-wave float-end" >Create</a>
                 </div>
             </div>
         </div>
@@ -22,12 +22,13 @@
                             <li><a class="dropdown-item" href="#" wire:click.prevent="updatePerPage(20)">20</a></li>
                         </ul>
                     </div>
-                    <div class="row g-3 align-items-center">
-                        <div class="col-auto">
-                            <label for="search" class="col-form-label">Search</label>
+                    <!-- Search Input -->
+                    <div class="d-flex align-items-center">
+                        <div class="col-auto d-none d-md-block">
+                            <label for="search" class="form-label">Search</label>
                         </div>
                         <div class="col-auto">
-                            <input wire:model.live.debounce.300ms="search" type="text" id="search" class="form-control" placeholder="search">
+                            <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
                         </div>
                     </div>
                 </div>
