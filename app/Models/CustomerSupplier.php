@@ -15,12 +15,19 @@ class CustomerSupplier extends Model
         'address',
         'customer_supplier',
         'gst_no',
-        'pan_no',
         'country',
         'state',
         'city',
         'ip_address',
     ];
+    public function users()
+    {
+        return $this->hasMany(CustomerSupplierUser::class);
+    }
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class, 'supplier_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

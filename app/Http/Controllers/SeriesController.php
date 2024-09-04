@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Series;
+use App\Models\StockCategory;
+use App\Models\ChildCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,59 +12,69 @@ class SeriesController extends Controller
 {
     public function index()
     {
-        $series = Series::where('dismantling_required', false)->with('user')->get();
-        return view('website.master.series.list', compact('series'));
+        return view('website.master.series.list');
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('website.master.series.create');
+        $categories = StockCategory::all();
+        $childCategories = [];
+        if ($request->has('stock_category_id')) {
+            $categoryId = $request->input('stock_category_id');
+            $childCategories = ChildCategory::where('parent_category_id', $categoryId)->get();
+        }
+
+        return view('website.master.series.create', compact('categories', 'childCategories'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        // Validate the request data
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'discount_rate' => 'nullable|numeric|min:0|max:100',
-            'dismantling_required' => 'nullable|boolean',
-            'tax_rate' => 'nullable|numeric|min:0|max:100',
+            'stock_category_id' => 'required|exists:stock_categories,id',
+            'child_category_id' => 'required|exists:child_categories,id', 
         ]);
 
+        // Create a new series
         Series::create([
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'discount_rate' => $request->input('discount_rate'),
-            'dismantling_required' => $request->boolean('dismantling_required'),
-            'tax_rate' => $request->input('tax_rate'),
-            'user_id' => Auth::id(), // Use Auth::id() for consistency
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+            'stock_category_id' => $validatedData['stock_category_id'],
+            'child_category_id' => $validatedData['child_category_id'] ?? null, 
+            'user_id' => auth()->id(),
         ]);
 
+        // Redirect to the series index page with a success message
         return redirect()->route('series.index')->with('success', 'Series created successfully.');
     }
 
     public function edit(Series $series)
     {
-        return view('website.master.series.edit', compact('series'));
+        $categories = StockCategory::all();
+        $childCategories = ChildCategory::all(); // Fetch all child categories
+
+        return view('website.master.series.edit', compact('series', 'categories', 'childCategories'));
     }
 
     public function update(Request $request, Series $series)
     {
-        $request->validate([
+        // Validate the request data
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'discount_rate' => 'nullable|numeric|min:0|max:100',
-            'dismantling_required' => 'nullable|boolean',
-            'tax_rate' => 'nullable|numeric|min:0|max:100',
+            'stock_category_id' => 'required|exists:stock_categories,id',
+            'child_category_id' => 'nullable|exists:child_categories,id',
         ]);
 
+        // Update the series
         $series->update([
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'discount_rate' => $request->input('discount_rate'),
-            'dismantling_required' => $request->boolean('dismantling_required'),
-            'tax_rate' => $request->input('tax_rate'),
-            'user_id' => Auth::id(), // Use Auth::id() for consistency
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+            'stock_category_id' => $validatedData['stock_category_id'],
+            'child_category_id' => $validatedData['child_category_id'] ?? null, // Handle optional child category
+            'user_id' => Auth::id(), 
         ]);
 
         return redirect()->route('series.index')->with('success', 'Series updated successfully.');

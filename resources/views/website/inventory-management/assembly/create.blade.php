@@ -38,7 +38,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="challan_no" class="form-label">Challan No</label>
-                                <input type="text" name="challan_no" id="challan_no" class="form-control" value="{{ old('challan_no', $purchaseOrderNo) }}" readonly>
+                                <input type="text" name="challan_no" id="challan_no" class="form-control" value="{{ old('challan_no', $challanNo) }}" readonly>
                             </div>
                             <div class="col-md-6">
                                 <label for="date" class="form-label">Date</label>

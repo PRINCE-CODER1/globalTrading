@@ -93,21 +93,21 @@
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label for="{{ $type }}_prefix" class="form-label">Prefix:</label>
-                                    <input type="text" id="{{ $type }}_prefix" name="{{ $type }}_prefix" class="form-control shadow-sm" placeholder="Prefix" value="{{ old("{$type}_prefix", isset($masterNumbering) ? $masterNumbering->{$type . '_prefix'} : '') }}" required>
+                                    <input type="text" id="{{ $type }}_prefix" name="{{ $type }}_prefix" class="form-control shadow-sm" placeholder="Prefix" required>
                                     @error("{{ $type }}_prefix")
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
                                     <label for="{{ $type }}_number" class="form-label">Number:</label>
-                                    <input type="number" id="{{ $type }}_number" name="{{ $type }}_number" class="form-control shadow-sm" placeholder="Number" value="{{ old("{$type}_number", isset($masterNumbering) ? $masterNumbering->{$type . '_number'} : '') }}" required>
+                                    <input type="number" id="{{ $type }}_number" name="{{ $type }}_number" class="form-control shadow-sm" placeholder="Number" required>
                                     @error("{{ $type }}_number")
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
                                     <label for="{{ $type }}_suffix" class="form-label">Suffix:</label>
-                                    <input type="text" id="{{ $type }}_suffix" name="{{ $type }}_suffix" class="form-control shadow-sm" placeholder="Suffix" value="{{ old("{$type}_suffix", isset($masterNumbering) ? $masterNumbering->{$type . '_suffix'} : '') }}" required>
+                                    <input type="text" id="{{ $type }}_suffix" name="{{ $type }}_suffix" class="form-control shadow-sm" placeholder="Suffix" required>
                                     @error("{{ $type }}_suffix")
                                         <div class="text-danger mt-1">{{ $message }}</div>
                                     @enderror
@@ -129,25 +129,37 @@
     </div>
 </div>
 
-<!-- JavaScript to Save and Restore Old Values -->
+<!-- JavaScript to Save and Retrieve Data from LocalStorage -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Retrieve and set saved values
-        const form = document.getElementById('numbering-form');
-        const fields = form.querySelectorAll('input, select');
-
-        fields.forEach(field => {
-            const savedValue = localStorage.getItem(field.name);
-            if (savedValue) {
-                field.value = savedValue;
-            }
-
-            // Save values on change
-            field.addEventListener('change', function () {
-                localStorage.setItem(field.name, field.value);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to save form data to localStorage
+        function saveFormData() {
+            const formData = new FormData(document.getElementById('numbering-form'));
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
             });
-        });
+            localStorage.setItem('formData', JSON.stringify(data));
+        }
+
+        // Function to load form data from localStorage
+        function loadFormData() {
+            const data = JSON.parse(localStorage.getItem('formData'));
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    const input = document.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        input.value = data[key];
+                    }
+                });
+            }
+        }
+
+        // Load form data when the page loads
+        loadFormData();
+
+        // Save form data on input change
+        document.getElementById('numbering-form').addEventListener('input', saveFormData);
     });
 </script>
-
 @endsection

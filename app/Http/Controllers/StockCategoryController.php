@@ -24,15 +24,19 @@ class StockCategoryController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData =  $request->validate([
-            'parent_id' => 'nullable|exists:stock_categories,id',
+        $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
-        $validatedData['user_id'] = Auth::id();
-        StockCategory::create($validatedData);
-        toastr()->closeButton(true)->success('Category Created successfully.');
-        return redirect()->route('stocks-categories.index')->with('success', 'Category created successfully.');
+
+        StockCategory::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'user_id' => Auth::id(),
+        ]);
+
+        toastr()->closeButton(true)->success('Parent Category Created successfully.');
+        return redirect()->route('stocks-categories.index');
     }
 
     public function edit($id)
@@ -45,29 +49,21 @@ class StockCategoryController extends Controller
     
     public function update(Request $request, $id)
     {
-        $stockCategory = StockCategory::findOrFail($id);
+        $parentCategory = StockCategory::findOrFail($id);
 
-        // Validate the request
-        $validator = Validator::make($request->all(), [
-            'parent_id' => 'nullable|exists:stock_categories,id', // Ensure parent_id exists in the stock_categories table
-            'name' => 'required|string|max:255|',
+        $request->validate([
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
-        if ($validator->fails()) {
-            toastr()->closeButton(true)->error('Stock Category not updated.');
-            return redirect()->route('stocks-categories.edit', $id)->withErrors($validator)->withInput();
-        }
+        $parentCategory->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'user_id' => Auth::id(),
+        ]);
 
-        // Update stock category details
-        $stockCategory->name = $request->name;
-        $stockCategory->description = $request->description;
-        $stockCategory->parent_id = $request->parent_id;
-        $stockCategory->user_id = Auth::id();
-        $stockCategory->save();
-
-        toastr()->closeButton(true)->success('Stock Category updated successfully.');
-        return redirect()->route('stocks-categories.index');
+        toastr()->closeButton(true)->success('Parent Category Updated successfully.');
+        return redirect()->route('parent-categories.index');
     }
     
 

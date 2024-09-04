@@ -27,7 +27,7 @@ class Series extends Component
 
     public function render()
     {
-        $series = ser::where('dismantling_required', false)
+        $series = ser::with('stockCategory','childCategory')
             ->where(function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
                       ->orWhere('description', 'like', '%' . $this->search . '%');

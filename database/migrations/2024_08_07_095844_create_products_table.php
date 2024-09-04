@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('product_name');
             $table->text('product_description')->nullable();
-            $table->foreignId('product_category_id')->constrained('stock_categories'); 
+            $table->foreignId('product_category_id')->constrained('stock_categories');  
             $table->decimal('tax', 8, 2)->nullable(); 
-            $table->string('product_model')->nullable();
             $table->string('hsn_code');
             $table->decimal('price', 10, 2);
             $table->string('product_code')->unique();
@@ -26,7 +25,6 @@ return new class extends Migration
             $table->foreignId('branch_id')->constrained('branches');
             $table->foreignId('godown_id')->constrained('godowns'); 
             $table->foreignId('unit_id')->constrained('unit_of_measurements'); 
-            $table->string('image')->nullable();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('modified_by')->nullable()->constrained('users'); 
             $table->timestamp('received_at')->nullable(); 

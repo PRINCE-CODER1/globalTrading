@@ -14,8 +14,8 @@ class Product extends Model
         'series_id',
         'product_description',
         'product_category_id',
+        'child_category_id',
         'tax',
-        'product_model',
         'hsn_code',
         'price',
         'product_code',
@@ -24,7 +24,6 @@ class Product extends Model
         'branch_id',
         'godown_id',
         'unit_id',
-        'image',
         'user_id',
         'modified_by',
         'received_at'
@@ -44,6 +43,10 @@ class Product extends Model
     {
         return $this->belongsTo(StockCategory::class, 'product_category_id');
     }
+    public function childcategory()
+    {
+        return $this->belongsTo(ChildCategory::class, 'child_category_id');
+    }
 
     public function branch()
     {
@@ -52,7 +55,7 @@ class Product extends Model
 
     public function godown()
     {
-        return $this->belongsTo(Godown::class);
+        return $this->belongsTo(Godown::class, 'godown_id');
     }
 
     public function unit()

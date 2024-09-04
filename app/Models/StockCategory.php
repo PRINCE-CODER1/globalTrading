@@ -9,17 +9,15 @@ class StockCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'parent_id','user_id'];
+    protected $fillable = ['name', 'description', 'user_id'];
 
-    public function parent()
+    // Relationship to child categories
+    public function childCategories()
     {
-        return $this->belongsTo(StockCategory::class, 'parent_id');
+        return $this->hasMany(ChildCategory::class, 'parent_category_id');
     }
 
-    public function children()
-    {
-        return $this->hasMany(StockCategory::class, 'parent_id');
-    }
+    // Relationship to user
     public function user()
     {
         return $this->belongsTo(User::class);

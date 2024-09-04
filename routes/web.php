@@ -12,10 +12,10 @@ use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\UnitOfMeasurementController;
 use App\Http\Controllers\StockCategoryController;
+use App\Http\Controllers\ChildCategoryController;
 use App\Http\Controllers\GodownController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\FinancialYearController;
-use App\Http\Controllers\SaleTypeController;
 use App\Http\Controllers\ChallanTypeController;
 use App\Http\Controllers\CustomerSupplierController;
 use App\Http\Controllers\ProductController;
@@ -27,6 +27,10 @@ use App\Http\Controllers\SeriesController;
 use App\Http\Controllers\LeadStatusController;
 use App\Http\Controllers\AgeCategoryController;
 use App\Http\Controllers\VisitMasterController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SaleOrderController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\StockTransferController;
 
 
 use App\Mail\StockAgingNotificationEmail;
@@ -79,6 +83,9 @@ Route::middleware('auth')->group(function() {
     // Stock Category  Route
     Route::resource('stocks-categories',StockCategoryController::class);
 
+    // Stock Child-Category  Route
+    Route::resource('child-categories', ChildCategoryController::class);
+
     // Godowns  Route
     Route::resource('godowns',GodownController::class);
 
@@ -87,9 +94,6 @@ Route::middleware('auth')->group(function() {
 
     //Master Numbering Route
     Route::resource('master_numbering',FinancialYearController::class);
-
-    //Master Numbering Route
-    Route::resource('sale-types',SaleTypeController::class);
 
     //Challan Types Route
     Route::resource('challan-types', ChallanTypeController::class);
@@ -102,28 +106,33 @@ Route::middleware('auth')->group(function() {
 
     //Assembly Route
     Route::resource('assemblies', AssemblyController::class);
-
-    //Assembly Route
-    Route::resource('purchase_orders', PurchaseOrderController::class);
-
-    //Stockaging Route
-    // Route::resource('/stock-aging', StockAgingController::class);
-
+    
     //Stockaging Route
     Route::resource('age_categories', AgeCategoryController::class);
-
-    //Purpose of visit Route
-    // Route::resource('visits', VisitController::class);
     
     //Visit Route
     Route::resource('visits', VisitMasterController::class);
-
+    
     //Purpose of visit Route
     Route::resource('series', SeriesController::class);
-
+    
     //Purpose of lead status Route
     Route::resource('leads-status', LeadStatusController::class);
+    
+    //Assembly Route
+    Route::resource('purchase_orders', PurchaseOrderController::class);
 
+    //Purpose of lead status Route
+    Route::resource('purchase', PurchaseController::class);
+
+    //Purpose of lead status Route
+    Route::resource('sale_orders', SaleOrderController::class);
+
+    //Purpose of lead status Route
+    Route::resource('sales', SaleController::class);
+
+    //Purpose of lead status Route
+    Route::resource('stock_transfer', StockTransferController::class);
 
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

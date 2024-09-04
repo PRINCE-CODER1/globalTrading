@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\StockCategory;
+use App\Models\ChildCategory;
 use App\Models\Branch;
 use App\Models\Godown;
 use App\Models\Series;
@@ -20,21 +21,27 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with('series')->get();
-        return view('website.inventory-management.products.list',compact('products'));
+        return view('website.master.products.list',compact('products'));
     }
 
     /**
      * Show the form for creating a new resource.
     */
-    public function create()
+    public function create(Request $request)
     {
+        $childcategories = [];
+        if ($request->has('product_category_id')) {
+            $categoryId = $request->input('product_category_id');
+            $childcategories = ChildCategory::where('parent_category_id', $categoryId)->get();
+        }
         $categories = StockCategory::all();
+        $childcategories = ChildCategory::all();
         $branches = Branch::all();
         $godowns = Godown::all();
         $units = UnitOfMeasurement::all();
         $series = Series::all();
         $tax = Tax::all();
-        return view('website.inventory-management.products.create', compact('categories', 'branches', 'godowns', 'units','series','tax'));
+        return view('website.master.products.create', compact('childcategories','categories','childcategories', 'branches', 'godowns', 'units','series','tax'));
     }
 
     /**
@@ -46,8 +53,8 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'product_description' => 'nullable|string',
             'product_category_id' => 'required|exists:stock_categories,id',
+            'child_category_id' => 'nullable|exists:child_categories,id',
             'tax' => 'nullable|numeric',
-            'product_model' => 'nullable|string|max:255',
             'hsn_code' => 'required|string|max:255',
             'price' => 'required|numeric',
             'product_code' => 'required|string|max:255|unique:products',
@@ -56,34 +63,42 @@ class ProductController extends Controller
             'branch_id' => 'required|exists:branches,id',
             'godown_id' => 'required|exists:godowns,id',
             'unit_id' => 'required|exists:unit_of_measurements,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'series_id' => 'nullable|exists:series,id',
+            'received_at' => 'nullable|date',
         ]);
 
         $validated['user_id'] = Auth::id();
         $validated['received_at'] = $request->input('received_at') ?? now();
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
-        }
 
         Product::create($validated);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(Product $product)
     {
+        // Fetch all necessary data
         $categories = StockCategory::all();
+        $childcategories = ChildCategory::all();
         $branches = Branch::all();
         $godowns = Godown::all();
         $units = UnitOfMeasurement::all();
         $series = Series::all();
-        $tax = Tax::all();
-        return view('website.inventory-management.products.edit', compact('product', 'categories', 'branches', 'godowns', 'units','series','tax'));
+        $taxes = Tax::all();
+
+        return view('website.master.products.edit', compact(
+            'product',
+            'categories',
+            'childcategories',
+            'branches',
+            'godowns',
+            'units',
+            'series',
+            'taxes'
+        ));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -94,8 +109,8 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'product_description' => 'nullable|string',
             'product_category_id' => 'required|exists:stock_categories,id',
+            'child_category_id' => 'nullable|exists:child_categories,id',
             'tax' => 'nullable|numeric',
-            'product_model' => 'nullable|string|max:255',
             'hsn_code' => 'required|string|max:255',
             'price' => 'required|numeric',
             'product_code' => 'required|string|max:255|unique:products,product_code,' . $product->id,
@@ -104,15 +119,12 @@ class ProductController extends Controller
             'branch_id' => 'required|exists:branches,id',
             'godown_id' => 'required|exists:godowns,id',
             'unit_id' => 'required|exists:unit_of_measurements,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'series_id' => 'nullable|exists:series,id',
+            'received_at' => 'nullable|date',
         ]);
 
         $validated['modified_by'] = Auth::id();
         $validated['received_at'] = $request->input('received_at') ?? $product->received_at;
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
-        }
 
         $product->update($validated);
 

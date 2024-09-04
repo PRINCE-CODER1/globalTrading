@@ -47,9 +47,7 @@
                                         <th><input type="checkbox" wire:model.live="selectAll"></th>
                                         <th scope="col">Name</th>
                                         <th scope="col">Description</th>
-                                        <th scope="col">Discount Rate (%)</th>
-                                        {{-- <th scope="col">Dismantling Required</th> --}}
-                                        <th scope="col">Tax Rate (%)</th>
+                                        <th scope="col">category</th>
                                         <th scope="col">Created By</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -60,9 +58,7 @@
                                             <td><input type="checkbox" value="{{ $ser->id }}" wire:model.live="selectedSeries"></td>
                                             <td>{{ $ser->name }}</td>
                                             <td>{{ $ser->description }}</td>
-                                            <td>{{ $ser->discount_rate ?? 'N/A' }}</td>
-                                            {{-- <td>{{ $ser->dismantling_required ? 'Yes' : 'No' }}</td> --}}
-                                            <td>{{ $ser->tax_rate ?? 'N/A' }}</td>
+                                            <td>{{ $ser->stockCategory->name }}</td>
                                             <td>{{ $ser->user->name ?? 'Unknown' }}</td>
                                             <td>
                                                 <a href="{{ route('series.edit', $ser->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>

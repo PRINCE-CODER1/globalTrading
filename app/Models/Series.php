@@ -12,15 +12,24 @@ class Series extends Model
     protected $fillable = [
         'name',
         'description',
-        'discount_rate',
-        'dismantling_required',
-        'tax_rate',
+        'stock_category_id',
+        'child_category_id',
         'user_id',
     ];
 
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function stockCategory()
+    {
+        return $this->belongsTo(StockCategory::class, 'stock_category_id');
+    }
+
+    public function childCategory()
+    {
+        return $this->belongsTo(ChildCategory::class, 'child_category_id');
     }
 
     public function user()

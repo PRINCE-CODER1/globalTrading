@@ -52,9 +52,12 @@ class PurchaseOrder extends Model
 
     public function deliveryBranch()
     {
-        return $this->belongsTo(Branch::class, 'delivery_branch_id');
+        return $this->belongsTo(Godown::class, 'delivery_branch_id');
     }
-
+    public function godown()
+    {
+        return $this->belongsTo(Godown::class, 'godown_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

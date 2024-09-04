@@ -23,6 +23,11 @@ class Godown extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'godown_id');
+    }
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);

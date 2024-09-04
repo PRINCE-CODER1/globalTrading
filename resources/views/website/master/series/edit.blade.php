@@ -65,33 +65,7 @@
                     @enderror
                 </div>
 
-                <!-- Discount Rate Field -->
-                <div class="mb-3">
-                    <label for="discount_rate" class="form-label fs-14 text-dark">
-                        <i class="bi bi-percent me-1"></i> Discount Rate (%)
-                    </label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-percent"></i></span>
-                        <input type="number" name="discount_rate" id="discount_rate" class="form-control" step="0.01" min="0" max="100" value="{{ old('discount_rate', $series->discount_rate) }}">
-                    </div>
-                    @error('discount_rate')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Tax Rate Field -->
-                <div class="mb-3">
-                    <label for="tax_rate" class="form-label fs-14 text-dark">
-                        <i class="bi bi-percent me-1"></i> Tax Rate (%)
-                    </label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-percent"></i></span>
-                        <input type="number" name="tax_rate" id="tax_rate" class="form-control" step="0.01" min="0" max="100" value="{{ old('tax_rate', $series->tax_rate) }}">
-                    </div>
-                    @error('tax_rate')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+                
 
                 <button type="submit" class="btn btn-secondary">
                     <i class="bi bi-pencil me-1"></i> Update
@@ -101,16 +75,3 @@
     </div>
 </div>
 @endsection
-
-
-                        
-                                        {{-- <div class="mb-3">
-                                            <label for="dismantling_required" class="form-label fs-14 text-dark me-3">Dismantling</label>
-                                            <label class="switch">
-                                                <input type="checkbox" name="dismantling_required" id="dismantling_required" value="1" {{ old('dismantling_required', $series->dismantling_required) ? 'checked' : '' }}>
-                                                <span class="slider round"></span>
-                                            </label>
-                                            @error('dismantling_required')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div> --}}

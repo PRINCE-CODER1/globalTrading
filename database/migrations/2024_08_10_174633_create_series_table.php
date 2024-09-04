@@ -15,9 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->decimal('discount_rate', 5, 2)->nullable(); 
-            $table->boolean('dismantling_required')->default(false);
-            $table->decimal('tax_rate', 5, 2)->nullable();
+            $table->foreignId('stock_category_id')->constrained('stock_categories');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });

@@ -46,18 +46,16 @@
                             </div>
                         </div>
                         <div class="col-md-6 mb-3 p-2">
-                            <label for="mobile_no" class="form-label fs-14 text-dark">Mobile No<sup class="text-danger fs-6">*</sup></label>
+                            <label for="mobile_no" class="form-label fs-14 text-dark">Mobile No</label>
                             <div class="input-group">
                                 <div class="input-group-text"><i class="bi bi-telephone"></i></div>
-                                <input type="text" class="form-control @error('mobile_no') is-invalid @enderror" id="mobile_no" name="mobile_no" placeholder="Enter mobile" value="{{ old('mobile_no') }}" required>
-                                @error('mobile_no')
-                                    <p class="text-danger">{{ $message }}</p>
-                                @enderror
+                                <input type="text" class="form-control @error('mobile_no') is-invalid @enderror" id="mobile_no" name="mobile_no" placeholder="Enter mobile" value="{{ old('mobile_no') }}">
+                                
                             </div>
                         </div>
                     </div>
     
-                    <div class="mb-3 p-2">
+                    <div class="mb-3 ">
                         <label for="address" class="form-label fs-14 text-dark">Address</label>
                         <div class="input-group">
                             <div class="input-group-text"><i class="bi bi-geo-alt"></i></div>
@@ -68,13 +66,13 @@
                         </div>
                     </div>
     
-                    <div class="mb-3 p-2">
+                    <div class="mb-3">
                         <label for="customer_supplier" class="form-label fs-14 text-dark">Customer/Supplier<sup class="text-danger fs-6">*</sup></label>
                         <select class="form-control @error('customer_supplier') is-invalid @enderror" id="customer_supplier" name="customer_supplier" required>
                             <option value="">Select</option>
-                            <option value="Only Supplier" {{ old('customer_supplier') == 'Only Supplier' ? 'selected' : '' }}>Only Supplier</option>
-                            <option value="Only Customer" {{ old('customer_supplier') == 'Only Customer' ? 'selected' : '' }}>Only Customer</option>
-                            <option value="Both Supplier & Customer" {{ old('customer_supplier') == 'Both Supplier & Customer' ? 'selected' : '' }}>Both Supplier & Customer</option>
+                            <option value="onlySupplier" {{ old('customer_supplier') == 'onlySupplier' ? 'selected' : '' }}>Only Supplier</option>
+                            <option value="onlyCustomer" {{ old('customer_supplier') == 'onlyCustomer' ? 'selected' : '' }}>Only Customer</option>
+                            <option value="bothCustomerSupplier" {{ old('customer_supplier') == 'bothCustomerSupplier' ? 'selected' : '' }}>Both Supplier & Customer</option>
                         </select>
                         @error('customer_supplier')
                             <span class="invalid-feedback" role="alert">
@@ -82,28 +80,17 @@
                             </span>
                         @enderror
                     </div>
+                    
     
                     <div class="row">
                         <div class="col-md-6 mb-3 p-2">
-                            <label for="gst_no" class="form-label fs-14 text-dark">GST No<sup class="text-danger fs-6">*</sup></label>
+                            <label for="gst_no" class="form-label fs-14 text-dark">GST No</label>
                             <div class="input-group">
                                 <div class="input-group-text"><i class="bi bi-hash"></i></div>
                                 <input type="text" class="form-control @error('gst_no') is-invalid @enderror" id="gst_no" name="gst_no" placeholder="Enter GST number" value="{{ old('gst_no') }}">
-                                @error('gst_no')
-                                    <p class="text-danger">{{ $message }}</p>
-                                @enderror
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3 p-2">
-                            <label for="pan_no" class="form-label fs-14 text-dark">PAN No<sup class="text-danger fs-6">*</sup></label>
-                            <div class="input-group">
-                                <div class="input-group-text"><i class="bi bi-card-text"></i></div>
-                                <input type="text" class="form-control @error('pan_no') is-invalid @enderror" id="pan_no" name="pan_no" placeholder="Enter PAN number" value="{{ old('pan_no') }}">
-                                @error('pan_no')
-                                    <p class="text-danger">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
+                        
                     </div>
     
                     <div class="row">
@@ -129,7 +116,7 @@
                         </div>
                     </div>
     
-                    <div class="mb-3 p-2">
+                    <div class="mb-3">
                         <label for="city" class="form-label fs-14 text-dark">City<sup class="text-danger fs-6">*</sup></label>
                         <div class="input-group">
                             <div class="input-group-text"><i class="bi bi-building"></i></div>
@@ -138,6 +125,43 @@
                                 <p class="text-danger">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
+                    <div class="table-responsive">
+                        <h4>Users :</h4>
+                        <table class="table table-bordered texxt-nowrap" id="userTable">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Designation</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userBody">
+                                <tr>
+                                    <td scope="row">
+                                        <input type="text" name="names[]" value="{{ old('names') }}" class="form-control" placeholder="Enter name">
+                                    </td>
+                                    <td scope="row">
+                                        <input type="email" name="email[]" class="form-control" placeholder="Enter email" >
+                                    </td>
+                                    <td scope="row">
+                                        <input type="text" name="phone[]" class="form-control" placeholder="Enter phone" >
+                                    </td>
+                                    <td scope="row">
+                                        <input type="text" name="designation[]" class="form-control" placeholder="Enter designation" >
+                                    </td>
+                                    <td scope="row" class="text-center">
+                                        <button type="button" class="btn btn-sm btn-danger remove-row"><i class="ri-close-circle-fill"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+    
+                    <div class="d-flex justify-content-end mb-3 mt-1">
+                        <button type="button" id="addRow" class="btn btn-sm btn-secondary"><i class="ri-add-circle-fill me-1"></i>Add Row</button>
                     </div>
     
                     <!-- Submit Button -->
@@ -149,4 +173,35 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    document.getElementById('addRow').addEventListener('click', function() {
+    let tableBody = document.getElementById('userBody');
+    let newRow = document.createElement('tr');
+
+    newRow.innerHTML = `
+        <td><input type="text" name="names[]" class="form-control" placeholder="Enter name" ></td>
+        <td><input type="email" name="email[]" class="form-control" placeholder="Enter email" ></td>
+        <td><input type="text" name="phone[]" class="form-control" placeholder="Enter phone" ></td>
+        <td><input type="text" name="designation[]" class="form-control" placeholder="Enter designation" ></td>
+        <td class="text-center"><button type="button" class="btn btn-sm btn-danger remove-row"><i class="ri-close-circle-fill"></i></button></td>
+    `;
+
+    tableBody.appendChild(newRow);
+
+    // Attach event listener to the remove button
+    newRow.querySelector('.remove-row').addEventListener('click', function() {
+        newRow.remove();
+    });
+});
+
+// Handle removing rows for existing rows
+document.querySelectorAll('.remove-row').forEach(function(button) {
+    button.addEventListener('click', function() {
+        button.closest('tr').remove();
+    });
+});
+
+</script>
+@endpush
 @endsection

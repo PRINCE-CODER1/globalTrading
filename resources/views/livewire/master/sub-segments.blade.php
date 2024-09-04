@@ -194,6 +194,9 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                    <div class="mb-3">
+                                        {{$segments->links('custom-pagination-links')}}
+                                    </div>
                                 </div>
                                 <!-- Bulk Delete Button -->
                                 @if($selectedSegments)

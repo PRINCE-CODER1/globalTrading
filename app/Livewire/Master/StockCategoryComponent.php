@@ -29,10 +29,10 @@ class StockCategoryComponent extends Component
 
     public function render()
     {
-        $categories = StockCategory::with('parent')
-            ->where('name', 'like', '%' . $this->search . '%')
-            //->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+        $categories = StockCategory::with('childCategories')
+        ->where('name', 'like', '%' . $this->search . '%')
+        ->orderBy($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
 
         return view('livewire.master.stock-category-component', compact('categories'));
     }

@@ -20,7 +20,6 @@ class PurchaseOrderController extends Controller
      */
     public function index()
     {
-        // $purchaseOrders = PurchaseOrder::with(['supplier', 'customer', 'agent', 'segment', 'orderBranch', 'deliveryBranch', 'user'])->paginate(10);
         return view('website.inventory-management.purchase-orders.list');
     }
 
@@ -30,9 +29,9 @@ class PurchaseOrderController extends Controller
     public function create()
     {
         $products = Product::all();
-        $suppliers = CustomerSupplier::where('customer_supplier', 'only supplier')->get();
-        $customers = CustomerSupplier::where('customer_supplier', 'only customer')->get();
-        $agents = User::all(); // Replace with appropriate query if needed
+        $suppliers = CustomerSupplier::where('customer_supplier', 'onlySupplier')->get();
+        $customers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
+        $agents = User::all();
         $segments = Segment::all();
         $branches = Branch::all();
 
@@ -42,20 +41,20 @@ class PurchaseOrderController extends Controller
             return redirect()->back()->withErrors(['error' => 'Master numbering not found.']);
         }
 
-        $currentFormat = $masterNumbering->challan_format;
+        $currentFormat = $masterNumbering->purchase_order_format;
         preg_match('/(\d+)/', $currentFormat, $matches);
         $number = isset($matches[0]) ? intval($matches[0]) : 0;
-        $number += 1; // Increment the number by 1 for the new challan number
-        $purchaseOrderNo = sprintf("CH/%03d/GTE", $number);
+        $number += 1; // Increment the number by 1 for the new purchase order number
+        $purchaseOrderNo = sprintf("PO/%03d/BI", $number);
 
         return view('website.inventory-management.purchase-orders.create', compact('products', 'suppliers', 'customers', 'agents', 'segments', 'branches', 'purchaseOrderNo'));
     }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // Validate incoming data
         $validatedData = $request->validate([
             'date' => 'required|date',
             'supplier_id' => 'required|exists:customer_suppliers,id',
@@ -74,7 +73,6 @@ class PurchaseOrderController extends Controller
             'items.*.discount' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        // Calculate subtotal
         $subtotal = 0;
         foreach ($request->input('items', []) as $item) {
             $subtotal += $item['quantity'] * $item['price'];
@@ -86,11 +84,11 @@ class PurchaseOrderController extends Controller
             return redirect()->back()->withErrors(['error' => 'Master numbering not found.']);
         }
 
-        $currentFormat = $masterNumbering->challan_format;
-        preg_match('/(\d+)/', $currentFormat, $matches);
+        // Increment the number for the new purchase order
+        preg_match('/(\d+)/', $masterNumbering->purchase_order_format, $matches);
         $number = isset($matches[0]) ? intval($matches[0]) : 0;
-        $number += 1; // Increment the number by 1 for the new purchase order number
-        $purchaseOrderNo = sprintf("CH/%03d/GTE", $number);
+        $number += 1; // Increment the number
+        $purchaseOrderNo = sprintf("PO/%03d/BI", $number);
 
         // Create the PurchaseOrder
         $purchaseOrder = PurchaseOrder::create([
@@ -106,7 +104,7 @@ class PurchaseOrderController extends Controller
             'customer_sale_order_no' => $request->customer_sale_order_no,
             'customer_sale_order_date' => $request->customer_sale_order_date,
             'user_id' => Auth::id(),
-            'subtotal' => $subtotal, // Add this line
+            'subtotal' => $subtotal,
         ]);
 
         // Save PurchaseOrderItems
@@ -125,19 +123,10 @@ class PurchaseOrderController extends Controller
             PurchaseOrderItem::insert($items);
         }
 
-        // Update MasterNumbering
-        $masterNumbering->update(['challan_format' => $purchaseOrderNo]);
+        // Update MasterNumbering with the new format
+        $masterNumbering->update(['purchase_order_format' => sprintf("PO/%03d/BI", $number)]);
 
         return redirect()->route('purchase_orders.index')->with('success', 'Purchase Order created successfully.');
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -145,11 +134,10 @@ class PurchaseOrderController extends Controller
      */
     public function edit(string $id)
     {
-        // Fetch the purchase order and related data
         $purchaseOrder = PurchaseOrder::with('items.product')->findOrFail($id);
         $products = Product::all();
-        $suppliers = CustomerSupplier::where('customer_supplier', 'only supplier')->get();
-        $customers = CustomerSupplier::where('customer_supplier', 'only customer')->get();
+        $suppliers = CustomerSupplier::where('customer_supplier', 'onlySupplier')->get();
+        $customers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
         $agents = User::all();
         $segments = Segment::all();
         $branches = Branch::all();
@@ -163,7 +151,6 @@ class PurchaseOrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Validate incoming data
         $validatedData = $request->validate([
             'date' => 'required|date',
             'supplier_id' => 'required|exists:customer_suppliers,id',
@@ -182,7 +169,6 @@ class PurchaseOrderController extends Controller
             'items.*.discount' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        // Calculate subtotal
         $subtotal = 0;
         foreach ($request->input('items', []) as $item) {
             $subtotal += $item['quantity'] * $item['price'];
@@ -218,27 +204,28 @@ class PurchaseOrderController extends Controller
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
-                    'discount' => $item['discount'] ?? 0, 
+                    'discount' => $item['discount'] ?? 0,
                 ]
             );
             $updatedItemIds[] = $purchaseOrderItem->id;
         }
 
-        // Remove any items that were not included in the update
-        $deletedItemIds = array_diff($existingItemIds, $updatedItemIds);
-        if (!empty($deletedItemIds)) {
-            PurchaseOrderItem::destroy($deletedItemIds);
-        }
+        // Delete items that were not included in the update
+        $itemsToDelete = array_diff($existingItemIds, $updatedItemIds);
+        PurchaseOrderItem::destroy($itemsToDelete);
 
         return redirect()->route('purchase_orders.index')->with('success', 'Purchase Order updated successfully.');
     }
-
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+        $purchaseOrder->items()->delete();
+        $purchaseOrder->delete();
+
+        return redirect()->route('purchase_orders.index')->with('success', 'Purchase Order deleted successfully.');
     }
 }

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('agent_id')->constrained('users')->onDelete('cascade'); // Agent/User
             $table->foreignId('segment_id')->constrained()->onDelete('cascade'); // Segment
             $table->foreignId('order_branch_id')->constrained('branches')->onDelete('cascade'); // Order Branch
-            $table->foreignId('delivery_branch_id')->constrained('branches')->onDelete('cascade'); // Delivery Branch
+            $table->foreignId('delivery_branch_id')->constrained('godowns')->onDelete('cascade'); // Delivery Branch
             $table->foreignId('customer_id')->nullable()->constrained('customer_suppliers')->onDelete('cascade'); // Customer
             $table->string('customer_sale_order_no')->nullable();
             $table->date('customer_sale_order_date')->nullable();

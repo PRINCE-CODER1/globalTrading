@@ -52,4 +52,5 @@ class User extends Authenticatable
     {
         return $this->belongsTo(\Spatie\Permission\Models\Role::class);
     }
+    
 }

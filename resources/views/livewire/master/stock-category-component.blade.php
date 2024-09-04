@@ -67,7 +67,7 @@
                                                     <i class="ri-expand-up-down-fill"></i>
                                                 @endif
                                             </th>
-                                            <th>Parent Category</th>
+                                            {{-- <th>Parent Category</th> --}}
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -79,7 +79,7 @@
                                                 </td>
                                                 <td>{{ $category->name }}</td>
                                                 <td>{{ $category->description }}</td>
-                                                <td>{{ $category->parent ? $category->parent->name : 'None' }}</td>
+                                                {{-- <td>{{ $category->parent ? $category->parent->name : 'None' }}</td> --}}
                                                 <td>
                                                     <a href="{{route('stocks-categories.edit', $category->id)}}" class="text-info fs-14 lh-1"><i class="ri-edit-line"></i></a>                                                   
                                                        

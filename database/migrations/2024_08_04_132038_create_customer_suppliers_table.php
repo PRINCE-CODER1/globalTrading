@@ -17,9 +17,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('mobile_no');
             $table->text('address')->nullable();
-            $table->string('customer_supplier');
+            $table->enum('customer_supplier', ['onlySupplier', 'onlyCustomer', 'bothCustomerSupplier']);
             $table->string('gst_no')->nullable();
-            $table->string('pan_no')->nullable();
             $table->string('country');
             $table->string('state');
             $table->string('city');

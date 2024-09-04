@@ -28,28 +28,39 @@ class AssemblyController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        // Fetch necessary data for the form
-        $masterNumbering = MasterNumbering::first();
-        $purchaseOrderNo = $masterNumbering ? $masterNumbering->purchase_order_format : 'PO/001/XYZ';
-        $products = Product::all();
-        $branches = Branch::all();
-        $suppliers = CustomerSupplier::all();
-        $godowns = Godown::all();
-        // Generate the Purchase Order No
-        $masterNumbering = MasterNumbering::first();
-        if (!$masterNumbering) {
-            return redirect()->back()->withErrors(['error' => 'Master numbering not found.']);
-        }
+{
+    // Fetch necessary data for the form
+    $masterNumbering = MasterNumbering::first();
+    
+    if (!$masterNumbering) {
+        // Initialize with starting number if not present
+        $initialFormat = 'CH/001/GTE';
+        MasterNumbering::create(['challan_format' => $initialFormat]);
 
+        $currentFormat = $initialFormat;
+    } else {
+        // Get current format
         $currentFormat = $masterNumbering->challan_format;
-        preg_match('/(\d+)/', $currentFormat, $matches);
-        $number = isset($matches[0]) ? intval($matches[0]) : 0;
-        $number += 1; // Increment the number by 1 for the new challan number
-        $purchaseOrderNo = sprintf("PO/%03d/XYZ", $number);
-
-        return view('website.inventory-management.assembly.create', compact('purchaseOrderNo', 'products', 'branches', 'suppliers', 'godowns'));
     }
+
+    // Extract the current number and increment it
+    preg_match('/(\d+)/', $currentFormat, $matches);
+    $number = isset($matches[0]) ? intval($matches[0]) : 0;
+    $number += 1; // Increment for the new challan number
+
+    // Generate the new challan number for the form
+    $challanNo = sprintf("CH/%03d/GTE", $number);
+
+    // Fetch additional data
+    $products = Product::all();
+    $branches = Branch::all();
+    $suppliers = CustomerSupplier::all();
+    $godowns = Godown::all();
+
+    return view('website.inventory-management.assembly.create', compact('challanNo', 'products', 'branches', 'suppliers', 'godowns'));
+}
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -70,13 +81,13 @@ class AssemblyController extends Controller
             'price.*' => 'required|numeric',
         ]);
 
-        // Fetch the current challan number from MasterNumbering
+        // Fetch the current MasterNumbering format
         $masterNumbering = MasterNumbering::first();
         if (!$masterNumbering) {
             return redirect()->back()->with('error', 'Master numbering not found.');
         }
 
-        // Create a new assembly record
+        // Create a new assembly record with the provided challan_no
         $assembly = Assembly::create([
             'challan_no' => $validatedData['challan_no'],
             'date' => $validatedData['date'],
@@ -114,6 +125,7 @@ class AssemblyController extends Controller
 
         return redirect()->route('assemblies.index')->with('success', 'Assemblies created successfully.');
     }
+
 
     /**
      * Show the form for editing the specified resource.

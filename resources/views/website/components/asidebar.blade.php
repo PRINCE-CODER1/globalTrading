@@ -102,15 +102,16 @@
                             <a href="{{ route('customer-supplier.index') }}" class="side-menu__item">Customer/Supplier</a>
                         </li>
                         <li class="slide">
+                            <a href="{{ route('products.index') }}" class="side-menu__item">Products</a>
+                        </li>
+                        <li class="slide">
                             <a href="{{ route('segments.index') }}" class="side-menu__item">Segments</a>
                         </li>
                         
                         <li class="slide">
                             <a href="{{ route('sub-segments.index') }}" class="side-menu__item">Sub-Segments</a>
                         </li>
-                        <li class="slide">
-                            <a href="{{ route('leads.index') }}" class="side-menu__item">Lead source</a>
-                        </li>
+                        
                         <li class="slide">
                             <a href="{{ route('branches.index') }}" class="side-menu__item">Branch</a>
                         </li>
@@ -124,6 +125,9 @@
                             <a href="{{ route('stocks-categories.index') }}" class="side-menu__item">Stock Categories</a>
                         </li>
                         <li class="slide">
+                            <a href="{{ route('child-categories.index') }}" class="side-menu__item">Sub Categories</a>
+                        </li>
+                        <li class="slide">
                             <a href="{{ route('godowns.index') }}" class="side-menu__item">Godowns</a>
                         </li>
                         <li class="slide">
@@ -133,24 +137,23 @@
                             <a href="{{ route('master_numbering.index') }}" class="side-menu__item">Master Numbering</a>
                         </li>
                         <li class="slide">
-                            <a href="{{ route('sale-types.index') }}" class="side-menu__item">Sale Types</a>
-                        </li>
-                        <li class="slide">
                             <a href="{{ route('challan-types.index') }}" class="side-menu__item">Challan Types</a>
                         </li>
-                        <li class="slide">
+                        {{-- <li class="slide">
                             <a href="{{ route('age_categories.index') }}" class="side-menu__item">Stock Aging</a>
-                        </li>
+                        </li> --}}
                         <li class="slide">
                             <a href="{{ route('visits.index') }}" class="side-menu__item">Purpose Of Visit</a>
                         </li>
                         <li class="slide">
-                            <a href="{{ route('series.index') }}" class="side-menu__item">Add Series</a>
+                            <a href="{{ route('series.index') }}" class="side-menu__item">Series</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('leads.index') }}" class="side-menu__item">Lead source</a>
                         </li>
                         <li class="slide">
                             <a href="{{ route('leads-status.index') }}" class="side-menu__item">Lead Status</a>
                         </li>
-                        
                     </ul>
                 </li>
                 <!-- End::Master -->
@@ -166,14 +169,24 @@
                             <a href="javascript:void(0)">Inventory Management</a>
                         </li>
                         
-                        <li class="slide">
-                            <a href="{{ route('products.index') }}" class="side-menu__item">Products</a>
-                        </li>
+                        
                         <li class="slide">
                             <a href="{{ route('assemblies.index') }}" class="side-menu__item">Assembly</a>
                         </li>
                         <li class="slide">
                             <a href="{{ route('purchase_orders.index') }}" class="side-menu__item">Purchase Order</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('purchase.index') }}" class="side-menu__item">Purchase</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('sale_orders.index') }}" class="side-menu__item">Sale Order</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('sales.index') }}" class="side-menu__item">Sale</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('stock_transfer.index') }}" class="side-menu__item">Stock Transfer</a>
                         </li>
                         
                     </ul>
