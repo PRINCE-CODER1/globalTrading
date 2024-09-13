@@ -7,19 +7,19 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-// use Illuminate\Routing\Controllers\Middleware;
-// use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
 class UserController extends Controller 
 {
-    // public static function middleware(): array{
-    //     return [
-    //         new Middleware('permission:view user', only: ['index']),
-    //         new Middleware('permission:edit user', only: ['edit']),
-    //         new Middleware('permission:create user', only: ['create']),
-    //         new Middleware('permission:delete user', only: ['destroy']),
-    //     ];
-    // }
+    public static function middleware(): array{
+        return [
+            new Middleware('permission:view user', only: ['index']),
+            new Middleware('permission:edit user', only: ['edit']),
+            new Middleware('permission:create user', only: ['create']),
+            new Middleware('permission:delete user', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -86,7 +86,13 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        return view('website.admin.user.list');
+        $user = User::findOrFail($id);
+        
+        // Get roles and filter out based on priority
+        $roles = $user->roles->pluck('name');
+        $displayRoles = $roles->contains('Super Admin') ? ['Super Admin'] : $roles->toArray();
+
+        return view('website.admin.user.list', compact('user', 'displayRoles'));
     }
 
     /**

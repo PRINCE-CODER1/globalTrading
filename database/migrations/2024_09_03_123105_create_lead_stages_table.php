@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('lead_stages', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->text('details')->nullable();
             $table->timestamps();
         });
     }

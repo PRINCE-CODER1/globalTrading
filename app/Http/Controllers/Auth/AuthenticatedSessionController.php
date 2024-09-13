@@ -28,7 +28,21 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-      
+        // Check user role and handle
+        $user = Auth::user();
+        
+        if ($user->hasRole('super admin')) {
+            // Remove 'Agent' role if they are also 'Super Admin'
+            $user->removeRole('agent');
+
+            return redirect()->route('dashboard.index');
+        } elseif ($user->hasRole('agent')) {
+            return redirect()->route('agent.dashboard');
+        } elseif ($user->hasRole('Manger')) {
+            return redirect()->route('manger.dashboard');
+        } else {
+            return redirect()->intended(route('dashboard.index'));
+        }
 
         return redirect()->intended(route('dashboard.index', absolute: false));
     }

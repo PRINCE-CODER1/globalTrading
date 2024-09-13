@@ -128,7 +128,7 @@ class ProductForm extends Component
         );
 
         $message = $this->product_id ? 'Product updated successfully.' : 'Product created successfully.';
-        session()->flash('message', $message);
+        toastr()->closeButton(true)->success('Created successfully.');
 
         return redirect()->route('products.index');
     }

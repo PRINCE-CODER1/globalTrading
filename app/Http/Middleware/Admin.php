@@ -15,11 +15,11 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!Auth::check()){
-            return redirect('/login');
-        }
-        if(Auth::user()->role != 'admin'){
-            return redirect('/dashboard');
+        if(Auth::check()){
+            if($user->hasRole(['super admin'])){
+                return redirect('/dashboard');
+            }
+            abort(403, "user doesnt have correct role");
         }
         return $next($request);
     }

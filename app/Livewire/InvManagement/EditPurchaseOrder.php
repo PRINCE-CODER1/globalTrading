@@ -220,8 +220,8 @@ class EditPurchaseOrder extends Component
             session()->flash('error', 'Master numbering not found.');
             return;
         }
-
-        session()->flash('message', 'Purchase Order updated successfully.');
+        
+        toastr()->closeButton(true)->success('Purchase Order updated successfully.');
         return redirect()->route('purchase_orders.index');
     }
 

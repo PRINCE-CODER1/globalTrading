@@ -139,9 +139,9 @@ class CreatePurchaseOrder extends Component
     public function calculateAmount($index)
     {
         $item = &$this->items[$index];
-        $price = $item['price'];
-        $quantity = $item['quantity'];
-        $discount = $item['discount'];
+        $price = (float) $item['price'];   // Cast to float
+        $quantity = (int) $item['quantity']; // Cast to integer
+        $discount = (float) $item['discount']; 
 
         $amount = ($price * $quantity) - ($price * $quantity * $discount / 100);
         $item['amount'] = $amount;
@@ -200,8 +200,8 @@ class CreatePurchaseOrder extends Component
     foreach ($this->items as $item) {
         $purchaseOrder->items()->create($item);
     }
-
-    session()->flash('message', 'Purchase Order created successfully.');
+    
+    toastr()->closeButton(true)->success('Purchase Order created successfully.');
     return redirect()->route('purchase_orders.index');
 }
 

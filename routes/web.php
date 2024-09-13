@@ -33,112 +33,124 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockTransferController;
 
 
+// Agent Controller 
+use App\Http\Controllers\AgentController;
+use App\Http\Controllers\LeadController;
+
+// Manager Controller 
+use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\ManagerTeamController;
+
+
+
 use App\Mail\StockAgingNotificationEmail;
 use Illuminate\Support\Facades\Mail;
 
 
+// Landing page (auth/login)
 Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::middleware(['auth','verified'])->group(function() {
+// Group routes for authenticated and verified users
+Route::middleware(['auth', 'verified'])->group(function () {
+    
+    // Single dashboard route that dynamically redirects based on role
     Route::get('/dashboard', function () {
-        return view('website.main-erp.index');
+        $user = Auth::user();
+
+        // Dynamically redirect based on role
+        if ($user->hasRole('Super Admin')) {
+            return view('website.main-erp.index');
+        } elseif ($user->hasRole('Agent')) {
+            return redirect()->route('agent.dashboard');
+        }elseif ($user->hasRole('Manager')) {
+            return redirect()->route('manager.dashboard');
+        }
+         else {
+            abort(403, 'Unauthorized access');
+        }
     })->name('dashboard.index');
-});     
 
-Route::middleware('auth')->group(function() {
+    // Agent-specific routes
+    Route::middleware('role:Agent')->group(function () {
+        Route::get('/agent/dashboard', [AgentController::class, 'index'])->name('agent.dashboard');
+        Route::resource('/agent/leads',LeadController::class, ['as' => 'agent']);
+    });
 
-   // Segments Route
-   Route::get('segments', function(){
-    return view('website.master.segments.segments');
-    })->name('segments.index');
+    // Manager-specific routes
+    Route::middleware('role:Manager')->group(function () {
+        Route::get('/manager/dashboard', [ManagerController::class, 'index'])->name('manager.dashboard');
+        
+        Route::prefix('manager')->group(function () {
+            Route::resource('teams', ManagerTeamController::class)
+                ->except(['show']);
+            
+        // Manager can manage leads just like agents
+        Route::get('teams/{team}/assign-agents', [ManagerTeamController::class, 'showAssignForm'])
+            ->name('manager.teams.show-assign-form');
+            // Handle POST request to assign agents
+            Route::post('teams/{team}/assign-agents', [ManagerTeamController::class, 'assignAgents'])
+            ->name('manager.teams.assign-agents');
+            // Route to view leads for a specific agent
+            Route::get('/agents/{userId}/leads', [ManagerController::class, 'showLeads'])->name('agents.leads');        });
+    });
 
-    // Sub-Segments Route
-    Route::get('sub-segments', function(){
-        return view('website.master.segments.sub-segments');
-    })->name('sub-segments.index');
+    // Lead Management Routes
+    Route::middleware(['role:Manager|Agent'])->group(function () {
+        Route::resource('/agent/leads',LeadController::class, ['as' => 'agent']);
+        Route::resource('leads', LeadController::class, ['as' => 'manager']);
 
-    // Role Route
-    Route::resource('users',UserController::class);
+    });
 
-    // Role Route
-    Route::resource('roles',RoleController::class);
+ // Admin-specific routes
+ Route::middleware('role:Super Admin')->group(function () {
+    Route::get('/admin/dashboard', function () {
+        return view('website.main-erp.index');
+    })->name('admin.dashboard');
 
-    // permission  Route
-    Route::resource('permissions',PermissionController::class);
+    // Resourceful routes (users, roles, permissions, etc.)
+    Route::resource('users', UserController::class);
+    Route::resource('roles', RoleController::class);
+    Route::resource('permissions', PermissionController::class);
 
-    // lead sources  Route
-    Route::resource('leads',LeadSourceController::class);
-
-    // Workshop  Route
-    Route::resource('workshops',WorkshopController::class);
-
-    // Branch  Route
-    Route::resource('branches',BranchController::class);
-
-    // Units Of Measurments  Route
-    Route::resource('units',UnitOfMeasurementController::class);
-
-    // Stock Category  Route
-    Route::resource('stocks-categories',StockCategoryController::class);
-
-    // Stock Child-Category  Route
+    Route::resource('leads', LeadSourceController::class);
+    Route::resource('workshops', WorkshopController::class);
+    Route::resource('branches', BranchController::class);
+    Route::resource('units', UnitOfMeasurementController::class);
+    Route::resource('stocks-categories', StockCategoryController::class);
     Route::resource('child-categories', ChildCategoryController::class);
-
-    // Godowns  Route
-    Route::resource('godowns',GodownController::class);
-
-    //Tax Route
-    Route::resource('taxes',TaxController::class);
-
-    //Master Numbering Route
-    Route::resource('master_numbering',FinancialYearController::class);
-
-    //Challan Types Route
+    Route::resource('godowns', GodownController::class);
+    Route::resource('taxes', TaxController::class);
+    Route::resource('master-numbering', FinancialYearController::class);
     Route::resource('challan-types', ChallanTypeController::class);
-
-    //customer supplier Route
     Route::resource('customer-supplier', CustomerSupplierController::class);
-
-    //customer supplier Route
     Route::resource('products', ProductController::class);
-
-    //Assembly Route
     Route::resource('assemblies', AssemblyController::class);
-    
-    //Stockaging Route
-    Route::resource('age_categories', AgeCategoryController::class);
-    
-    //Visit Route
+    Route::resource('age-categories', AgeCategoryController::class);
     Route::resource('visits', VisitMasterController::class);
-    
-    //Purpose of visit Route
     Route::resource('series', SeriesController::class);
-    
-    //Purpose of lead status Route
     Route::resource('leads-status', LeadStatusController::class);
-    
-    //Assembly Route
     Route::resource('purchase_orders', PurchaseOrderController::class);
-
-    //Purpose of lead status Route
     Route::resource('purchase', PurchaseController::class);
-
-    //Purpose of lead status Route
     Route::resource('sale_orders', SaleOrderController::class);
-
-    //Purpose of lead status Route
     Route::resource('sales', SaleController::class);
-
-    //Purpose of lead status Route
     Route::resource('stock_transfer', StockTransferController::class);
 
-    
+    // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
+    // Segments and Sub-Segments
+    Route::get('segments', function(){
+        return view('website.master.segments.segments');
+    })->name('segments.index');
+
+    Route::get('sub-segments', function(){
+        return view('website.master.segments.sub-segments');
+    })->name('sub-segments.index');
+});
+});
 
 require __DIR__.'/auth.php';

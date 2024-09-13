@@ -121,8 +121,8 @@ class ProductEdit extends Component
 
         // Update product details
         Product::where('id', $this->product_id)->update($validatedData);
-
-        session()->flash('message', 'Product updated successfully.');
+        
+        toastr()->closeButton(true)->success('Product updated successfully.');
         return redirect()->route('products.index');
     }
 

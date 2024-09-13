@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lead_types', function (Blueprint $table) {
+        Schema::create('lead_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('lead_id')->constrained('leads')->onDelete('cascade');
+            $table->foreignId('id_from')->references('id')->on('users');
+            $table->foreignId('id_to')->nullable()->references('id')->on('users');
+            $table->enum('log_type', ['lead_created', 'lead_updated', 'lead_reassigned', 'lead_deleted']);
             $table->text('details')->nullable();
             $table->timestamps();
         });
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lead_types');
+        Schema::dropIfExists('lead_logs');
     }
 };

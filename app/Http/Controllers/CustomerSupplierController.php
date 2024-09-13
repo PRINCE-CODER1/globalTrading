@@ -89,8 +89,8 @@ class CustomerSupplierController extends Controller
                 'designation' => $request->input('designation')[$index],
             ]);
         }
-
-        return redirect()->route('customer-supplier.index')->with('success', 'Customer/Supplier created successfully.');
+        toastr()->closeButton(true)->success('Created successfully.');
+        return redirect()->route('customer-supplier.index');
     }
 
     /**
@@ -137,7 +137,7 @@ class CustomerSupplierController extends Controller
                 'designation' => $validatedData['designation'][$index],
             ]);
         }
-
+        toastr()->closeButton(true)->success('Updated successfully.');
         return redirect()->route('customer-supplier.index')->with('success', 'Customer/Supplier updated successfully.');
     }
 

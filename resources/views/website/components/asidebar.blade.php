@@ -21,8 +21,90 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24" viewBox="0 0 24 24"> <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"></path> </svg>
             </div>
             <ul class="main-menu">
-
+                @role('Manager')
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
+                        <i class="bi bi-house side-menu__icon mb-0"></i>
+                        <span class="side-menu__label">Manager Dashboard</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Manager Dashboard</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('manager.dashboard')}}" class="side-menu__item">Manager Dashboard</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
+                        <i class="ri-team-fill side-menu__icon d-flex justify-content-center align-items-center"></i>
+                        <span class="side-menu__label">Team</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Team</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('teams.index')}}" class="side-menu__item">Team</a>
+                        </li>
+                    </ul>
+                </li>
+                @can('view lead')
+                <li class="slide has-sub {{ request()->routeIs('manager.leads.index') || request()->routeIs('manager.leads.create') ? 'active' : '' }}">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
+                        <i class="ri-group-line side-menu__icon d-flex justify-content-center align-items-center"></i>
+                        <span class="side-menu__label">Leads</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Leads</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('agent.leads.index') }}" class="side-menu__item">View Leads</a>
+                        </li>
+                    </ul>
+                </li>
+                @endcan
+                @endrole
+                @role('Agent')
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
+                        <i class="bi bi-house side-menu__icon mb-0"></i>
+                        <span class="side-menu__label">Agent Dashboard</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Agent Dashboard</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('agent.dashboard')}}" class="side-menu__item">Agent Dashboard</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="slide has-sub {{ request()->routeIs('agent.lead') || request()->routeIs('agent.leads.create') ? 'active' : '' }}">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex  align-items-center">
+                        <i class="ri-group-line side-menu__icon d-flex justify-content-center align-items-center"></i>
+                            <span class="side-menu__label">Leads</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Leads</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('agent.leads.index')}}" class="side-menu__item">Leads</a>
+                        </li>
+                    </ul>
+                </li>
+                
+                @endrole
                 <!-- Start::slide -->
+                @role('Super Admin')
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
                         <i class="bi bi-house side-menu__icon mb-0"></i>
@@ -34,13 +116,11 @@
                             <a href="javascript:void(0)">Dashboards</a>
                         </li>
                         <li class="slide">
-                            <a href="{{route('dashboard.index')}}" class="side-menu__item">Dashboards</a>
+                            <a href="{{route('admin.dashboard')}}" class="side-menu__item">Main Dashboard</a>
                         </li>
-                        
                     </ul>
                 </li>
-                <!-- End::slide -->
-                <!-- Start::User -->
+                 <!-- Start::User -->
                 {{-- @can('view user') --}}
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item d-flex  align-items-center">
@@ -62,7 +142,7 @@
                 
                 <!-- End::User -->
                 <!-- Start::Roles & Management -->
-                {{-- @can('view permissions') --}}
+                @can('view permissions')
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item d-flex  align-items-center">
                         <i class="bi bi-gear side-menu__icon mb-0 me-2"></i>
@@ -73,19 +153,19 @@
                         <li class="slide side-menu__label1">
                             <a href="javascript:void(0)">Roles & Management</a>
                         </li>
-                        {{-- @can('view permissions') --}}
+                        @can('view permissions')
                         <li class="slide">
                             <a href="{{ route('permissions.index') }}" class="side-menu__item">Permissions</a>
                         </li>
-                        {{-- @endcan --}}
-                        {{-- @can('view roles') --}}
+                        @endcan
+                        @can('view roles')
                         <li class="slide">
                             <a href="{{ route('roles.index') }}" class="side-menu__item">Roles</a>
                         </li>
-                        {{-- @endcan --}}
+                        @endcan
                     </ul>
                 </li>
-                {{-- @endcan --}}
+                @endcan
                 <!-- End::Roles & Management -->
                 <!-- Start::Master -->
                 <li class="slide has-sub">
@@ -134,7 +214,7 @@
                             <a href="{{ route('taxes.index') }}" class="side-menu__item">Tax</a>
                         </li>
                         <li class="slide">
-                            <a href="{{ route('master_numbering.index') }}" class="side-menu__item">Master Numbering</a>
+                            <a href="{{ route('master-numbering.index') }}" class="side-menu__item">Master Numbering</a>
                         </li>
                         <li class="slide">
                             <a href="{{ route('challan-types.index') }}" class="side-menu__item">Challan Types</a>
@@ -192,6 +272,11 @@
                     </ul>
                 </li>
                 <!-- End::Inventory Management -->
+                @endrole
+                
+                
+                <!-- End::slide -->
+               
                 
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24" viewBox="0 0 24 24"> <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path> </svg></div>

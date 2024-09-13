@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lead_types', function (Blueprint $table) {
+        Schema::create('remarks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('details')->nullable();
+            $table->foreignId('lead_id')->constrained('leads')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->text('remark');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lead_types');
+        Schema::dropIfExists('remarks');
     }
 };

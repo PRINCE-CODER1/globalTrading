@@ -72,9 +72,9 @@
                         <label for="customer_supplier" class="form-label fs-14 text-dark">Customer/Supplier<sup class="text-danger fs-6">*</sup></label>
                         <select class="form-control @error('customer_supplier') is-invalid @enderror" id="customer_supplier" name="customer_supplier" required>
                             <option value="">Select</option>
-                            <option value="Only Supplier" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'Only Supplier' ? 'selected' : '' }}>Only Supplier</option>
-                            <option value="Only Customer" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'Only Customer' ? 'selected' : '' }}>Only Customer</option>
-                            <option value="Both Supplier & Customer" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'Both Supplier & Customer' ? 'selected' : '' }}>Both Supplier & Customer</option>
+                            <option value="onlySupplier" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'onlySupplier' ? 'selected' : '' }}>Only Supplier</option>
+                            <option value="OnlyCustomer" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'OnlyCustomer' ? 'selected' : '' }}>Only Customer</option>
+                            <option value="bothCustomerSupplier" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'bothCustomerSupplier' ? 'selected' : '' }}>Both Supplier & Customer</option>
                         </select>
                         @error('customer_supplier')
                             <span class="invalid-feedback" role="alert">
