@@ -2,7 +2,7 @@
     <div class="container mt-5 mb-3">
         <div class="d-flex justify-content-between">
             <h4 class="mb-0">Customer/Supplier List</h4>
-            <a href="{{ route('customer-supplier.create') }}" class="btn btn-secondary">Create</a>
+            <a href="{{ route('customer-supplier.create') }}" class="btn btn-secondary"><i class="ri-add-circle-line"></i> Create</a>
         </div>
     </div>
 
@@ -23,9 +23,9 @@
 
                 <!-- Search Input -->
                 <div class="d-flex align-items-center">
-                    <div class="col-auto d-none d-md-block">
+                    {{-- <div class="col-auto d-none d-md-block">
                         <label for="search" class="form-label d-none">Search</label>
-                    </div>
+                    </div> --}}
                     <div class="col-auto">
                         <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
                     </div>

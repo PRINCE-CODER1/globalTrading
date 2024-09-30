@@ -56,7 +56,6 @@ class Lead extends Model
 
     public function assignedAgentTeam()
     {
-        // Return the first team associated with the assigned agent, or null if no agent is assigned
         return $this->assignedAgent ? $this->assignedAgent->teams()->first() : null;
     }
 
@@ -69,4 +68,5 @@ class Lead extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
 }

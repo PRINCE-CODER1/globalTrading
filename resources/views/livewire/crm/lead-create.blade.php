@@ -1,5 +1,4 @@
-<div class="container">
-    <h1>Create Lead</h1>
+<div>
 
     @if (session('success'))
         <div class="alert alert-success">
@@ -71,10 +70,10 @@
 
         <div class="mb-3">
             <label for="remark" class="form-label">Remark</label>
-            <textarea id="remark" wire:model="remark" class="form-control"></textarea>
+            <textarea id="remark" wire:model="remark" class="form-control" placeholder="description"></textarea>
             @error('remark') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
 
-        <button type="submit" class="btn btn-primary">Save Lead</button>
+        <button type="submit" class="btn btn-secondary">Save Lead</button>
     </form>
 </div>

@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-2">
-            <h4 class="mb-0 d-flex justify-content-between align-items-center">Create Lead Status</h4>
+            <h4 class="mb-0">Create Lead Status</h4>
             <a href="{{ route('leads-status.index') }}" class="btn btn-secondary btn-wave float-end">
                 <i class="bi bi-arrow-left me-1"></i> Back
             </a>
@@ -77,6 +77,21 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <!-- Color Picker Field -->
+                <div class="mb-3">
+                    <label for="color" class="form-label">
+                        <i class="bi bi-palette me-1"></i> Color <sup class="text-danger">*</sup>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-palette"></i></span>
+                        <input type="color" name="color" id="color" class="form-control" value="{{ old('color', '#000000') }}" required>
+                    </div>
+                    @error('color')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
 
                 <button type="submit" class="btn btn-secondary">
                     <i class="bi bi-check me-1"></i> Create Lead Status

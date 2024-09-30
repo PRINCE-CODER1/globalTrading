@@ -49,7 +49,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="supplier_sale_order_no" class="form-label fs-14 text-dark">Supplier Sale Order No</label>
-                            <input type="text" class="form-control" wire:model="supplier_sale_order_no">
+                            <input type="text" class="form-control" wire:model="supplier_sale_order_no" placeholder="enter supplier number">
                         </div>
                     </div>
 
@@ -126,7 +126,7 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="customer_sale_order_no" class="form-label fs-14 text-dark">Customer Sale Order No</label>
-                            <input type="text" class="form-control" wire:model="customer_sale_order_no">
+                            <input type="text" class="form-control" wire:model="customer_sale_order_no" placeholder="enter customer number">
                         </div>
                     </div>
                 </div>
@@ -167,16 +167,16 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.quantity" wire:change="calculateAmount({{ $index }})" required>
+                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.quantity" wire:change="calculateAmount({{ $index }})" placeholder="quantity" required>
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.price" wire:change="calculateAmount({{ $index }})" required>
+                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.price" wire:change="calculateAmount({{ $index }})" placeholder="price" required>
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.discount" wire:change="calculateAmount({{ $index }})">
+                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.discount" wire:change="calculateAmount({{ $index }})" placeholder="discount">
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.amount" readonly>
+                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.amount"  placeholder="amount" readonly>
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-danger" wire:click="removeItem({{ $index }})"><i class="ri-delete-bin-line"></i></button>
@@ -190,7 +190,7 @@
 
                 <!-- Submit Button -->
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-secondary">Create Purchase Order</button>
+                    <button type="submit" class="btn btn-secondary"><i class="ri-save-3-line"></i> Create Purchase Order</button>
                 </div>
             </form>
         </div>

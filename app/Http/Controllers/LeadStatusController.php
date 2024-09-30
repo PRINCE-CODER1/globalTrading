@@ -24,6 +24,7 @@ class LeadStatusController extends Controller
             'name' => 'required|string|max:255',
             'status' => 'required|string',
             'details' => 'nullable|string',
+            'color' => 'required|string|max:7',
         ]);
 
         LeadStatus::create($request->all());
@@ -43,6 +44,7 @@ class LeadStatusController extends Controller
             'name' => 'required|string|max:255',
             'status' => 'required|string',
             'details' => 'nullable|string',
+            'color' => 'required|string|max:7',
         ]);
 
         $lead = LeadStatus::findOrFail($id);

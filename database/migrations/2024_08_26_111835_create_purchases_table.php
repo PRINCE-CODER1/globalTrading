@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('purchase_no')->unique(); 
             $table->foreignId('supplier_id')->constrained('customer_suppliers')->onDelete('cascade'); 
-            $table->date('purchase_date')->default(DB::raw('CURRENT_DATE')); // Purchase Date
+            $table->timestamp('purchase_date')->useCurrent(); // Purchase Date
             $table->string('ref_no')->nullable(); // Reference Number
             $table->string('destination')->nullable(); // Destination
             $table->string('received_through')->nullable(); // Received Through

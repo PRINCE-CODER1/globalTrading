@@ -68,7 +68,7 @@
     
                     <div class="mb-3">
                         <label for="customer_supplier" class="form-label fs-14 text-dark">Customer/Supplier<sup class="text-danger fs-6">*</sup></label>
-                        <select class="form-control @error('customer_supplier') is-invalid @enderror" id="customer_supplier" name="customer_supplier" required>
+                        <select class="form-select @error('customer_supplier') is-invalid @enderror" id="customer_supplier" name="customer_supplier" required>
                             <option value="">Select</option>
                             <option value="onlySupplier" {{ old('customer_supplier') == 'onlySupplier' ? 'selected' : '' }}>Only Supplier</option>
                             <option value="onlyCustomer" {{ old('customer_supplier') == 'onlyCustomer' ? 'selected' : '' }}>Only Customer</option>

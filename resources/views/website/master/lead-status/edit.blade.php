@@ -78,6 +78,19 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+                <!-- Color Picker Field -->
+                <div class="mb-3">
+                    <label for="color" class="form-label">
+                        <i class="bi bi-palette me-1"></i> Color <sup class="text-danger">*</sup>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-palette"></i></span>
+                        <input type="color" name="color" id="color" class="form-control" value="{{ old('color', '#000000') }}" required>
+                    </div>
+                    @error('color')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
 
                 <button type="submit" class="btn btn-secondary">
                     <i class="bi bi-save me-1"></i> Update Lead Status

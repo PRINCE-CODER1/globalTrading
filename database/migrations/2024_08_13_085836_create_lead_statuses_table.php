@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('status');
             $table->text('details')->nullable();
+            $table->string('color', 7)->default('#000000'); 
             $table->timestamps();
         });
     }

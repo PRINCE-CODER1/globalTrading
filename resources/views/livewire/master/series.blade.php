@@ -3,7 +3,7 @@
         <div class="row mt-5 mb-3">
             <div class="col-12 d-flex align-items-center justify-content-between">
                 <h4>Series Management</h4>
-                <a href="{{ route('series.create') }}" class="btn btn-secondary">Create Series</a>
+                <a href="{{ route('series.create') }}" class="btn btn-secondary"><i class="ri-add-circle-line"></i> Create Series</a>
             </div>
         </div>
     </div>
@@ -24,9 +24,7 @@
 
                 <!-- Search Input -->
                 <div class="d-flex align-items-center">
-                    <div class="col-auto d-none d-md-block">
-                        <label for="search" class="form-label">Search</label>
-                    </div>
+                    
                     <div class="col-auto">
                         <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
                     </div>

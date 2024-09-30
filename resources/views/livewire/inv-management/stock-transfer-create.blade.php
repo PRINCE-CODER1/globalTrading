@@ -55,20 +55,6 @@
                 </div>
             </div>
 
-            <!-- Ref No -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="ref_no" class="form-label"><i class="ri-hashtag"></i> Ref No.</label>
-                    <div class="input-group">
-                        <div class="input-group-text"><i class="ri-hashtag"></i></div>
-                        <input type="text" wire:model="ref_no" id="ref_no" class="form-control">
-                    </div>
-                    @error('ref_no')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-
             <!-- Destination -->
             <div class="col-md-6">
                 <div class="mb-3">

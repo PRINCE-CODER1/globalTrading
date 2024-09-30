@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ArticleController;
+
+// Admin Controller
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
@@ -31,6 +32,9 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SaleOrderController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockTransferController;
+use App\Http\Controllers\CrmController;
+use App\Http\Controllers\ChalaanController;
+use App\Http\Controllers\ExternalChalaanController;
 
 
 // Agent Controller 
@@ -58,28 +62,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Single dashboard route that dynamically redirects based on role
     Route::get('/dashboard', function () {
         $user = Auth::user();
-
+        
         // Dynamically redirect based on role
         if ($user->hasRole('Super Admin')) {
             return view('website.main-erp.index');
         } elseif ($user->hasRole('Agent')) {
             return redirect()->route('agent.dashboard');
-        }elseif ($user->hasRole('Manager')) {
+        } elseif ($user->hasRole('Manager')) {
             return redirect()->route('manager.dashboard');
-        }
-         else {
+        } else {
+            // Unauthorized access handling for roles without a dashboard
             abort(403, 'Unauthorized access');
         }
     })->name('dashboard.index');
+    
 
     // Agent-specific routes
-    Route::middleware('role:Agent')->group(function () {
+    Route::middleware(['auth','role:Agent'])->group(function () {
         Route::get('/agent/dashboard', [AgentController::class, 'index'])->name('agent.dashboard');
         Route::resource('/agent/leads',LeadController::class, ['as' => 'agent']);
     });
 
     // Manager-specific routes
-    Route::middleware('role:Manager')->group(function () {
+    Route::middleware(['auth','role:Manager'])->group(function () {
         Route::get('/manager/dashboard', [ManagerController::class, 'index'])->name('manager.dashboard');
         
         Route::prefix('manager')->group(function () {
@@ -97,14 +102,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Lead Management Routes
-    Route::middleware(['role:Manager|Agent'])->group(function () {
+    Route::middleware(['auth','role:Manager|Agent'])->group(function () {
         Route::resource('/agent/leads',LeadController::class, ['as' => 'agent']);
         Route::resource('leads', LeadController::class, ['as' => 'manager']);
 
     });
 
  // Admin-specific routes
- Route::middleware('role:Super Admin')->group(function () {
+ Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('website.main-erp.index');
     })->name('admin.dashboard');
@@ -136,6 +141,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('sale_orders', SaleOrderController::class);
     Route::resource('sales', SaleController::class);
     Route::resource('stock_transfer', StockTransferController::class);
+    Route::resource('crm', CrmController::class);
+    Route::resource('chalaan', ChalaanController::class);
+    Route::resource('challan/external', ExternalChalaanController::class);
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

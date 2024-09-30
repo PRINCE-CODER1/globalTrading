@@ -2,56 +2,67 @@
 
 @section('content')
 <div class="container">
-    <h2>Leads for {{ $user->name }}</h2>
-
-    @if($leads->isEmpty())
-        <p>No leads assigned to this agent.</p>
-    @else
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Lead Name</th>
-                    <th>Status</th>
-                    <th>Source</th>
-                    <th>Created Date</th>
-                    <th>Last Updated</th>
-                    <th>Contact Information</th>
-                    {{-- <th>Notes</th>
-                    <th>Activities</th>
-                    <th>Follow-up Dates</th> --}}
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($leads as $lead)
-                @php
-                    $badgeColors = [
-                        'New' => 'bg-primary',
-                        'Qualified' => 'bg-info',
-                        'Contacted' => 'bg-warning',
-                        'Proposal Sent' => 'bg-secondary',
-                        'Won' => 'bg-success',
-                        'Sent' => 'bg-dark',
-                        'Lost' => 'bg-danger',
-                    ];
-                    $statusColor = $badgeColors[$lead->leadStatus->name] ?? 'bg-light';
-                @endphp
-                    <tr>
-                        <td>{{ $lead->id }}</td>
-                        <td>{{ $lead->customer->name }}</td>
-                        <td><p class="badge {{ $statusColor }}">{{ $lead->leadStatus->name }}</p></td>
-                        <td>{{ $lead->leadSource->name }}</td>
-                        <td>{{ $lead->created_at->format('d-m-Y H:i') }}</td>
-                        <td>{{ $lead->updated_at->format('d-m-Y H:i') }}</td>
-                        <td>
-                            <p>Phone: {{ $lead->customer->mobile_no }}</p>
-                            <p>Address: {{ $lead->customer->address }}</p>
-                        </td>
-                        <td>{{ $lead->notes }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @endif
+    <div class="row mt-5 mb-3">
+        <div class="col-12 d-flex align-items-center justify-content-between">
+            <h4 class="mb-0">Agents</h4>
+            <a href="{{ route('teams.index') }}" class="btn btn-secondary"><i class="ri-arrow-left-s-line"></i> Back</a>
+        </div>
+    </div>
+    <hr>
 </div>
+<div class="container">
+    <h2 class="fw-bold">Leads for : <span class="text-secondary">{{ $user->name }}</span></h2>
+</div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Lead Name</th>
+                                    <th>Status</th>
+                                    <th>Source</th>
+                                    <th>Created Date</th>
+                                    <th>Last Updated</th>
+                                    <th>Contact Information</th>
+                
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($leads as $lead)
+                                
+                                    <tr>
+                                        <td>{{ $lead->id }}</td>
+                                        <td>{{ $lead->customer->name }}</td>
+                                        <td>
+                                            <span class="badge" style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">
+                                                {{ $lead->leadStatus->name }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $lead->leadSource->name }}</td>
+                                        <td>{{ $lead->created_at->format('d-m-Y ') }}</td>
+                                        <td>{{ $lead->updated_at->format('d-m-Y ') }}</td>
+                                        <td>
+                                            <p><span class="fw-semibold">Phone:</span>  {{ $lead->customer->mobile_no }}</p>
+                                            <p><span class="fw-semibold">Address:</span> {{ $lead->customer->address }}</p>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="10" class="text-center">No Agent Record found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

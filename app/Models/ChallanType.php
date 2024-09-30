@@ -9,8 +9,13 @@ class ChallanType extends Model
 {
     use HasFactory;
     protected $fillable = ['name','description','user_id'];
+    
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function Chalaans()
+    {
+        return $this->hasMany(ExternalChalaan::class);
     }
 }

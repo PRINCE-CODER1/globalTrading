@@ -12,7 +12,6 @@ class StockTransferCreate extends Component
     public $stock_transfer_no;
     public $from_branch_id;
     public $stock_transfer_date;
-    public $ref_no;
     public $destination;
     public $dispatch_through;
     public $gr_no;
@@ -78,7 +77,6 @@ class StockTransferCreate extends Component
             'stock_transfer_no' => $this->stock_transfer_no,
             'from_branch_id' => $this->from_branch_id,
             'stock_transfer_date' => $this->stock_transfer_date,
-            'ref_no' => $this->ref_no,
             'destination' => $this->destination,
             'dispatch_through' => $this->dispatch_through,
             'gr_no' => $this->gr_no,

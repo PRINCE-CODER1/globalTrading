@@ -3,7 +3,7 @@
         <div class="row mt-5 mb-3">
             <div class="col-12 d-flex align-items-center justify-content-between">
                 <h4>Lead Status</h4>
-                <a href="{{ route('leads-status.create') }}" class="btn btn-secondary">Lead Status</a>
+                <a href="{{ route('leads-status.create') }}" class="btn btn-secondary"><i class="ri-add-circle-line"></i> Lead Status</a>
             </div>
         </div>
     </div>
@@ -24,9 +24,9 @@
 
                 <!-- Search Input -->
                 <div class="d-flex align-items-center">
-                    <div class="col-auto d-none d-md-block">
+                    {{-- <div class="col-auto d-none d-md-block">
                         <label for="search" class="form-label">Search</label>
-                    </div>
+                    </div> --}}
                     <div class="col-auto">
                         <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
                     </div>
@@ -56,7 +56,12 @@
                                         <tr wire:key="{{ $lead->id }}">
                                             <td><input type="checkbox" wire:model.live="selectedLeads" value="{{ $lead->id }}"></td>
                                             <td>{{ $lead->name }}</td>
-                                            <td>{{ $lead->status }}</td>
+                                            <td>
+                                                <span class="badge" style="outline:1px solid {{ $lead->color }}; color:  {{ $lead->color }};">
+                                                    {{ $lead->status }}
+                                                </span>
+                                            </td>
+                                            
                                             <td>{{ $lead->details }}</td>
                                             <td>
                                                 <a href="{{ route('leads-status.edit', $lead->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>

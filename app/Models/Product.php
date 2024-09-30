@@ -72,4 +72,8 @@ class Product extends Model
     {
         return $this->belongsTo(Series::class);
     }
+    public function externalChalaan()
+    {
+        return $this->belongsTo(ExternalChalaan::class); 
+    }
 }

@@ -3,7 +3,7 @@
         <div class="row mt-5 mb-3">
             <div class="col-12 d-flex align-items-center justify-content-between">
                 <h4>Products</h4>
-                <a href="{{ route('products.create') }}" class="btn btn-secondary">Create Products</a>
+                <a href="{{ route('products.create') }}" class="btn btn-secondary"><i class="ri-add-circle-line"></i> Create Products</a>
             </div>
         </div>
     </div>

@@ -58,7 +58,7 @@
                                                 <td>{{ $transfer->user->name }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($transfer->created_at)->format('d/m/Y H:i') }}</td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-info">View Details</button>
+                                                    <button class="btn btn-sm btn-info"><i class="ri-eye-line"></i> View Details</button>
                                                 </td>
                                                 <td>
                                                     <a href="{{ route('stock_transfer.edit', $transfer->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>

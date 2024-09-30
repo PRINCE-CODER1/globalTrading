@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
             <h4>Workshops</h4>
-            <a href="{{route('workshops.create')}}" class="btn btn-secondary btn-wave float-end">Create Workshop</a>
+            <a href="{{route('workshops.create')}}" class="btn btn-secondary btn-wave float-end"><i class="ri-add-circle-line"></i> Create Workshop</a>
             </div>
         </div>
     </div>
@@ -22,9 +22,9 @@
                     </div>
                     <!-- Search Input -->
                     <div class="d-flex align-items-center">
-                        <div class="col-auto d-none d-md-block">
+                        {{-- <div class="col-auto d-none d-md-block">
                             <label for="search" class="form-label">Search</label>
-                        </div>
+                        </div> --}}
                         <div class="col-auto">
                             <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
                         </div>

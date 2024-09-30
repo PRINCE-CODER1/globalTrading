@@ -52,7 +52,6 @@
                         </li>
                     </ul>
                 </li>
-                @can('view lead')
                 <li class="slide has-sub {{ request()->routeIs('manager.leads.index') || request()->routeIs('manager.leads.create') ? 'active' : '' }}">
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
                         <i class="ri-group-line side-menu__icon d-flex justify-content-center align-items-center"></i>
@@ -68,7 +67,6 @@
                         </li>
                     </ul>
                 </li>
-                @endcan
                 @endrole
                 @role('Agent')
                 <li class="slide has-sub">
@@ -219,9 +217,6 @@
                         <li class="slide">
                             <a href="{{ route('challan-types.index') }}" class="side-menu__item">Challan Types</a>
                         </li>
-                        {{-- <li class="slide">
-                            <a href="{{ route('age_categories.index') }}" class="side-menu__item">Stock Aging</a>
-                        </li> --}}
                         <li class="slide">
                             <a href="{{ route('visits.index') }}" class="side-menu__item">Purpose Of Visit</a>
                         </li>
@@ -237,10 +232,25 @@
                     </ul>
                 </li>
                 <!-- End::Master -->
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
+                        <i class="ri-bar-chart-grouped-fill side-menu__icon d-flex justify-content-center align-items-center"></i>
+                            <span class="side-menu__label">Crm</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul custom-h">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Crm</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('crm.index') }}" class="side-menu__item">Crm</a>
+                        </li>
+                    </ul>
+                </li>
                 <!-- Start::Inventory Management -->
                 <li class="slide has-sub">
-                    <a href="javascript:void(0);" class="side-menu__item d-flex fs-5  align-items-center">
-                        <i class="ri-store-2-line"></i>
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
+                        <i class="ri-store-2-line side-menu__icon d-flex justify-content-center align-items-center"></i>
                             <span class="side-menu__label">Inventory Management</span>
                         <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
@@ -272,6 +282,32 @@
                     </ul>
                 </li>
                 <!-- End::Inventory Management -->
+
+                <!-- Start::Chalaan -->
+
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
+                        <i class="ri-service-line side-menu__icon d-flex justify-content-center align-items-center"></i>
+                            <span class="side-menu__label">Chalaan</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul custom-h">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Chalaan</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('chalaan.index') }}" class="side-menu__item">Internal Chalaan</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('external.index') }}" class="side-menu__item">External Chalaan</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('chalaan.index') }}" class="side-menu__item">Return Chalaan</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- End::Chalaan -->
                 @endrole
                 
                 

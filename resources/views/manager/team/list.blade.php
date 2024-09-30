@@ -1,7 +1,7 @@
 @extends('website.master')
 
 @section('content')
-<div class="container">
+{{-- <div class="container">
     <h2>Teams</h2>
     <a href="{{route('teams.create')}}" class="btn btn-sm btn-secondary">create</a>
     <table class="table">
@@ -47,5 +47,6 @@
             @endforeach
         </tbody>
     </table>
-</div>
+</div> --}}
+@livewire('crm.team-list')
 @endsection

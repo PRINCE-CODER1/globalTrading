@@ -41,7 +41,7 @@ class LeadEdit extends Component
         $this->customers = CustomerSupplier::all();
         $this->leadStatuses = LeadStatus::all();
         $this->leadSources = LeadSource::all();
-        $this->segments = Segment::all();
+        $this->segments = Segment::whereNull('parent_id')->get();
         $this->loadSubSegments();
     }
 

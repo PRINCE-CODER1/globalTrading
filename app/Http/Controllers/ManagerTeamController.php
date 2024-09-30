@@ -12,7 +12,7 @@ class ManagerTeamController extends Controller
     // Display a list of teams
     public function index()
     {
-        $teams = Team::all();
+        $teams = Team::where('id', auth()->id())->get();
         return view('manager.team.list', compact('teams'));
     }
 
@@ -63,6 +63,8 @@ class ManagerTeamController extends Controller
         $team->delete();
         return redirect()->route('teams.index')->with('success', 'Team deleted successfully!');
     }
+
+    // Show the form for assigning agents to a team
     public function showAssignForm(Team $team)
     {
         $agents = User::whereHas('roles', function ($query) {
@@ -71,6 +73,7 @@ class ManagerTeamController extends Controller
     
         return view('manager.team.assign-agents', compact('team', 'agents'));
     }
+
     // Assign agents to a team
     public function assignAgents(Request $request, Team $team)
     {
@@ -82,18 +85,13 @@ class ManagerTeamController extends Controller
         $agentsToAssign = $request->agents;
 
         DB::transaction(function () use ($team, $agentsToAssign) {
-            foreach ($agentsToAssign as $agentId) {
-                $agent = User::find($agentId);
-                if ($agent) {
-                    $agent->teams()->detach();
-                }
-            }
+            // Detach agents from the team only if they are currently assigned to it
+            $team->agents()->detach();
 
+            // Assign the selected agents to the team
             $team->agents()->sync($agentsToAssign);
         });
 
         return redirect()->route('teams.index')->with('success', 'Agents assigned successfully!');
     }
-
-
 }
