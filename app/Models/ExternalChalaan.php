@@ -18,9 +18,13 @@ class ExternalChalaan extends Model
 
     public function customer()
     {
-        return $this->belongsTo(CustomerSupplier::class);
+        return $this->belongsTo(CustomerSupplier::class, 'customer_id');
     }
 
+    public function chalaanProducts()
+    {
+        return $this->hasMany(ExternalChalaanProduct::class, 'external_chalaan_id');
+    }
     public function product()
     {
         return $this->hasMany(ExternalChalaanProduct::class);

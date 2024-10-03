@@ -3,5 +3,7 @@
 @section('title', 'Agent Dashboard')
 
 @section('content')
-    cmwm.
+<div>
+    @livewire('crm.agent-dashboard')
+ </div>
 @endsection

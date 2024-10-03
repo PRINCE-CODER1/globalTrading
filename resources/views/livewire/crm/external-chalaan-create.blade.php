@@ -1,5 +1,5 @@
 <div>
-    <h2 class="mb-0 fw-bold">External <span class="text-secondary"><u>Chalaan</u></span></h2>
+    <h2 class="mb-0 fw-bold">External <span class="text-secondary"><u>Chalaan</u></span> : {{$reference_id}}</h2>
     <hr>
     <div class="card">
         <div class="card-body">
@@ -68,20 +68,20 @@
                                             @error('products.'.$index.'.product_id') <span class="text-danger">{{ $message }}</span> @enderror
                                         </td>
                                         <td>
-                                            <input type="number" wire:model="products.{{ $index }}.quantity" class="form-control" min="1">
+                                            <input type="number" wire:model="products.{{ $index }}.quantity" class="form-control" min="1" placeholder="quantity">
                                             @error('products.'.$index.'.quantity') <span class="text-danger">{{ $message }}</span> @enderror
                                         </td>
                                         <td>
-                                            <button type="button" wire:click.prevent="removeProduct({{ $index }})" class="btn btn-danger">Remove</button>
+                                            <button type="button" wire:click.prevent="removeProduct({{ $index }})" class="btn btn-sm btn-danger"><i class="ri-delete-bin-5-line"></i> Remove</button>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-                        <button type="button" wire:click.prevent="addProduct" class="btn btn-primary">Add Product</button>
+                        <button type="button" wire:click.prevent="addProduct" class="btn btn-info btn-sm mb-3 mt-1"><i class="ri-add-circle-line"></i> Add Product</button>
                     </div>
             
-                    <button type="submit" class="btn btn-success">Create External Chalaan</button>
+                    <button type="submit" class="btn btn-secondary"><i class="ri-save-3-line"></i> Create External Chalaan</button>
                 </form>
             
         </div>

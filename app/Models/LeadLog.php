@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; // Import BelongsTo relation
 
 class LeadLog extends Model
 {
@@ -39,7 +40,7 @@ class LeadLog extends Model
     }
 
     // Optionally, you can add a mutator to format the log type
-    public function getLogTypeAttribute($value)
+    public function getLogTypeAttribute($value): string
     {
         $types = [
             'lead_created' => 'Lead Created',

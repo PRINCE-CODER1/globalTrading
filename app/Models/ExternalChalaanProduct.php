@@ -19,7 +19,7 @@ class ExternalChalaanProduct extends Model
 
     public function externalChalaan()
     {
-        return $this->belongsTo(ExternalChalaan::class);
+        return $this->belongsTo(ExternalChalaan::class, 'external_chalaan_id');
     }
 
     public function product()

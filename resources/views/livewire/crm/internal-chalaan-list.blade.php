@@ -2,8 +2,8 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
-                <h4>Create External Chalaan</h4>
-                <a href="{{ route('external.create') }}" class="btn btn-secondary btn-wave float-end"><i class="ri-add-circle-line"></i> Create Chalaan</a>
+                <h4>Create Iternal Chalaan</h4>
+                <a href="{{ route('internal.create') }}" class="btn btn-secondary btn-wave float-end"><i class="ri-add-circle-line"></i> Create Chalaan</a>
             </div>
         </div>
     
@@ -11,7 +11,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Per Page: {{ $perPage }}
+                        Per Page: 
                     </button>
                     <ul class="dropdown-menu">
                         @foreach ([2, 5, 10, 20] as $size)
@@ -51,8 +51,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($externalChalaans as $chalaan)
-                                    @foreach ($chalaan->chalaanProducts as $productData)
+                                    {{-- @forelse ($externalChalaans as $chalaan)
+                                        @foreach ($chalaan->chalaanProducts as $productData)
                                         <tr>
                                             <td>
                                                 <input type="checkbox" wire:model.live="selectedExternalChalaan" value="{{ $chalaan->id }}">
@@ -99,15 +99,15 @@
                                         <tr>
                                             <td colspan="10" class="text-center">No External Chalaan found.</td>
                                         </tr>
-                                @endforelse
+                                    @endforelse --}}
                                 </tbody>
                             </table>
                         </div>
                         <div class="mt-3">
-                            {{ $externalChalaans->links('custom-pagination-links') }}
+                            {{-- {{ $externalChalaans->links('custom-pagination-links') }} --}}
                         </div>
                         <div class="mt-2">
-                            @if($selectedExternalChalaan)
+                            {{-- @if($selectedExternalChalaan)
                                 <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal">Delete</button>
                                 <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -126,7 +126,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            @endif
+                            @endif --}}
                         </div>
                     </div> 
                 </div>

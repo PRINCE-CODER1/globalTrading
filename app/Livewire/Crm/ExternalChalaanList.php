@@ -4,7 +4,7 @@ namespace App\Livewire\Crm;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\ExternalChalaan; 
+use App\Models\ExternalChalaan;
 use App\Models\ExternalChalaanProduct;
 
 class ExternalChalaanList extends Component
@@ -20,24 +20,24 @@ class ExternalChalaanList extends Component
     public $sortBy = 'created_at';
     public $sortDir = 'desc';
 
-    protected $listeners = ['deleteConfirmed' => 'deleteConfirmed'];
+    protected $listeners = ['deleteConfirmed' => 'delete'];
 
     public function mount()
     {
         $this->search = session()->get('search', '');
         $this->perPage = session()->get('perPage', 10);
-        $this->sortBy = session()->get('sortBy', 'created_at');
-        $this->sortDir = session()->get('sortDir', 'desc');
+        // $this->sortBy = session()->get('sortBy', 'created_at');
+        // $this->sortDir = session()->get('sortDir', 'desc');
     }
 
     public function render()
     {
-        $externalChalaans = ExternalChalaan::with(['chalaanProducts.products', 'customer', 'branch', 'godown']) // Load relationships correctly
+        $externalChalaans = ExternalChalaan::with(['chalaanProducts.product', 'chalaanProducts.branch' , 'chalaanProducts.godown', 'customer','createdby'])
                             ->where('reference_id', 'like', '%' . $this->search . '%')
                             ->orderBy($this->sortBy, $this->sortDir)
                             ->paginate($this->perPage);
-
-        return view('livewire.crm.external-chalaan-list');
+        
+        return view('livewire.crm.external-chalaan-list', compact('externalChalaans'));
     }
 
     public function updatePerPage($value)
@@ -56,7 +56,7 @@ class ExternalChalaanList extends Component
     public function updatedSelectAll($value)
     {
         $this->selectedExternalChalaan = $value 
-            ? ExternalChalaan::pluck('id')->toArray() // Change to ExternalChalaan
+            ? ExternalChalaan::pluck('id')->toArray() 
             : [];
     }
 
@@ -69,22 +69,40 @@ class ExternalChalaanList extends Component
     {
         if ($this->deleteId) {
             try {
-                ExternalChalaan::findOrFail($this->deleteId)->delete(); // Change to ExternalChalaan
-                toastr()->closeButton(true)->success('External Chalaan Deleted Successfully');
+                $externalChalaan = ExternalChalaan::find($this->deleteId);
+                if ($externalChalaan) {
+                    // Delete related chalaan products if necessary
+                    $externalChalaan->chalaanProducts()->delete(); 
+                    
+                    // Delete the external chalaan itself
+                    $externalChalaan->delete();
+                    
+                    toastr()->closeButton(true)->success('External Chalaan Deleted Successfully');
+                }
             } catch (\Exception $e) {
                 toastr()->closeButton(true)->error('Error deleting External Chalaan: ' . $e->getMessage());
             } finally {
-                $this->deleteId = null; // Clear the delete ID
+                $this->deleteId = null; 
                 $this->resetPage();
             }
         }
     }
+    
 
     public function bulkDelete()
     {
         if (!empty($this->selectedExternalChalaan)) {
             try {
-                ExternalChalaan::whereIn('id', $this->selectedExternalChalaan)->delete(); // Change to ExternalChalaan
+                $externalChalaans = ExternalChalaan::whereIn('id', $this->selectedExternalChalaan)->get();
+
+                foreach ($externalChalaans as $chalaan) {
+                    // Delete related chalaan products if necessary
+                    $chalaan->chalaanProducts()->delete();
+                    
+                    // Delete the external chalaan itself
+                    $chalaan->delete();
+                }
+
                 toastr()->closeButton(true)->success('Selected External Chalaans Deleted Successfully');
             } catch (\Exception $e) {
                 toastr()->closeButton(true)->error('Error deleting selected External Chalaans: ' . $e->getMessage());
@@ -96,6 +114,7 @@ class ExternalChalaanList extends Component
             toastr()->closeButton(true)->warning('No External Chalaans selected for deletion.');
         }
     }
+
 
     public function setSortBy($sortByField)
     {

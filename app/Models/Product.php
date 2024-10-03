@@ -76,4 +76,8 @@ class Product extends Model
     {
         return $this->belongsTo(ExternalChalaan::class); 
     }
+    public function internalChalaanProducts()
+    {
+        return $this->hasMany(InternalChalaanProduct::class);
+    }
 }

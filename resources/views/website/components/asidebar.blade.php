@@ -296,7 +296,7 @@
                             <a href="javascript:void(0)">Chalaan</a>
                         </li>
                         <li class="slide">
-                            <a href="{{ route('chalaan.index') }}" class="side-menu__item">Internal Chalaan</a>
+                            <a href="{{ route('internal.index') }}" class="side-menu__item">Internal Chalaan</a>
                         </li>
                         <li class="slide">
                             <a href="{{ route('external.index') }}" class="side-menu__item">External Chalaan</a>

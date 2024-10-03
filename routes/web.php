@@ -35,6 +35,7 @@ use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\CrmController;
 use App\Http\Controllers\ChalaanController;
 use App\Http\Controllers\ExternalChalaanController;
+use App\Http\Controllers\InternalChalaanController;
 
 
 // Agent Controller 
@@ -144,6 +145,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('crm', CrmController::class);
     Route::resource('chalaan', ChalaanController::class);
     Route::resource('challan/external', ExternalChalaanController::class);
+    Route::resource('challan/internal', InternalChalaanController::class);
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

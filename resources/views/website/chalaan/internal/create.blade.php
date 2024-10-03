@@ -1,7 +1,7 @@
 @extends('website.master')
 @section('content')
 <div>
-    @livewire('crm.external-chalaan-edit')
+    @livewire('crm.internal-chalaan-create')
 </div>
 
 @endsection

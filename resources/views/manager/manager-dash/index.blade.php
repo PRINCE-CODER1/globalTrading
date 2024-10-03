@@ -1,4 +1,7 @@
 @extends('website.master')
 @section('content')
-   Manager Dashboard
+<div>
+   @livewire('crm.manager-dashboard')
+</div>
+
 @endsection
