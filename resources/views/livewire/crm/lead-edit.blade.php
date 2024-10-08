@@ -32,8 +32,8 @@
     <div class="container my-3">
         <div class="row">
             <div class="col-12">
-                <h1 class="mb-0 fw-bold">Edit Lead : <span class="text-secondary"> {{ $lead->id }}</span>
-                </h1>
+                <h3 class="mb-0 fw-bold">Edit Lead : <span class="text-secondary"> {{ $lead->id }}</span>
+                </h3>
             </div>
         </div>
     </div>
@@ -55,14 +55,24 @@
                                 </div>
                                 <!-- Display the selected Lead Status in an H5 heading -->
                                 <div class="col-md-6 d-flex align-items-end flex-column">
-                                    <label class="fw-bold">
-                                        Lead Status:     
-                                    </label>
-                                        @if($lead_status_id)
-                                            <span class="badge bg-secondary">{{ $leadStatuses->where('id', $lead_status_id)->first()->name }}</span>
+                                    <label class="fw-bold">Lead Status:</label>
+
+                                    @if($lead_status_id)
+                                        @php
+                                            // Find the selected Lead Status by ID
+                                            $selectedStatus = $leadStatuses->where('id', $lead_status_id)->first();
+                                        @endphp
+
+                                        @if($selectedStatus && $selectedStatus->color)
+                                            <span class="badge" style="background-color: {{ $selectedStatus->color }}; color: #fff;">
+                                                {{ $selectedStatus->name }}
+                                            </span>
                                         @else
-                                            No Status Selected
+                                            <span class="badge bg-secondary">No Color Available</span>
                                         @endif
+                                    @else
+                                        No Status Selected
+                                    @endif
                                 </div>
                                 
                             </div>
@@ -153,13 +163,6 @@
                                 </div>
                             </div>
                             <hr>
-                            {{-- <!-- Add Remark -->
-                            <div class="mb-3 mb-4">
-                                <label for="remark" class="form-label fw-bold">Add Remark</label>
-                                <textarea id="remark" wire:model="remark" class="form-control" rows="3" placeholder="Add a new remark"></textarea>
-                                @error('remark') <span class="text-danger">{{ $message }}</span> @enderror
-                            </div> --}}
-                            <hr>
                             <!-- Form Actions -->
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-secondary"><i class="ri-save-3-line"></i> Update</button>
@@ -194,7 +197,7 @@
                                 @if ($lead->assignedAgent)
                                     @if ($lead->assignedAgentTeams()->isNotEmpty())
                                         @foreach ($lead->assignedAgentTeams() as $team)
-                                            <span class="badge bg-secondary">{{ $team->name }}</span>
+                                            <span class="badge bg-dark">{{ $team->name }}</span>
                                             @if (!$loop->last) 
                                                 <span> </span>
                                             @endif
@@ -240,43 +243,39 @@
         
         <div class="row">
             <div class="col-12">
-                <h2 class="fw-bold"><span class="text-secondary"> Remarks :</span>
+                <h2 class="fw-bold"><span> Remarks :</span>
                 </h2>
-                <hr>
-                <hr>
             </div>
         </div>
         <div class="row">
             <!-- Remarks Section -->
-            <div class="col-md-9">
-                <div class="row">
-                    <div class="col-md-9">                
-                        <div class="card mt-3">
-                            <div class="card-body">
-                                <form wire:submit.prevent="addRemark">
-                                    <div class="mb-3 mb-4">
-                                        <label for="remark" class="form-label fw-bold">Add Remark</label>
-                                        <textarea id="remark" wire:model="remark" class="form-control" rows="3" placeholder="Add a new remark" required></textarea>
-                                        @error('remark') <span class="text-danger">{{ $message }}</span> @enderror
-                                    </div>
-                                    <button type="submit" class="btn btn-secondary"><i class="ri-links-line"></i> Add Remark</button>
-                                </form>
-                                @forelse($remarks as $remark)
-                                    <div class="card mb-2">
-                                        <div class="card-body">
-                                            <strong>{{ $remark->user->name ?? 'Unknown User' }}</strong>
-                                            <small class="text-muted">({{ $remark->created_at->format('d-m-Y H:i') }})</small>
-                                            <p class="mt-2">{{ $remark->remark }}</p>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p>No remarks available.</p>
-                                @endforelse
+            <div class="col-md-9">                
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <form wire:submit.prevent="addRemark">
+                            <div class="mb-3 mb-4">
+                                <label for="remark" class="form-label fw-bold">Add Remark</label>
+                                <textarea id="remark" wire:model="remark" class="form-control" rows="3" placeholder="Add a new remark" required></textarea>
+                                @error('remark') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
-                        </div>
+                            <button type="submit" class="btn btn-secondary mb-3"><i class="ri-links-line"></i> Add Remark</button>
+                        </form>
+                        @forelse($remarks as $remark)
+                            <div class="card mb-2">
+                                <div class="card-body">
+                                   <div class="d-flex justify-content-between">
+                                    <strong>{{ $remark->user->name ?? 'Unknown User' }}</strong>
+                                    <small class="text-muted">({{ $remark->created_at->format('d-m-Y H:i') }})</small>
+                                   </div>
+                                    <p class="mt-2">{{ $remark->remark }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <p>No remarks available.</p>
+                        @endforelse
                     </div>
-                </div>                
-            </div>
+                </div>
+            </div>   
             
         </div>
     </div>

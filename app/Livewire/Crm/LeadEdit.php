@@ -39,6 +39,8 @@ class LeadEdit extends Component
         $this->expected_date = $this->lead->expected_date;
         $this->remarks = $this->lead->remarks;
 
+        $this->remarks = $this->lead->remarks()->orderBy('created_at', 'desc')->get();
+
         // Load related data
         $this->customers = CustomerSupplier::all();
         $this->leadStatuses = LeadStatus::all();
