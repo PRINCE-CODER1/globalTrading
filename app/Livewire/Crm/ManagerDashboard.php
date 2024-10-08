@@ -23,26 +23,26 @@ class ManagerDashboard extends Component
 
     public function render()
     {
-        $user = Auth::user();
+        $user = Auth::user();  // Get the currently logged-in manager
 
         // Fetch all teams managed by the current manager
         $teams = Team::where('creator_id', $user->id)->with('members')->get();
         $teamMemberIds = $teams->pluck('members.*.id')->flatten()->toArray(); // Get IDs of all team members
 
-        // Calculate total leads for the current period (all team members' leads)
+        // Total leads for the current period (for the manager's team members)
         $currentLeads = Lead::whereIn('assigned_to', $teamMemberIds)->count(); 
 
-        // Calculate total leads for the previous period (e.g., last month)
+        // Total leads for the previous period (last month)
         $previousLeads = Lead::whereIn('assigned_to', $teamMemberIds)
             ->whereBetween('created_at', [now()->subMonth(), now()])
             ->count();
 
-        // Calculate percentage change in leads between the current and previous period
+        // Calculate percentage change in leads between current and previous period
         $percentageChange = $previousLeads > 0 ? (($currentLeads - $previousLeads) / $previousLeads) * 100 : 0;
 
         // Fetch all leads assigned to the team members
         $leads = Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
-            ->whereIn('assigned_to', $teamMemberIds) // Only leads assigned to the manager's team members
+            ->whereIn('assigned_to', $teamMemberIds)  // Only leads assigned to the manager's team members
             ->when($this->teamFilter, function($query) {
                 $query->whereHas('assignedAgent.teams', function ($q) {
                     $q->where('name', 'like', '%' . $this->teamFilter . '%');
@@ -62,7 +62,7 @@ class ManagerDashboard extends Component
             ->paginate($this->perPage);
 
         // Fetch recent lead logs for the team members
-        $leadLogs = LeadLog::with('lead', 'fromUser', 'toUser')
+        $leadLogs = LeadLog::with(['lead', 'fromUser', 'toUser'])
             ->whereIn('id_from', $teamMemberIds)
             ->orWhereIn('id_to', $teamMemberIds)
             ->orderBy('created_at', 'desc')
@@ -98,11 +98,14 @@ class ManagerDashboard extends Component
             ->orderBy('date', 'asc')
             ->get();
 
-        return view('livewire.crm.manager-dashboard', compact('leadsPerDay', 'openLeads', 'closedLeads', 'leads', 'leadLogs', 'teams', 'statuses', 'percentageChange'));
+        return view('livewire.crm.manager-dashboard', compact(
+            'leadsPerDay', 'openLeads', 'closedLeads', 'leads', 
+            'leadLogs', 'teams', 'statuses', 'percentageChange'
+        ));
     }
 
     public function updatePerPage($perPage)
     {
-        $this->perPage = $perPage; // Update the items per page
+        $this->perPage = $perPage; 
     }
 }

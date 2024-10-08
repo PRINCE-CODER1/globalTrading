@@ -102,7 +102,7 @@
                                 <div class="d-flex align-items-center justify-content-between flex-wrap">
                                     <div>
                                         <p class="text-muted mb-3">{{ $team->name }}</p>
-                                        <h4 class="mt-1">Leads Assigned: {{ $team->members->sum('leads_count') }}</h4>
+                                        <h4 class="mt-1">Leads Assigned: {{ $team->members->count()}}</h4>
                                     </div>
                                 </div>
                             </div>

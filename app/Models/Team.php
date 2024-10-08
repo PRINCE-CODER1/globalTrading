@@ -16,15 +16,16 @@ class Team extends Model
     {
         return $this->belongsToMany(User::class, 'user_team', 'team_id', 'user_id');
     }
-    public function members()
-    {
-        return $this->belongsToMany(User::class, 'user_team', 'team_id', 'user_id')
-                    ->withTimestamps();
-    }
+
     // Define the relationship to the user who created the team
     public function creator()
     {
         return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class,'user_team');
     }
     public function users()
     {

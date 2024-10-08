@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -53,10 +52,15 @@ class Lead extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
-
-    public function assignedAgentTeam()
+    public function assignedAgentTeams()
     {
-        return $this->assignedAgent ? $this->assignedAgent->teams()->first() : null;
+        // Retrieve teams assigned to the agent
+        return $this->assignedAgent ? $this->assignedAgent->teams : collect(); // Return an empty collection if no agent is assigned
+    }
+    public function managerTeams()
+    {
+        // Fetch the teams associated with the creator (manager) of the lead
+        return $this->creator->teams; // Ensure this returns the actual teams
     }
 
     public function remarks()
@@ -69,4 +73,10 @@ class Lead extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    // Define relationship to creator (manager) of the lead
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
+

@@ -1,7 +1,7 @@
 @extends('website.master')
 @section('content')
 <!-- Start::app-content -->
-<div class="main-content">
+{{-- <div class="main-content">
     <div class="container my-5">
         <div class="row">
             <div class="col-xl-9">
@@ -70,7 +70,8 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
+@livewire('crm.crm-dashboard')
 
 @push('scripts')
 

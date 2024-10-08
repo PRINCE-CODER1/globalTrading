@@ -34,7 +34,6 @@ class LeadController extends Controller
         $leads = Lead::where('assigned_to',$userId)
                 ->with('remarks')
                 ->get();
-                // dd($leads);
         return view('agent-dash.leads.list', compact('leads'));
     }
 

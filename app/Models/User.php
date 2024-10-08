@@ -56,8 +56,6 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Team::class, 'user_team', 'user_id', 'team_id');
     }
-
-
     public function leads()
     {
         return $this->hasMany(Lead::class);

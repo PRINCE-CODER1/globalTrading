@@ -53,7 +53,7 @@ class LeadCreate extends Component
             'expected_date' => 'required|date',
             'remark' => 'nullable|string',
         ]);
-
+        $assignedTo = auth()->user()->hasRole('manager') ? $this->selectedAgent : auth()->id();
         $lead = Lead::create([
             'customer_id' => $this->customer_id,
             'lead_status_id' => $this->lead_status_id,

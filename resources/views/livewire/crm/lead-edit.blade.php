@@ -184,15 +184,37 @@
                         <div class="mb-3">
                             <h6 class="card-subtitle mb-2 text-muted fw-bold">Lead Assigned To:</h6>
                             <p class="card-text">
-                                @if($lead->assignedAgent && $lead->assignedAgent->teams->isNotEmpty())
-                                    @foreach($lead->assignedAgent->teams as $team)
-                                        <span class="badge bg-secondary"> {{ $team->name }}</span>@if(!$loop->last)  @endif
-                                    @endforeach
+                                @if ($lead->assignedAgent)
+                                    @if ($lead->assignedAgentTeams()->isNotEmpty())
+                                        @foreach ($lead->assignedAgentTeams() as $team)
+                                            <span class="badge bg-secondary">{{ $team->name }}</span>
+                                            @if (!$loop->last) 
+                                                <span> </span>
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        <span>No teams assigned to the agent</span>
+                                    @endif
                                 @else
-                                    No team assigned
+                                    @if ($lead->creator_id === Auth::id())
+                                        <span class="badge bg-primary">Lead created by manager</span>
+                                        @if ($lead->managerTeams()->isNotEmpty())
+                                            @foreach ($lead->managerTeams() as $team)
+                                                <span class="badge bg-secondary">{{ $team->name }}</span>
+                                                @if (!$loop->last) 
+                                                    <span> </span>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <span>No teams assigned</span>
+                                        @endif
+                                    @else
+                                        <span>No agent assigned</span>
+                                    @endif
                                 @endif
                             </p>
                         </div>
+
     
                         <!-- Lead Assign History -->
                         <div class="mb-3">

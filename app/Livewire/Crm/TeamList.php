@@ -37,8 +37,8 @@ class TeamList extends Component
 
     public function render()
     {
-        $user = auth()->user(); 
-
+        $user = auth()->user();
+        
         $teams = Team::where('creator_id', $user->id)
             ->where('name', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDir)
