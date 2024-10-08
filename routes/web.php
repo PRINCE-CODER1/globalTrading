@@ -103,7 +103,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Lead Management Routes
-    Route::middleware(['auth','role:Manager|Agent'])->group(function () {
+    Route::middleware(['auth','role:Manager|Agent|Super Admin'])->group(function () {
         Route::resource('/agent/leads',LeadController::class, ['as' => 'agent']);
         Route::resource('leads', LeadController::class, ['as' => 'manager']);
 

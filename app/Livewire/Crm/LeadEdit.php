@@ -22,13 +22,14 @@ class LeadEdit extends Component
         'lead_status_id' => 'required|exists:lead_statuses,id',
         'lead_source_id' => 'required|exists:lead_sources,id',
         'segment_id' => 'required|exists:segments,id',
-        'sub_segment_id' => 'required|exists:segments,id',
+        'sub_segment_id' => 'nullable|exists:segments,id',
         'expected_date' => 'required|date',
         'remark' => 'nullable|string|max:255',
     ];
 
     public function mount($leadId)
     {
+        // Load lead data and related entities
         $this->lead = Lead::findOrFail($leadId);
         $this->customer_id = $this->lead->customer_id;
         $this->lead_status_id = $this->lead->lead_status_id;
@@ -38,6 +39,7 @@ class LeadEdit extends Component
         $this->expected_date = $this->lead->expected_date;
         $this->remarks = $this->lead->remarks;
 
+        // Load related data
         $this->customers = CustomerSupplier::all();
         $this->leadStatuses = LeadStatus::all();
         $this->leadSources = LeadSource::all();
@@ -53,13 +55,16 @@ class LeadEdit extends Component
 
     public function loadSubSegments()
     {
+        // Load sub-segments based on the selected segment
         $this->subSegments = Segment::where('parent_id', $this->segment_id)->get();
     }
 
     public function save()
     {
+        // Validate form data
         $this->validate();
 
+        // Update lead details
         $this->lead->update([
             'customer_id' => $this->customer_id,
             'lead_status_id' => $this->lead_status_id,
@@ -69,16 +74,36 @@ class LeadEdit extends Component
             'expected_date' => $this->expected_date,
         ]);
 
-        if ($this->remark) {
-            $this->lead->remarks()->create([
-                'user_id' => Auth::id(),
-                'remark' => $this->remark,
-            ]);
-
-            $this->remarks = $this->lead->remarks; // Update remarks list without reload
-            $this->remark = ''; // Clear the remark input
-        }
         toastr()->closeButton(true)->success('Lead updated successfully.');
+    }
+
+    public function addRemark()
+    {
+        $this->validateRemark();
+
+        // Create a new remark for the lead
+        Remark::create([
+            'lead_id' => $this->lead->id,
+            'user_id' => Auth::id(),
+            'remark' => $this->remark,
+        ]);
+
+        $this->refreshRemarks(); 
+        $this->remark = ''; 
+        session()->flash('message', 'Remark added successfully!');
+    }
+
+    protected function validateRemark()
+    {
+        $this->validate([
+            'remark' => 'required|string|max:255',
+        ]);
+    }
+
+    protected function refreshRemarks()
+    {
+        // Refresh the remarks list
+        $this->remarks = $this->lead->remarks; 
     }
 
     public function render()

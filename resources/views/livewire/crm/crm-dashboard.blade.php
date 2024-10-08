@@ -1,7 +1,7 @@
 <div>
     
     <div class="container my-5">
-        <h1 class="fw-bold">Admin <span class="text-secondary">Dashboard</span></h1>
+        <h1 class="fw-bold">CRM <span class="text-secondary">Dashboard</span></h1>
         <hr>
         <hr>
     </div>
@@ -293,6 +293,7 @@
                                 <table class="table table-bordered text-nowrap shadow-sm">
                                     <thead class="thead-light">
                                         <tr>
+                                            <th class="fw-bold">Action</th>
                                             <th class="fw-bold">Customer</th>
                                             <th class="fw-bold">Lead Source</th>
                                             <th class="fw-bold">Assigned Agent</th>
@@ -304,6 +305,7 @@
                                     <tbody>
                                         @foreach($leads as $lead)
                                             <tr>
+                                                <td><a class="btn btn-sm btn-info" href="{{ route('agent.leads.edit', $lead->id) }}"><i class="ri-eye-2-line"></i> View Lead</a></td>
                                                 <td>{{ $lead->customer->name }}</td>
                                                 <td>{{ $lead->leadSource->name }}</td>
                                                 <td>{{ $lead->assignedAgent->name }}</td>
@@ -332,13 +334,46 @@
             </div>
         </div>
     </div>
-
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-3">
+                <h3 class="fw-bold">Recent <span class="text-secondary">Logs</span></h3>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            @if($remarks->isEmpty())
+                <p>No remarks found.</p>
+            @else
+                <div class="table-responsive ">
+                    <table class="table table-bordered text-nowrap shadow-sm">
+                        <thead>
+                            <tr>
+                                <th class="fw-bold">Remark</th>
+                                <th class="fw-bold">User</th>
+                                <th class="fw-bold">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($remarks as $remark)
+                                <tr>
+                                    <td>{{ $remark->remark }}</td>
+                                    <td>{{ $remark->user->name }}</td>
+                                    <td>{{ $remark->created_at->format('Y-m-d H:i:s') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
     <div class="container mb-5">
         <div class="row">
-            <!-- Recent Lead Activity Section -->
+            <!-- Lead Activity Section -->
             <div class="col-md-5">
                 <div class="mt-5">
-                    <h4 class="mb-4 fw-bold">Recent Activity Logs</h4>
+                    <h4 class="mb-4 fw-bold">Leads Created</h4>
                     <hr>
                     <div class="card">
                         <div class="card-body">
@@ -363,7 +398,7 @@
             </div>
             <div class="col-md-6">
                 <div class="mt-5" style="height:400px">
-                    <h4 class="mb-4 fw-bold">Lead Status Overview</h4>
+                    <h4 class="mb-4 fw-bold">Lead Creation Graph</h4>
                     <hr>
                    <div class="d-flex justify-content-center" style="height:400px">
                     <canvas  id="leadStatusChart"></canvas>
@@ -428,7 +463,7 @@
     </script>
 
     <script>
-            document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('leadStatusChart').getContext('2d');
 
             const statusCounts = @json($leadStatusCounts); // Your PHP data
@@ -441,8 +476,29 @@
                 return foundStatus ? foundStatus.name : statusId; // Return name if found, else return ID
             });
 
-            const backgroundColors = labels.map(() => getRandomColor());
-            const borderColors = labels.map(() => getRandomColor());
+            // Define an array of 15 custom colors
+            const customColors = [
+                'rgba(76, 175, 80, 0.7)', // Green
+                'rgba(244, 67, 54, 0.7)', // Red
+                'rgba(255, 152, 0, 0.7)', // Orange
+                'rgba(33, 150, 243, 0.7)', // Blue
+                'rgba(156, 39, 176, 0.7)', // Purple
+                'rgba(255, 193, 7, 0.7)', // Yellow
+                'rgba(0, 150, 136, 0.7)', // Teal
+                'rgba(158, 158, 158, 0.7)', // Grey
+                'rgba(255, 87, 34, 0.7)', // Deep Orange
+                'rgba(63, 81, 181, 0.7)', // Indigo
+                'rgba(76, 175, 80, 0.7)', // Light Green
+                'rgba(244, 67, 54, 0.7)', // Deep Red
+                'rgba(0, 188, 212, 0.7)', // Cyan
+                'rgba(121, 85, 72, 0.7)', // Brown
+                'rgba(96, 125, 139, 0.7)', // Blue Grey
+                'rgba(255, 235, 59, 0.7)' // Lime
+            ];
+
+            // Generate background and border colors based on the number of labels
+            const backgroundColors = labels.map((_, index) => customColors[index % customColors.length]);
+            const borderColors = labels.map((_, index) => customColors[index % customColors.length]);
 
             const leadStatusChart = new Chart(ctx, {
                 type: 'pie', // Or any other type
@@ -467,53 +523,41 @@
                 }
             });
         });
-
-        // Function to generate random color
-        function getRandomColor() {
-            // Generate random values for RGB channels (0-255)
-            const r = Math.floor(Math.random() * 256); // Red
-            const g = Math.floor(Math.random() * 256); // Green
-            const b = Math.floor(Math.random() * 256); // Blue
-            const a = (Math.random()).toFixed(2); // Alpha (0 to 1)
-
-            // Return the RGBA color string
-            return `rgba(${r}, ${g}, ${b}, ${a})`;
-        }
     </script>
-<script>
-    const ctx = document.getElementById('leadStatusCh').getContext('2d');
-    const leadStatusData = {
-        labels: ['Open', 'Closed', 'Follow-up', 'Lost'], // Replace with dynamic data
-        datasets: [{
-            label: 'Lead Status Distribution',
-            data: [12, 19, 3, 5], // Replace with dynamic counts
-            backgroundColor: [
-                getRandomColor(),
-                getRandomColor(),
-                getRandomColor(),
-                getRandomColor(),
-            ],
-            borderWidth: 1
-        }]
-    };
-    
-    const leadStatusChart = new Chart(ctx, {
-        type: 'pie',
-        data: leadStatusData,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Lead Status Distribution'
+
+    <script>
+        const ctx = document.getElementById('leadStatusCh').getContext('2d');
+        const leadStatusData = {
+            labels: ['Open', 'Closed', 'Follow-up', 'Lost'], // Replace with dynamic data
+            datasets: [{
+                label: 'Lead Status Distribution',
+                data: [12, 19, 3, 5], // Replace with dynamic counts
+                backgroundColor: [
+                    '#4CAF50', // Green for Open
+                    '#F44336', // Red for Closed
+                    '#FF9800', // Orange for Follow-up
+                    '#2196F3', // Blue for Lost
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        
+        const leadStatusChart = new Chart(ctx, {
+            type: 'pie',
+            data: leadStatusData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Lead Status Distribution'
+                    }
                 }
             }
-        }
-    });
+        });
     </script>
-    
-    
 </div>

@@ -5,6 +5,7 @@ namespace App\Livewire\Crm;
 use Livewire\Component;
 use App\Models\Lead;
 use App\Models\LeadLog;
+use App\Models\Remark;
 use App\Models\Team;
 use App\Models\LeadStatus;
 use App\Models\User;
@@ -95,15 +96,19 @@ class CrmDashboard extends Component
             ->groupBy('lead_status_id')
             ->pluck('count', 'lead_status_id');
         $users = User::with(['leads', 'teams'])->get();
+
+        // Fetch all remarks for the dashboard
+        $remarks = Remark::with('user', 'lead')->orderBy('created_at', 'desc')->take(10)->get();
+
         return view('livewire.crm.crm-dashboard', compact(
             'leadsPerDay', 'openLeads', 'closedLeads', 'leads','users', 
             'leadLogs', 'teams','leadStatusCounts', 'statuses', 'totalLeads', 
-            'currentLeads', 'percentageChange'
+            'currentLeads', 'percentageChange','remarks'
         ));
     }
 
     public function updatePerPage($perPage)
     {
-        $this->perPage = $perPage; // Update the items per page
+        $this->perPage = $perPage;
     }
 }

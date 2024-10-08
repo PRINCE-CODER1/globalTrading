@@ -3,9 +3,11 @@
         <div class="row">
             <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-2">
                 <h4 class="mb-0">Edit Lead</h4>
-                <a href="{{ route('agent.leads.index') }}" class="btn btn-secondary btn-wave float-end">
-                    <i class="bi bi-arrow-left me-1"></i> Back
-                </a>
+                    @if(auth()->user()->hasRole('Agent')) 
+                        <a href="{{ route('agent.leads.index') }}" class="btn btn-secondary btn-wave float-end">
+                            <i class="bi bi-arrow-left me-1"></i> Back
+                        </a>
+                    @endif
             </div>
         </div>
     </div>
@@ -151,17 +153,22 @@
                                 </div>
                             </div>
                             <hr>
-                            <!-- Add Remark -->
+                            {{-- <!-- Add Remark -->
                             <div class="mb-3 mb-4">
                                 <label for="remark" class="form-label fw-bold">Add Remark</label>
                                 <textarea id="remark" wire:model="remark" class="form-control" rows="3" placeholder="Add a new remark"></textarea>
                                 @error('remark') <span class="text-danger">{{ $message }}</span> @enderror
-                            </div>
+                            </div> --}}
                             <hr>
                             <!-- Form Actions -->
                             <div class="d-flex justify-content-between">
-                                <button type="submit" class="btn btn-secondary"><i class="ri-save-3-line"></i> Save</button>
-                                <a href="{{ route('agent.leads.index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Back</a>
+                                <button type="submit" class="btn btn-secondary"><i class="ri-save-3-line"></i> Update</button>
+                                @if(auth()->user()->hasRole('Agent'))
+                                    <a href="{{ route('agent.leads.index') }}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-arrow-left me-1"></i>
+                                        Back
+                                    </a>
+                                @endif
                             </div>
                         </form>
                     </div>
@@ -215,7 +222,6 @@
                             </p>
                         </div>
 
-    
                         <!-- Lead Assign History -->
                         <div class="mb-3">
                             <h6 class="card-subtitle mb-2 text-muted fw-bold">Lead Assign History:</h6>
@@ -234,29 +240,44 @@
         
         <div class="row">
             <div class="col-12">
-                <h2 class="fw-bold"><span class="text-dark"> Remarks :</span>
+                <h2 class="fw-bold"><span class="text-secondary"> Remarks :</span>
                 </h2>
+                <hr>
+                <hr>
             </div>
         </div>
         <div class="row">
             <!-- Remarks Section -->
             <div class="col-md-9">
-                <div class="card">
-                    <div class="card-body">
-                        @forelse($remarks as $remark)
-                            <div class="card mb-2">
-                                <div class="card-body">
-                                    <strong>{{ $remark->user->name ?? 'Unknown User' }}</strong>
-                                    <small class="text-muted">({{ $remark->created_at->format('d-m-Y H:i') }})</small>
-                                    <p class="mt-2">{{ $remark->remark }}</p>
-                                </div>
+                <div class="row">
+                    <div class="col-md-9">                
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <form wire:submit.prevent="addRemark">
+                                    <div class="mb-3 mb-4">
+                                        <label for="remark" class="form-label fw-bold">Add Remark</label>
+                                        <textarea id="remark" wire:model="remark" class="form-control" rows="3" placeholder="Add a new remark" required></textarea>
+                                        @error('remark') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                    <button type="submit" class="btn btn-secondary"><i class="ri-links-line"></i> Add Remark</button>
+                                </form>
+                                @forelse($remarks as $remark)
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <strong>{{ $remark->user->name ?? 'Unknown User' }}</strong>
+                                            <small class="text-muted">({{ $remark->created_at->format('d-m-Y H:i') }})</small>
+                                            <p class="mt-2">{{ $remark->remark }}</p>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p>No remarks available.</p>
+                                @endforelse
                             </div>
-                        @empty
-                            <p>No remarks available.</p>
-                        @endforelse
+                        </div>
                     </div>
-                </div>
+                </div>                
             </div>
+            
         </div>
     </div>
 </div>
