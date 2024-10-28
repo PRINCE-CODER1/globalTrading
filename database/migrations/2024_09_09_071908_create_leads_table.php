@@ -17,7 +17,10 @@ return new class extends Migration
             $table->foreignId('lead_status_id')->constrained('lead_statuses');   
             $table->foreignId('lead_source_id')->constrained('lead_sources');  
             $table->foreignId('segment_id')->constrained('segments');        
-            $table->foreignId('sub_segment_id')->constrained('segments'); 
+            $table->foreignId('sub_segment_id')->constrained('segments');
+            $table->foreignId('category_id')->constrained('stock_categories');  
+            $table->foreignId('child_category_id')->constrained('child_categories'); 
+            $table->string('series');
             $table->date('expected_date')->nullable();
             $table->foreignId('assigned_to')->constrained('users');  
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

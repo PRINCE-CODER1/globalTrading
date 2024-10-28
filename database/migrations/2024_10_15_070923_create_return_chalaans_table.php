@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('remarks', function (Blueprint $table) {
+        Schema::create('return_chalaans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lead_id')->constrained('leads')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->text('remark');
-            $table->string('image');
+            $table->foreignId('external_chalaan_id')->constrained('external_chalaans')->onDelete('cascade');
+            $table->string('return_reference_id');
+            $table->foreignId('returned_by')->constrained('users')->onDelete('cascade'); 
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('remarks');
+        Schema::dropIfExists('return_chalaans');
     }
 };

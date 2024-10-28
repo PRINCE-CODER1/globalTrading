@@ -27,7 +27,7 @@ class ExternalChalaan extends Model
     }
     public function product()
     {
-        return $this->hasMany(ExternalChalaanProduct::class);
+        return $this->hasManyThrough(Product::class, ExternalChalaanProduct::class, 'external_chalaan_id', 'id', 'id', 'product_id');
     }
     public function branch()
     {
@@ -40,6 +40,11 @@ class ExternalChalaan extends Model
     public function createdby()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function returnChalaans()
+    {
+        return $this->hasMany(ReturnChalaan::class, 'external_chalaan_id');
     }
 
 }

@@ -13,8 +13,8 @@ use App\Models\Branch;
 use App\Models\Product;
 use App\Models\SaleOrder;
 use App\Models\MasterNumbering;
+use App\Models\Stock; // Assuming Stock model is defined
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SaleOrderForm extends Component
 {
@@ -62,7 +62,7 @@ class SaleOrderForm extends Component
         $this->segments = Segment::all();
         $this->leadSources = LeadSource::all();
         $this->branches = Branch::all();
-        $this->productsList = Product::all(); // Initialize with all products
+        $this->productsList = Product::all(); 
         $this->products[] = $this->createEmptyProduct();
         $this->generateSaleOrderNo();
     }
@@ -75,18 +75,25 @@ class SaleOrderForm extends Component
     public function updatedOrderBranchId($branchId)
     {
         $this->godowns = Godown::where('branch_id', $branchId)->get();
-        $this->productsList = Product::where('branch_id', $branchId)->get();
+
+        // Fetch products based on stock availability in the selected branch
+        $this->productsList = Product::whereHas('stock', function ($query) use ($branchId) {
+            $query->where('branch_id', $branchId);
+        })->get();
+
+        // Reset delivery branch and products for fresh data
         $this->reset('delivery_branch_id');
         $this->reset('products');
     }
 
     public function updatedDeliveryBranchId($godownId)
     {
-        $godown = Godown::find($godownId);
-        if ($godown) {
-            $this->productsList = $godown->products;
-            $this->calculateNetAmount();
-        }
+        $this->productsList = Product::whereHas('stock', function ($query) use ($godownId) {
+            $query->where('godown_id', $godownId);
+        })->get();
+
+        // Recalculate net amount based on the selected godown
+        $this->calculateNetAmount();
     }
 
     public function addProduct()
@@ -112,10 +119,10 @@ class SaleOrderForm extends Component
         $this->validate();
 
         DB::transaction(function () {
-            // Generate the new Sale Order Number
+            // Generate new sale order number
             $this->generateSaleOrderNo();
 
-            // Create the new Sale Order
+            // Create new sale order
             $saleOrder = SaleOrder::create([
                 'sale_order_no' => $this->saleOrderNo,
                 'date' => $this->date,
@@ -129,7 +136,7 @@ class SaleOrderForm extends Component
                 'user_id' => auth()->id(),
             ]);
 
-            // Attach products to the Sale Order
+            // Attach products to sale order
             foreach ($this->products as $product) {
                 $saleOrder->products()->updateOrCreate(
                     ['product_id' => $product['product_id']],
@@ -138,14 +145,11 @@ class SaleOrderForm extends Component
                         'quantity' => $product['quantity'],
                         'price' => $product['price'],
                         'discount' => $product['discount'],
-                        'subtotal' => $product['subtotal'],
+                        'sub_total' => $product['subtotal'], // Use subtotal key
                         'user_id' => auth()->id(),
                     ]
                 );
             }
-
-            // Ensure transaction consistency
-            DB::commit();
         });
 
         session()->flash('message', 'Sale Order created successfully.');
@@ -169,7 +173,7 @@ class SaleOrderForm extends Component
     {
         $this->netAmount = 0;
 
-        foreach ($this->products as &$product) { // Use reference to modify the array
+        foreach ($this->products as &$product) {
             $quantity = is_numeric($product['quantity']) ? (float) $product['quantity'] : 0;
             $price = is_numeric($product['price']) ? (float) $product['price'] : 0;
             $discount = is_numeric($product['discount']) ? (float) $product['discount'] : 0;
@@ -185,17 +189,17 @@ class SaleOrderForm extends Component
 
     public function generateSaleOrderNo()
     {
-        // Fetch the latest MasterNumbering record
+        // Fetch latest MasterNumbering record
         $masterNumbering = MasterNumbering::first();
         if (!$masterNumbering) {
             session()->flash('error', 'Master numbering not found.');
             return;
         }
 
-        // Extract the format from MasterNumbering
+        // Extract format from MasterNumbering
         $format = $masterNumbering->sale_order_format;
 
-        // Extract prefix, numeric part, and suffix from the format
+        // Extract prefix, numeric part, and suffix
         preg_match('/^(.+)\/(\d{3})\/(.+)$/', $format, $matches);
         if (!$matches) {
             session()->flash('error', 'Invalid format in MasterNumbering.');
@@ -206,25 +210,25 @@ class SaleOrderForm extends Component
         $currentNumber = intval($matches[2]);
         $suffix = $matches[3];
 
-        // Fetch the latest sale order number from the database
+        // Fetch latest sale order number
         $lastSaleOrder = SaleOrder::orderBy('created_at', 'desc')->first();
-        $newNumber = $currentNumber; // Default to current number if no previous order
+        $newNumber = $currentNumber;
 
-        // Extract the numeric part from the latest sale order number if it exists
+        // Increment number if there’s a previous order
         if ($lastSaleOrder) {
             preg_match('/\/(\d{3})\//', $lastSaleOrder->sale_order_no, $lastMatches);
             if ($lastMatches) {
-                $newNumber = intval($lastMatches[1]) + 1; // Increment the number
+                $newNumber = intval($lastMatches[1]) + 1;
             }
         }
 
-        // Ensure the number is zero-padded
+        // Zero-pad new number
         $newNumber = str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 
         // Generate new sale order number
         $this->saleOrderNo = sprintf("%s/%s/%s", $prefix, $newNumber, $suffix);
 
-        // Update MasterNumbering with the new number
+        // Update MasterNumbering
         $masterNumbering->update([
             'sale_order_format' => sprintf("%s/%s/%s", $prefix, $newNumber, $suffix),
         ]);

@@ -45,89 +45,17 @@ class PurchaseForm extends Component
         $this->products = Product::all();
         $this->godowns = Godown::all();
         $this->purchaseOrders = [];
-        $this->items[] = [
-            'product_id' => null,
-            'quantity' => null,
-            'price' => null,
-            'discount' => null,
-            'godown_id' => null,
-            'sub_total' => 0, // Default to 0
-        ];
+        
+        // Initialize items array with a default item
+        $this->items[] = $this->initializeItem();
 
         // Generate the Purchase Order No
         $this->generatePurchaseOrderNo();
     }
 
-    public function generatePurchaseOrderNo()
+    private function initializeItem()
     {
-        // Fetch the latest MasterNumbering record
-        $masterNumbering = MasterNumbering::first();
-        if (!$masterNumbering) {
-            return redirect()->back()->withErrors(['error' => 'Master numbering not found.']);
-        }
-
-        // Extract the format from MasterNumbering
-        $format = $masterNumbering->purchase_format;
-
-        // Fetch the latest purchase order number from the database
-        $latestOrder = Purchase::latest('created_at')->first();
-        $currentNumber = 0;
-
-        // Extract the numeric part from the latest purchase order number if it exists
-        if ($latestOrder) {
-            preg_match('/(\d{3})/', $latestOrder->purchase_no, $matches);
-            $currentNumber = isset($matches[0]) ? intval($matches[0]) : 0;
-        }
-
-        // If no previous orders exist, start from 001
-        $newNumber = $currentNumber > 0 ? str_pad($currentNumber + 1, 3, '0', STR_PAD_LEFT) : '001';
-
-        // Generate new format
-        $this->purchaseOrderNo = preg_replace('/\d{3}/', $newNumber, $format);
-    }
-
-
-    public function updatedSupplierId($supplierId)
-    {
-        $this->purchaseOrders = PurchaseOrder::where('supplier_id', $supplierId)->get();
-        // Reset the purchase order if it's not valid anymore
-        if ($this->purchase_order_id && !$this->purchaseOrders->contains('id', $this->purchase_order_id)) {
-            $this->purchase_order_id = null;
-        }
-    }
-
-    public function updated($attribute)
-    {
-        if (str_starts_with($attribute, 'items.')) {
-            // Extract the index from the attribute name
-            $index = explode('.', $attribute)[1];
-            // Update sub-total for the affected item
-            $this->updateSubTotal($index);
-        }
-    }
-
-    public function updateSubTotal($index)
-    {
-        $item = &$this->items[$index];
-
-        // Ensure all values are treated as floats for accurate calculations
-        $quantity = floatval($item['quantity'] ?? 0);
-        $price = floatval($item['price'] ?? 0);
-        $discountPercentage = floatval($item['discount'] ?? 0);
-
-        // Calculate the subtotal before applying the discount
-        $subTotalBeforeDiscount = $quantity * $price;
-
-        // Calculate the discount amount based on percentage
-        $discountAmount = ($discountPercentage / 100) * $subTotalBeforeDiscount;
-
-        // Calculate the final subtotal after applying the discount
-        $item['sub_total'] = $subTotalBeforeDiscount - $discountAmount;
-    }
-
-    public function addItem()
-    {
-        $this->items[] = [
+        return [
             'product_id' => null,
             'quantity' => null,
             'price' => null,
@@ -137,10 +65,63 @@ class PurchaseForm extends Component
         ];
     }
 
+    public function generatePurchaseOrderNo()
+    {
+        $masterNumbering = MasterNumbering::first();
+        if (!$masterNumbering) {
+            return redirect()->back()->withErrors(['error' => 'Master numbering not found.']);
+        }
+
+        $format = $masterNumbering->purchase_format;
+        $latestOrder = Purchase::latest('created_at')->first();
+        $currentNumber = 0;
+
+        if ($latestOrder) {
+            preg_match('/(\d{3})/', $latestOrder->purchase_no, $matches);
+            $currentNumber = isset($matches[0]) ? intval($matches[0]) : 0;
+        }
+
+        $newNumber = $currentNumber > 0 ? str_pad($currentNumber + 1, 3, '0', STR_PAD_LEFT) : '001';
+        $this->purchaseOrderNo = preg_replace('/\d{3}/', $newNumber, $format);
+    }
+
+    public function updatedSupplierId($supplierId)
+    {
+        $this->purchaseOrders = PurchaseOrder::where('supplier_id', $supplierId)->get();
+        if ($this->purchase_order_id && !$this->purchaseOrders->contains('id', $this->purchase_order_id)) {
+            $this->purchase_order_id = null;
+        }
+    }
+
+    public function updated($attribute)
+    {
+        if (str_starts_with($attribute, 'items.')) {
+            $index = explode('.', $attribute)[1];
+            $this->updateSubTotal($index);
+        }
+    }
+
+    public function updateSubTotal($index)
+    {
+        $item = &$this->items[$index];
+        $quantity = floatval($item['quantity'] ?? 0);
+        $price = floatval($item['price'] ?? 0);
+        $discountPercentage = floatval($item['discount'] ?? 0);
+
+        $subTotalBeforeDiscount = $quantity * $price;
+        $discountAmount = ($discountPercentage / 100) * $subTotalBeforeDiscount;
+        $item['sub_total'] = $subTotalBeforeDiscount - $discountAmount;
+    }
+
+    public function addItem()
+    {
+        $this->items[] = $this->initializeItem();
+    }
+
     public function removeItem($index)
     {
         unset($this->items[$index]);
-        $this->items = array_values($this->items);
+        $this->items = array_values($this->items); // Re-index the array
     }
 
     public function save()
@@ -167,7 +148,6 @@ class PurchaseForm extends Component
             'items.*.sub_total' => 'nullable|numeric|min:0',
         ]);
 
-        // Create the purchase record
         $purchase = Purchase::create([
             'purchase_no' => $this->purchaseOrderNo,
             'supplier_id' => $this->supplier_id,
@@ -190,34 +170,36 @@ class PurchaseForm extends Component
             $item['user_id'] = Auth::id();
             $purchase->items()->create($item);
 
-            // Update the product's opening stock
+            // Update the product's stock in the specific godown
             $product = Product::find($item['product_id']);
             if ($product) {
-                $product->increment('opening_stock', $item['quantity']);
+                // Update the stock based on godown_id
+                $product->stock()->where('godown_id', $item['godown_id'])->increment('opening_stock', $item['quantity']);
             }
         }
 
         // Update MasterNumbering with new number
+        $this->updateMasterNumbering();
+
+        toastr()->closeButton(true)->success('Created successfully.');
+        return redirect()->route('purchase.index');
+    }
+
+    private function updateMasterNumbering()
+    {
         $masterNumbering = MasterNumbering::first();
         if ($masterNumbering) {
             $currentFormat = $masterNumbering->purchase_format;
 
-            // Extract the prefix, numeric part, and suffix
             preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches);
             $prefix = $matches[1];
             $number = isset($matches[2]) ? (int)$matches[2] : 0;
             $suffix = $matches[3] ?? '';
 
-            // Increment the number
             $newNumber = $number + 1;
-
-            // Create the new format
             $newFormat = sprintf("%s/%03d/%s", $prefix, $newNumber, $suffix);
             $masterNumbering->update(['purchase_format' => $newFormat]);
         }
-
-        toastr()->closeButton(true)->success('Created successfully.');
-        return redirect()->route('purchase.index');
     }
 
     public function render()

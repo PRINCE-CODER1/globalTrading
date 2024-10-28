@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,10 +17,13 @@ class Lead extends Model
         'lead_source_id',
         'segment_id',
         'sub_segment_id',
+        'category_id',
+        'child_category_id',
+        'series',
         'remarks',
         'expected_date',
         'assigned_to',
-        'user_id',
+        'user_id', 
     ];
 
     // Relationships
@@ -37,6 +41,14 @@ class Lead extends Model
     {
         return $this->belongsTo(Segment::class, 'sub_segment_id');
     }
+    public function category()
+    {
+        return $this->belongsTo(StockCategory::class);
+    }
+    public function series()
+    {
+        return $this->belongsTo(Series::class, 'series');
+    }
 
     public function leadStatus()
     {
@@ -52,15 +64,17 @@ class Lead extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
+
     public function assignedAgentTeams()
     {
         // Retrieve teams assigned to the agent
         return $this->assignedAgent ? $this->assignedAgent->teams : collect(); // Return an empty collection if no agent is assigned
     }
+
     public function managerTeams()
     {
         // Fetch the teams associated with the creator (manager) of the lead
-        return $this->creator->teams; // Ensure this returns the actual teams
+        return $this->creator->teams(); // Use () to call the relationship method
     }
 
     public function remarks()
@@ -79,4 +93,3 @@ class Lead extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 }
-

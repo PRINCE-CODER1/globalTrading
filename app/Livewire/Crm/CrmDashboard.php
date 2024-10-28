@@ -23,87 +23,103 @@ class CrmDashboard extends Component
     public $sortDir = 'desc';
     public $perPage = 10;
 
+    // Listen for filter changes and reset the pagination
+    protected $updatesQueryString = ['search', 'statusFilter', 'teamFilter', 'sortBy', 'sortDir', 'perPage'];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingTeamFilter()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        // Fetch all teams (Admins can see all)
-        $teams = Team::with('members')->get();
-        $teamMemberIds = $teams->pluck('members.*.id')->flatten()->toArray();
 
-        // Total leads for all agents in the system (global view)
+        $teams = Team::all();
+        // Total teams for admin view
+        $totalTeams = Team::count();
+
+        // Total leads for global view
         $totalLeads = Lead::count();
 
-        // Total leads created in the current month (Admin-level statistics)
+        // Leads created this month
         $currentLeads = Lead::whereBetween('created_at', [now()->startOfMonth(), now()])->count();
 
-        // Leads from the previous month for comparison
+        // Leads from the previous month
         $previousLeads = Lead::whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->count();
 
-        // Calculate the percentage change in leads between the current and previous month
+        // Calculate percentage change in leads
         $percentageChange = $previousLeads > 0 ? (($currentLeads - $previousLeads) / $previousLeads) * 100 : 0;
 
-        // Fetch all leads (for admins, this shows all leads)
+        // Fetch leads with filters and search
         $leads = Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
-            ->when($this->teamFilter, function($query) {
+            ->when($this->teamFilter, function ($query) {
                 $query->whereHas('assignedAgent.teams', function ($q) {
                     $q->where('name', 'like', '%' . $this->teamFilter . '%');
                 });
             })
-            ->when($this->statusFilter, function($query) {
+            ->when($this->statusFilter, function ($query) {
                 $query->whereHas('leadStatus', function ($q) {
                     $q->where('name', $this->statusFilter);
                 });
             })
-            ->where(function($query) {
+            ->when($this->search, function ($query) {
                 $query->whereHas('customer', function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%');
                 });
             })
-            
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        // Fetch recent lead logs for all agents
+        // Recent lead logs
         $leadLogs = LeadLog::with(['lead', 'fromUser', 'toUser'])
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
 
-        // Fetch all lead statuses for filtering
+        // Lead status filtering options
         $statuses = LeadStatus::all();
 
-        // Count open leads (new + in progress) globally
-        $openLeads = Lead::whereIn('lead_status_id', function ($query) {
-            $query->select('id')
-                ->from('lead_statuses')
-                ->whereIn('name', ['new', 'in progress']);
-        })->count();
+        // Count open leads globally (new + in progress)
+        $openLeads = Lead::whereIn('lead_status_id', LeadStatus::whereIn('name', ['new', 'in progress'])->pluck('id'))->count();
 
-        // Count closed leads (completed + lost) globally
-        $closedLeads = Lead::whereIn('lead_status_id', function ($query) {
-            $query->select('id')
-                ->from('lead_statuses')
-                ->whereIn('name', ['completed', 'lost']);
-        })->count();
+        // Count closed leads globally (completed + lost)
+        $closedLeads = Lead::whereIn('lead_status_id', LeadStatus::whereIn('name', ['completed', 'lost'])->pluck('id'))->count();
 
-        // Leads created per day globally for charting
+        // Leads created per day for the last 30 days
         $leadsPerDay = Lead::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
             ->where('created_at', '>=', now()->subDays(30))
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get();
 
-            $leadStatusCounts = Lead::select('lead_status_id', DB::raw('count(*) as count'))
+        // Lead status counts
+        $leadStatusCounts = Lead::select('lead_status_id', DB::raw('count(*) as count'))
             ->groupBy('lead_status_id')
             ->pluck('count', 'lead_status_id');
+
+        // Fetch users (agents)
         $users = User::with(['leads', 'teams'])->get();
 
-        // Fetch all remarks for the dashboard
-        $remarks = Remark::with('user', 'lead')->orderBy('created_at', 'desc')->take(10)->get();
+        // Fetch recent remarks
+        $remarks = Remark::with('user', 'lead')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
 
-        return view('livewire.crm.crm-dashboard', compact(
-            'leadsPerDay', 'openLeads', 'closedLeads', 'leads','users', 
-            'leadLogs', 'teams','leadStatusCounts', 'statuses', 'totalLeads', 
-            'currentLeads', 'percentageChange','remarks'
+        return view('livewire.crm.crm-dashboard', compact('teams','totalTeams',
+            'leadsPerDay', 'openLeads', 'closedLeads', 'leads', 'users', 
+            'leadLogs', 'statuses', 'totalLeads', 'currentLeads', 
+            'percentageChange', 'remarks', 'leadStatusCounts'
         ));
     }
 

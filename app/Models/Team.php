@@ -23,13 +23,4 @@ class Team extends Model
         return $this->belongsTo(User::class, 'creator_id');
     }
 
-    public function members()
-    {
-        return $this->belongsToMany(User::class,'user_team');
-    }
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'user_team');
-    }
-
 }

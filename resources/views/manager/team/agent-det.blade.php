@@ -11,7 +11,7 @@
     <hr>
 </div>
 <div class="container">
-    <h2 class="fw-bold">Leads for : <span class="text-secondary">{{ $user->name }}</span></h2>
+    <h2 class="fw-bold">Leads for : <span class="text-secondary">{{ $agent->name }}</span></h2>
 </div>
 <div class="container">
     <div class="row justify-content-center">

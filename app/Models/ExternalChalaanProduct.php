@@ -15,6 +15,7 @@ class ExternalChalaanProduct extends Model
         'branch_id',
         'godown_id',
         'quantity',
+        'edit_quantity'
     ];
 
     public function externalChalaan()

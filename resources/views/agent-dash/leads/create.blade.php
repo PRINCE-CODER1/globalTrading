@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-2">
+        <div class="col-12 mt-1 d-flex align-items-center justify-content-between mb-2">
             <h4 class="mb-0">Create Lead </h4>
             <a href="{{ route('agent.leads.index') }}" class="btn btn-secondary btn-wave float-end">
                 <i class="bi bi-arrow-left me-1"></i> Back
@@ -31,7 +31,7 @@
 </div>
 <div class="container">
     <div class="row d-flex justify-content-center">
-        <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
+        <div class="col-12 mb-5 mt-3 bg-white p-2 shadow">
             @livewire('crm.lead-create')
         </div>
     </div>

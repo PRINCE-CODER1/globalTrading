@@ -19,10 +19,6 @@ class Product extends Model
         'hsn_code',
         'price',
         'product_code',
-        'opening_stock',
-        'reorder_stock',
-        'branch_id',
-        'godown_id',
         'unit_id',
         'user_id',
         'modified_by',
@@ -48,16 +44,6 @@ class Product extends Model
         return $this->belongsTo(ChildCategory::class, 'child_category_id');
     }
 
-    public function branch()
-    {
-        return $this->belongsTo(Branch::class);
-    }
-
-    public function godown()
-    {
-        return $this->belongsTo(Godown::class, 'godown_id');
-    }
-
     public function unit()
     {
         return $this->belongsTo(UnitOfMeasurement::class, 'unit_id');
@@ -79,5 +65,9 @@ class Product extends Model
     public function internalChalaanProducts()
     {
         return $this->hasMany(InternalChalaanProduct::class);
+    }
+    public function stock()
+    {
+        return $this->hasOne(Stock::class);
     }
 }

@@ -36,6 +36,7 @@ use App\Http\Controllers\CrmController;
 use App\Http\Controllers\ChalaanController;
 use App\Http\Controllers\ExternalChalaanController;
 use App\Http\Controllers\InternalChalaanController;
+use App\Http\Controllers\ReturnChalaanController;
 
 
 // Agent Controller 
@@ -85,22 +86,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Manager-specific routes
-    Route::middleware(['auth','role:Manager'])->group(function () {
+    Route::middleware(['auth', 'role:Manager|Super Admin'])->group(function () {
         Route::get('/manager/dashboard', [ManagerController::class, 'index'])->name('manager.dashboard');
         
+        // Show leads created by managers
+        Route::get('/managers/{managerId}/leads', [ManagerController::class, 'showManagerLeads'])
+            ->name('managers.leads'); // Ensure the user is a 'Manager'
+        
+        // Nested manager routes
         Route::prefix('manager')->group(function () {
-            Route::resource('teams', ManagerTeamController::class)
-                ->except(['show']);
+            Route::resource('teams', ManagerTeamController::class)->except(['show']);
             
-        // Manager can manage leads just like agents
-        Route::get('teams/{team}/assign-agents', [ManagerTeamController::class, 'showAssignForm'])
-            ->name('manager.teams.show-assign-form');
-            // Handle POST request to assign agents
+            Route::get('teams/{team}/assign-agents', [ManagerTeamController::class, 'showAssignForm'])
+                ->name('manager.teams.show-assign-form');
+            // Route::get('leads', [ManagerTeamController::class, 'showManagerLeads'])
+            //     ->name('manager.leads');
             Route::post('teams/{team}/assign-agents', [ManagerTeamController::class, 'assignAgents'])
-            ->name('manager.teams.assign-agents');
-            // Route to view leads for a specific agent
-            Route::get('/agents/{userId}/leads', [ManagerController::class, 'showLeads'])->name('agents.leads');        });
+                ->name('manager.teams.assign-agents');
+    
+            // Manager viewing agent leads
+            Route::get('/agents/{userId}/leads', [ManagerController::class, 'showLeads'])
+                ->name('agents.leads');
+        });
     });
+    
 
     // Lead Management Routes
     Route::middleware(['auth','role:Manager|Agent|Super Admin'])->group(function () {
@@ -146,6 +155,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('chalaan', ChalaanController::class);
     Route::resource('challan/external', ExternalChalaanController::class);
     Route::resource('challan/internal', InternalChalaanController::class);
+    Route::resource('return-chalaan', ReturnChalaanController::class);
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

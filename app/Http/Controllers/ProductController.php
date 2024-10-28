@@ -10,6 +10,7 @@ use App\Models\Godown;
 use App\Models\Series;
 use App\Models\Tax;
 use App\Models\UnitOfMeasurement;
+use App\Models\Stock; // Add Stock model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,13 +21,13 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('series')->get();
-        return view('website.master.products.list',compact('products'));
+        $products = Product::with('series', 'stock')->get(); // Load stock relationship
+        return view('website.master.products.list', compact('products'));
     }
 
     /**
      * Show the form for creating a new resource.
-    */
+     */
     public function create(Request $request)
     {
         $childcategories = [];
@@ -34,14 +35,24 @@ class ProductController extends Controller
             $categoryId = $request->input('product_category_id');
             $childcategories = ChildCategory::where('parent_category_id', $categoryId)->get();
         }
+
+        // Fetch all necessary data
         $categories = StockCategory::all();
-        $childcategories = ChildCategory::all();
         $branches = Branch::all();
         $godowns = Godown::all();
         $units = UnitOfMeasurement::all();
         $series = Series::all();
-        $tax = Tax::all();
-        return view('website.master.products.create', compact('childcategories','categories','childcategories', 'branches', 'godowns', 'units','series','tax'));
+        $taxes = Tax::all(); // Corrected from tax to taxes (plural)
+
+        return view('website.master.products.create', compact(
+            'childcategories',
+            'categories',
+            'branches',
+            'godowns',
+            'units',
+            'series',
+            'taxes' // Correct variable name here
+        ));
     }
 
     /**
@@ -49,7 +60,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Validate product-related fields
+        $validatedProduct = $request->validate([
             'product_name' => 'required|string|max:255',
             'product_description' => 'nullable|string',
             'product_category_id' => 'required|exists:stock_categories,id',
@@ -58,24 +70,36 @@ class ProductController extends Controller
             'hsn_code' => 'required|string|max:255',
             'price' => 'required|numeric',
             'product_code' => 'required|string|max:255|unique:products',
-            'opening_stock' => 'required|integer',
-            'reorder_stock' => 'required|integer',
-            'branch_id' => 'required|exists:branches,id',
-            'godown_id' => 'required|exists:godowns,id',
             'unit_id' => 'required|exists:unit_of_measurements,id',
             'series_id' => 'nullable|exists:series,id',
             'received_at' => 'nullable|date',
         ]);
 
-        $validated['user_id'] = Auth::id();
-        $validated['received_at'] = $request->input('received_at') ?? now();
+        // Add current user ID and received date if not provided
+        $validatedProduct['user_id'] = Auth::id();
+        $validatedProduct['received_at'] = $request->input('received_at') ?? now();
 
-        Product::create($validated);
+        // Create the product
+        $product = Product::create($validatedProduct);
+
+        // Validate stock-related fields
+        $validatedStock = $request->validate([
+            'opening_stock' => 'required|integer|min:0',
+            'reorder_stock' => 'required|integer|min:0',
+            'branch_id' => 'required|exists:branches,id',
+            'godown_id' => 'required|exists:godowns,id',
+        ]);
+
+        // Create stock entry for the product
+        $validatedStock['product_id'] = $product->id;
+        Stock::create($validatedStock); // Use Stock model to create stock
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
-
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(Product $product)
     {
         // Fetch all necessary data
@@ -87,6 +111,9 @@ class ProductController extends Controller
         $series = Series::all();
         $taxes = Tax::all();
 
+        // Fetch the stock data for this product
+        $stock = $product->stock; // Ensure stock is loaded for this product
+
         return view('website.master.products.edit', compact(
             'product',
             'categories',
@@ -95,17 +122,18 @@ class ProductController extends Controller
             'godowns',
             'units',
             'series',
-            'taxes'
+            'taxes',
+            'stock'
         ));
     }
-
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
+        // Validate product-related fields
+        $validatedProduct = $request->validate([
             'product_name' => 'required|string|max:255',
             'product_description' => 'nullable|string',
             'product_category_id' => 'required|exists:stock_categories,id',
@@ -114,21 +142,34 @@ class ProductController extends Controller
             'hsn_code' => 'required|string|max:255',
             'price' => 'required|numeric',
             'product_code' => 'required|string|max:255|unique:products,product_code,' . $product->id,
-            'opening_stock' => 'required|integer',
-            'reorder_stock' => 'required|integer',
-            'branch_id' => 'required|exists:branches,id',
-            'godown_id' => 'required|exists:godowns,id',
             'unit_id' => 'required|exists:unit_of_measurements,id',
             'series_id' => 'nullable|exists:series,id',
             'received_at' => 'nullable|date',
         ]);
 
-        $validated['modified_by'] = Auth::id();
-        $validated['received_at'] = $request->input('received_at') ?? $product->received_at;
+        // Add the ID of the user making the update
+        $validatedProduct['modified_by'] = Auth::id();
+        $validatedProduct['received_at'] = $request->input('received_at') ?? $product->received_at;
 
-        $product->update($validated);
+        // Update the product
+        $product->update($validatedProduct);
+
+        // Validate stock-related fields
+        $validatedStock = $request->validate([
+            'opening_stock' => 'required|integer|min:0',
+            'reorder_stock' => 'required|integer|min:0',
+            'branch_id' => 'required|exists:branches,id',
+            'godown_id' => 'required|exists:godowns,id',
+        ]);
+
+        // Update stock entry
+        if ($product->stock) {
+            $product->stock()->update($validatedStock);  // Assuming you have a stock relationship in Product model
+        } else {
+            $validatedStock['product_id'] = $product->id;
+            Stock::create($validatedStock); // Create stock if it doesn't exist
+        }
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }
-
 }

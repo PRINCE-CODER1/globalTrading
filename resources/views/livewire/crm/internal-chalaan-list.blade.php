@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
-                <h4>Create Iternal Chalaan</h4>
+                <h4>Create Internal Chalaan</h4>
                 <a href="{{ route('internal.create') }}" class="btn btn-secondary btn-wave float-end"><i class="ri-add-circle-line"></i> Create Chalaan</a>
             </div>
         </div>
@@ -11,7 +11,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Per Page: 
+                        Per Page: {{ $perPage }}
                     </button>
                     <ul class="dropdown-menu">
                         @foreach ([2, 5, 10, 20] as $size)
@@ -39,40 +39,28 @@
                                             <input type="checkbox" wire:model.live="selectAll">
                                         </th>
                                         <th>Reference ID</th>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
                                         <th>Chalaan Type</th>
-                                        <th>Branch</th>
-                                        <th>Godown</th>
-                                        <th>Customer</th>
-                                        <th>Created By</th>
-                                        <th>Created On</th>
+                                        <th>From Branch</th>
+                                        <th>To Branch</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- @forelse ($externalChalaans as $chalaan)
-                                        @foreach ($chalaan->chalaanProducts as $productData)
+                                    @forelse($internalChalaans as $chalaan)
                                         <tr>
                                             <td>
-                                                <input type="checkbox" wire:model.live="selectedExternalChalaan" value="{{ $chalaan->id }}">
+                                                <input type="checkbox" wire:model.live="selectedInternalChalaan" value="{{ $chalaan->id }}">
                                             </td>
                                             <td>{{ $chalaan->reference_id }}</td>
-                                            <td>{{ $productData->product->product_name ?? 'N/A' }}</td>
-                                            <td>{{ $productData->quantity }}</td>
-                                            <td><span class="badge bg-secondary">{{ $chalaan->chalaanType->name  ?? 'N/A'}}</span></td>
-                                            <td>{{ $productData->branch->name ?? 'N/A' }}</td>
-                                            <td>{{ $productData->godown->godown_name ?? 'N/A' }}</td>
-                                            <td>{{ $chalaan->customer->name ?? 'N/A' }}</td>
-                                            <td>{{ $chalaan->createdby->name ?? 'N/A' }}</td>
-                                            <td>{{ $chalaan->created_at->format('Y-m-d H:i') }}</td>
+                                            <td><span class="badge bg-secondary">{{ $chalaan->chalaanType->name }}</span></td>
+                                            <td>{{ $chalaan->fromBranch->name }}</td>
+                                            <td>{{ $chalaan->toBranch->name }}</td>
                                             <td>
-                                                <a href="{{ route('external.edit', $chalaan->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>
-                                                <button class="btn btn-link text-danger fs-14 lh-1 p-0" 
+                                                <a href="{{ route('internal.edit', $chalaan->id) }}" class="btn btn-sm text-info"><i class="ri-edit-line"></i> Edit</a>
+                                                <button wire:click="confirmDelete({{ $chalaan->id }})"class="btn btn-sm btn-danger " 
                                                     data-bs-toggle="modal" 
-                                                    data-bs-target="#deleteSegmentModal" 
-                                                    wire:click="confirmDelete({{ $chalaan->id }})">
-                                                    <i class="ri-delete-bin-5-line"></i>
+                                                    data-bs-target="#deleteSegmentModal" >
+                                                    <i class="ri-delete-bin-line"></i> Delete
                                                 </button>
                                                 <!-- Delete Confirmation Modal -->
                                                 <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="deleteSegmentModal" tabindex="-1" aria-labelledby="deleteSegmentModalLabel" aria-hidden="true">
@@ -94,22 +82,25 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        @endforeach
                                         @empty
                                         <tr>
-                                            <td colspan="10" class="text-center">No External Chalaan found.</td>
+                                            <td class="text-center" colspan="8">
+                                                No records found
+                                            </td>
                                         </tr>
-                                    @endforelse --}}
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
                         <div class="mt-3">
-                            {{-- {{ $externalChalaans->links('custom-pagination-links') }} --}}
+                            {{ $internalChalaans->links('custom-pagination-links') }}
                         </div>
                         <div class="mt-2">
-                            {{-- @if($selectedExternalChalaan)
-                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal">Delete</button>
-                                <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
+                            @if($selectedInternalChalaan)
+                                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bulkDeleteConfirmationModal">Delete Selected</button>
+                                
+                                <!-- Bulk Delete Confirmation Modal -->
+                                <div wire:ignore.self class="modal fade" id="bulkDeleteConfirmationModal" tabindex="-1" aria-labelledby="bulkDeleteConfirmationModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -117,16 +108,16 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Are you sure you want to delete the selected external Chalaan?
+                                                Are you sure you want to delete the selected Internal Chalaans?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="button" class="btn btn-danger" wire:click="bulkDelete">Confirm Delete</button>
+                                                <button type="button" class="btn btn-danger" wire:click="bulkDelete" data-bs-dismiss="modal">Confirm Delete</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            @endif --}}
+                            @endif
                         </div>
                     </div> 
                 </div>

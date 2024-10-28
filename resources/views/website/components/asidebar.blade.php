@@ -302,7 +302,7 @@
                             <a href="{{ route('external.index') }}" class="side-menu__item">External Chalaan</a>
                         </li>
                         <li class="slide">
-                            <a href="{{ route('chalaan.index') }}" class="side-menu__item">Return Chalaan</a>
+                            <a href="{{ route('return-chalaan.index') }}" class="side-menu__item">Return Chalaan</a>
                         </li>
                     </ul>
                 </li>

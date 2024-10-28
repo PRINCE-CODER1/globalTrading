@@ -12,7 +12,9 @@ class ManagerTeamController extends Controller
     // Display a list of teams
     public function index()
     {
-        $teams = Team::where('id', auth()->id())->get();
+        $teams = Team::with('agents')->where('creator_id', auth()->id())->get();
+
+
         return view('manager.team.list', compact('teams'));
     }
 
@@ -68,9 +70,11 @@ class ManagerTeamController extends Controller
     public function showAssignForm(Team $team)
     {
         $agents = User::whereHas('roles', function ($query) {
-            $query->where('name', 'Agent'); 
+            $query->where('name', 'Agent');
         })->get();
-    
+        
+        $team->load('agents'); // Eager load agents for the team
+        
         return view('manager.team.assign-agents', compact('team', 'agents'));
     }
 
@@ -87,11 +91,19 @@ class ManagerTeamController extends Controller
         DB::transaction(function () use ($team, $agentsToAssign) {
             // Detach agents from the team only if they are currently assigned to it
             $team->agents()->detach();
-
             // Assign the selected agents to the team
             $team->agents()->sync($agentsToAssign);
         });
 
         return redirect()->route('teams.index')->with('success', 'Agents assigned successfully!');
     }
+    // public function showManagerLeads()
+    // {
+    //     // Retrieve leads created by the authenticated manager
+    //     $leads = Lead::with(['assignedAgent', 'leadStatus', 'managerTeams']) // Load necessary relationships
+    //         ->where('user_id', auth()->id()) // Only leads created by the logged-in user
+    //         ->get();
+
+    //     return view('manager.team.list', compact('leads'));
+    // }
 }

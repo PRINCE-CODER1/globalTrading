@@ -29,7 +29,7 @@ class ProductEdit extends Component
     public $reorder_stock;
     public $branch_id;
     public $godown_id;
-    public $unit_id;
+    public $unit_id; // Added unit_id for product
 
     public $categories = [];
     public $childcategories = [];
@@ -37,7 +37,7 @@ class ProductEdit extends Component
     public $taxes = [];
     public $branches = [];
     public $godowns = [];
-    public $units = [];
+    public $units = []; // Added units of measurement
 
     public function mount(Product $product)
     {
@@ -56,7 +56,7 @@ class ProductEdit extends Component
         $this->reorder_stock = $product->reorder_stock;
         $this->branch_id = $product->branch_id;
         $this->godown_id = $product->godown_id;
-        $this->unit_id = $product->unit_id;
+        $this->unit_id = $product->unit_id; // Load unit for product
 
         // Load other necessary data
         $this->categories = StockCategory::all();
@@ -64,7 +64,7 @@ class ProductEdit extends Component
         $this->series = $this->child_category_id ? Series::where('child_category_id', $this->child_category_id)->get() : [];
         $this->taxes = Tax::all();
         $this->branches = Branch::all();
-        $this->units = UnitOfMeasurement::all();
+        $this->units = UnitOfMeasurement::all(); // Load units of measurement
 
         // Load godowns based on the selected branch
         $this->updateGodowns($this->branch_id);
@@ -116,7 +116,7 @@ class ProductEdit extends Component
             'reorder_stock' => 'required|numeric',
             'branch_id' => 'required|exists:branches,id',
             'godown_id' => 'required|exists:godowns,id',
-            'unit_id' => 'required|exists:unit_of_measurements,id',
+            'unit_id' => 'required|exists:unit_of_measurements,id', // Validate unit_id
         ]);
 
         // Update product details

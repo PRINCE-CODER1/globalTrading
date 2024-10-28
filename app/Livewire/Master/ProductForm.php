@@ -26,11 +26,13 @@ class ProductForm extends Component
     public $hsn_code;
     public $price;
     public $product_code;
+
+    // Stock Management Fields
     public $opening_stock;
     public $reorder_stock;
     public $branch_id;
     public $godown_id;
-    public $unit_id;
+    public $unit_id; // Added unit_id for product
 
     public $categories = [];
     public $childcategories = [];
@@ -38,7 +40,7 @@ class ProductForm extends Component
     public $taxes = [];
     public $branches = [];
     public $godowns = [];
-    public $units = [];
+    public $units = []; // To hold units of measurement
 
     public function mount($product_id = null)
     {
@@ -54,9 +56,8 @@ class ProductForm extends Component
         $this->categories = StockCategory::all();
         $this->taxes = Tax::all();
         $this->branches = Branch::all();
-        $this->units = UnitOfMeasurement::all();
+        $this->units = UnitOfMeasurement::all(); // Load units of measurement
 
-        // Initialize empty series and godowns as default
         $this->series = [];
         $this->godowns = [];
     }
@@ -75,40 +76,44 @@ class ProductForm extends Component
         $this->hsn_code = $product->hsn_code;
         $this->price = $product->price;
         $this->product_code = $product->product_code;
-        $this->opening_stock = $product->opening_stock;
-        $this->reorder_stock = $product->reorder_stock;
-        $this->branch_id = $product->branch_id;
-        $this->godown_id = $product->godown_id;
-        $this->unit_id = $product->unit_id;
+        $this->unit_id = $product->unit_id; // Load unit for product
 
         // Update child categories and series based on the loaded product's category
         $this->childcategories = ChildCategory::where('parent_category_id', $this->product_category_id)->get();
         $this->series = Series::where('stock_category_id', $this->product_category_id)->get();
-        
-        // Update godowns based on the loaded product's branch
-        $this->updateGodowns($this->branch_id);
+
+        // Load stock information if available
+        $this->loadStockData($product_id);
+    }
+
+    private function loadStockData($product_id)
+    {
+        // Assuming Stock is a model representing stock data linked to Product
+        $stock = \App\Models\Stock::where('product_id', $product_id)->first();
+
+        if ($stock) {
+            $this->opening_stock = $stock->opening_stock;
+            $this->reorder_stock = $stock->reorder_stock;
+            $this->branch_id = $stock->branch_id;
+            $this->godown_id = $stock->godown_id;
+        }
     }
 
     public function updatedProductCategoryId($categoryId)
     {
-        // Update child categories based on selected category
         $this->childcategories = ChildCategory::where('parent_category_id', $categoryId)->get();
-
-        // Update series based on selected category
         $this->series = Series::where('stock_category_id', $categoryId)->get();
         $this->series_id = null; // Reset selected series
     }
 
     public function updatedChildCategoryId($childCategoryId)
     {
-        // Update series based on selected child category
         $this->series = Series::where('child_category_id', $childCategoryId)->get();
-        $this->series_id = null; 
+        $this->series_id = null;
     }
 
     public function updatedBranchId($branchId)
     {
-        // Update godowns based on selected branch
         $this->updateGodowns($branchId);
     }
 
@@ -120,20 +125,28 @@ class ProductForm extends Component
 
     public function submit()
     {
-        $validatedData = $this->validateData();
+        $validatedProductData = $this->validateProductData();
+        $validatedStockData = $this->validateStockData();
 
-        Product::updateOrCreate(
+        // Save or update the product
+        $product = Product::updateOrCreate(
             ['id' => $this->product_id],
-            array_merge($validatedData, ['user_id' => Auth::id()])
+            array_merge($validatedProductData, ['user_id' => Auth::id()])
+        );
+
+        // Save or update stock data
+        \App\Models\Stock::updateOrCreate(
+            ['product_id' => $product->id],
+            $validatedStockData
         );
 
         $message = $this->product_id ? 'Product updated successfully.' : 'Product created successfully.';
-        toastr()->closeButton(true)->success('Created successfully.');
+        toastr()->closeButton(true)->success($message);
 
         return redirect()->route('products.index');
     }
 
-    private function validateData()
+    private function validateProductData()
     {
         return $this->validate([
             'product_category_id' => 'required|exists:stock_categories,id',
@@ -150,11 +163,17 @@ class ProductForm extends Component
                 'max:255',
                 Rule::unique('products', 'product_code')->ignore($this->product_id),
             ],
+            'unit_id' => 'required|exists:unit_of_measurements,id', // Validate unit_id
+        ]);
+    }
+
+    private function validateStockData()
+    {
+        return $this->validate([
             'opening_stock' => 'required|numeric',
             'reorder_stock' => 'required|numeric',
             'branch_id' => 'required|exists:branches,id',
             'godown_id' => 'required|exists:godowns,id',
-            'unit_id' => 'required|exists:unit_of_measurements,id',
         ]);
     }
 

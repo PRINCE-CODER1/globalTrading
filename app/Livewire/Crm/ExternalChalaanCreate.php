@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Crm;
 
 use Livewire\Component;
@@ -7,6 +6,7 @@ use App\Models\ExternalChalaan;
 use App\Models\Product;
 use App\Models\ChallanType;
 use App\Models\Branch;
+use App\Models\Stock;
 use App\Models\Godown;
 use App\Models\CustomerSupplier;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +31,7 @@ class ExternalChalaanCreate extends Component
         'products.*.godown_id' => 'required|exists:godowns,id',
         'products.*.product_id' => 'required|exists:products,id',
         'products.*.quantity' => 'required|integer|min:1',
+        'products.*.edit_quantity' => 'required|integer|min:1', // Add validation for edit_quantity
     ];
 
     public function mount()
@@ -49,6 +50,7 @@ class ExternalChalaanCreate extends Component
             'godown_id' => null,
             'product_id' => null,
             'quantity' => null,
+            'edit_quantity' => null, 
         ];
     }
 
@@ -62,8 +64,7 @@ class ExternalChalaanCreate extends Component
     {
         // Update the godowns and available products when relevant properties change
         if (str_contains($propertyName, 'products.')) {
-            // Extract index from property name
-            preg_match('/products\.(\d+)\.(branch_id|godown_id)/', $propertyName, $matches);
+            preg_match('/products\.(\d+)\.(branch_id|godown_id|quantity|edit_quantity)/', $propertyName, $matches);
             if (isset($matches[1])) {
                 $index = (int)$matches[1]; // Cast to integer
 
@@ -75,6 +76,11 @@ class ExternalChalaanCreate extends Component
 
                 if (strpos($propertyName, 'godown_id') !== false) {
                     $this->loadProducts($index); // Load products based on the selected godown
+                }
+
+                // If quantity changes, also update edit_quantity
+                if (strpos($propertyName, 'quantity') !== false) {
+                    $this->products[$index]['edit_quantity'] = $this->products[$index]['quantity'];
                 }
             }
         }
@@ -92,9 +98,11 @@ class ExternalChalaanCreate extends Component
     public function loadProducts(int $index)
     {
         if (isset($this->products[$index]['branch_id']) && isset($this->products[$index]['godown_id'])) {
-            $this->availableProducts[$index] = Product::where('branch_id', $this->products[$index]['branch_id'])
-                ->where('godown_id', $this->products[$index]['godown_id'])
-                ->get();
+            // Get stocks for the selected branch and godown
+            $this->availableProducts[$index] = Product::whereHas('stock', function ($query) use ($index) {
+                $query->where('branch_id', $this->products[$index]['branch_id'])
+                    ->where('godown_id', $this->products[$index]['godown_id']);
+            })->get();
         } else {
             $this->availableProducts[$index] = [];
         }
@@ -103,20 +111,20 @@ class ExternalChalaanCreate extends Component
     public function create()
     {
         $this->validate();
-
+    
         // Check stock availability
         foreach ($this->products as $productData) {
-            $productStock = Product::where('id', $productData['product_id'])
+            $productStock = Stock::where('product_id', $productData['product_id'])
                 ->where('branch_id', $productData['branch_id'])
                 ->where('godown_id', $productData['godown_id'])
                 ->value('opening_stock');
-
-            if (!$productStock || $productData['quantity'] > $productStock) {
-                $this->addError('products.' . $productData['product_id'] . '.quantity', 'The quantity exceeds the available stock in the selected branch/godown.');
+    
+            if (!$productStock || $productData['edit_quantity'] > $productStock) { // Use edit_quantity for validation
+                $this->addError('products.' . $productData['product_id'] . '.edit_quantity', 'The quantity exceeds the available stock in the selected branch/godown.');
                 return;
             }
         }
-
+    
         // Create the external chalaan entry
         $chalaan = ExternalChalaan::create([
             'reference_id' => $this->reference_id,
@@ -124,30 +132,36 @@ class ExternalChalaanCreate extends Component
             'customer_id' => $this->customer_id,
             'created_by' => Auth::id(),
         ]);
-
+    
         foreach ($this->products as $productData) {
             // Use updateOrCreate to manage the associated products for the external chalaan
             $chalaan->chalaanProducts()->updateOrCreate(
-                ['product_id' => $productData['product_id'], 'branch_id' => $productData['branch_id'], 'godown_id' => $productData['godown_id']],
-                ['quantity' => $productData['quantity']]
+                [
+                'product_id' => $productData['product_id'], 
+                'branch_id' => $productData['branch_id'], 
+                'godown_id' => $productData['godown_id'],
+                'quantity' => $productData['quantity'],
+                'edit_quantity' => $productData['quantity']
+                ],
+               
             );
-
+    
             // Reduce stock from opening stock
-            $product = Product::where('id', $productData['product_id'])
+            $stock = Stock::where('product_id', $productData['product_id'])
                 ->where('branch_id', $productData['branch_id'])
                 ->where('godown_id', $productData['godown_id'])
                 ->first();
-
-            if ($product) {
-                $product->opening_stock -= $productData['quantity'];
-                $product->save();
+    
+            if ($stock) {
+                $stock->opening_stock -= $productData['edit_quantity'];
+                $stock->save();
             }
         }
+        toastr()->closeButton(true)->success('External Chalaan Created Successfully!');
 
-        session()->flash('success', 'External Chalaan Created Successfully!');
         return redirect()->route('external.index');
     }
-
+    
     public function render()
     {
         return view('livewire.crm.external-chalaan-create');

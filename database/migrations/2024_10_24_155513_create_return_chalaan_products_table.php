@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('external_chalaan_products', function (Blueprint $table) {
+        Schema::create('return_chalaan_products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('external_chalaan_id')->constrained('external_chalaans')->onDelete('cascade');
+            $table->foreignId('return_chalaan_id')->constrained('return_chalaans')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
+            $table->integer('quantity_returned');
             $table->foreignId('godown_id')->constrained('godowns')->onDelete('cascade');
-            $table->unsignedInteger('quantity');
+            $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('external_chalaan_products');
+        Schema::dropIfExists('return_chalaan_products');
     }
 };

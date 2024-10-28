@@ -115,7 +115,7 @@
                                 </span>
                             </div>
                         </div>
-                        <span class="fs-5 fw-medium">{{ count($teams) }}</span>
+                        <span class="fs-5 fw-medium">{{ $totalTeams }}</span>
                     </div>
                 </div>
             </div>
@@ -164,7 +164,11 @@
                                     @foreach ($users as $user)
                                         @if ($user->role == 'Agent')
                                             <tr>
-                                                <td>{{ $user->name }}</td>
+                                                <td>
+                                                    <a href="{{ route('agent.leads.index', $user->id) }}" class="text-decoration-none text-secondary fw-bold">
+                                                    {{ $user->name }}
+                                                    </a>
+                                                </td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->leads->count() }}</td>
                                                 <td>
@@ -211,7 +215,11 @@
                                     @foreach ($users as $user)
                                         @if ($user->role == 'Manager')
                                             <tr>
-                                                <td>{{ $user->name }}</td>
+                                                <td> 
+                                                    <a href="{{ route('managers.leads', $user->id) }}" class="text-decoration-none text-secondary fw-bold">
+                                                        {{ $user->name }}
+                                                    </a>
+                                                </td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->leads->count() }}</td>
                                             </tr>

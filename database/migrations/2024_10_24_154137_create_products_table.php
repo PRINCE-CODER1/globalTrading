@@ -16,14 +16,12 @@ return new class extends Migration
             $table->string('product_name');
             $table->text('product_description')->nullable();
             $table->foreignId('product_category_id')->constrained('stock_categories');  
+            $table->foreignId('child_category_id')->constrained('child_categories');
+            $table->foreignId('series_id')->nullable()->constrained('series')->onDelete('cascade');
             $table->decimal('tax', 8, 2)->nullable(); 
             $table->string('hsn_code');
             $table->decimal('price', 10, 2);
             $table->string('product_code')->unique();
-            $table->integer('opening_stock')->default(0);
-            $table->integer('reorder_stock')->default(0);
-            $table->foreignId('branch_id')->constrained('branches');
-            $table->foreignId('godown_id')->constrained('godowns'); 
             $table->foreignId('unit_id')->constrained('unit_of_measurements'); 
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('modified_by')->nullable()->constrained('users'); 

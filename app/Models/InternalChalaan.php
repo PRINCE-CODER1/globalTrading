@@ -29,6 +29,11 @@ class InternalChalaan extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function chalaanType()
+    {
+        return $this->belongsTo(ChallanType::class, 'chalaan_type_id');
+    }
+
     public function fromBranch()
     {
         return $this->belongsTo(Branch::class, 'from_branch_id');

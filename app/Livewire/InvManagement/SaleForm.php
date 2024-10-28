@@ -11,6 +11,7 @@ use App\Models\Godown;
 use App\Models\Product;
 use App\Models\SaleOrder;
 use App\Models\MasterNumbering;
+use App\Models\Stock;
 
 class SaleForm extends Component
 {
@@ -45,21 +46,15 @@ class SaleForm extends Component
         $this->saleOrders = [];
         $this->items[] = $this->createEmptyItem();
 
-        // Initialize Sale Order Number
         $this->initializeSaleOrderNo();
     }
 
     public function updatedBranchId($branchId)
     {
-        // Fetch products for the selected branch
-        $this->products = Product::where('branch_id', $branchId)->get();
-        
-        // Reset the items to use the filtered products
-        foreach ($this->items as &$item) {
-            if ($item['product_id'] && !$this->products->contains('id', $item['product_id'])) {
-                $item['product_id'] = null; // Reset product ID if it's no longer available
-            }
-        }
+        // Fetch products available in the selected branch
+        $this->products = Product::whereHas('stock', function($query) use ($branchId) {
+            $query->where('branch_id', $branchId);
+        })->get(); // Get products linked to the selected branch through stocks
     }
 
     public function updatedCustomerId($customerId)
@@ -116,19 +111,43 @@ class SaleForm extends Component
             // Extract the prefix, numeric part, and suffix
             preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches);
             $prefix = $matches[1] ?? 'SA';
-            $number = isset($matches[2]) ? (int)$matches[2] : 0; // Start with 0
+            $number = isset($matches[2]) ? (int)$matches[2] : 0; // This gets the last number
             $suffix = $matches[3] ?? 'GTE';
 
+            // Start from 1 instead of incrementing from 0
+            if ($number == 0) {
+                $number = 1; // Start from 1 if the number is 0
+            }
+
             // Ensure the number is zero-padded
-            $newNumberFormatted = str_pad($number + 1, 3, '0', STR_PAD_LEFT);
+            $newNumberFormatted = str_pad($number, 3, '0', STR_PAD_LEFT); // Always 3 digits
 
             // Create the new format
             $this->saleOrderNo = sprintf("%s/%s/%s", $prefix, $newNumberFormatted, $suffix);
         }
     }
+    protected function updateMasterNumbering()
+    {
+        $masterNumbering = MasterNumbering::first();
+        if ($masterNumbering) {
+            $currentFormat = $masterNumbering->sale_format;
+            preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches);
+            $prefix = $matches[1] ?? 'SA';
+            $number = isset($matches[2]) ? (int)$matches[2] : 0; // Use current number
+            $suffix = $matches[3] ?? 'GTE';
 
+            // Increment the number and ensure it's zero-padded
+            $newNumberFormatted = str_pad($number + 1, 3, '0', STR_PAD_LEFT);
+
+            // Update MasterNumbering
+            $masterNumbering->update([
+                'sale_format' => sprintf("%s/%s/%s", $prefix, $newNumberFormatted, $suffix)
+            ]);
+        }
+    }
     public function save()
     {
+        // Validate inputs
         $this->validate([
             'customer_id' => 'required|exists:customer_suppliers,id',
             'sale_date' => 'required|date',
@@ -171,45 +190,44 @@ class SaleForm extends Component
             'user_id' => Auth::id(),
         ]);
 
-        // Create sale items
+        // Create sale items and manage stock
         foreach ($this->items as $item) {
             $item['user_id'] = Auth::id(); 
-            $sale->items()->create($item);
+            $saleItem = $sale->items()->create($item); // Store sale item
 
-            $product = Product::find($item['product_id']);
-            if ($product) {
-                if ($product->opening_stock < $item['quantity']) {
-                    toastr()->error('Not enough stock for product: ' . $product->product_name);
-                    return;
+            // Check stock availability for the product at the selected branch
+            $stock = Stock::where('product_id', $item['product_id'])
+                        ->where('branch_id', $this->branch_id)
+                        ->first();
+
+            if ($stock) {
+                if ($stock->opening_stock < $item['quantity']) {
+                    toastr()->error('Not enough stock for product: ' . Product::find($item['product_id'])->name);
+                    return; 
                 }
-                $product->decrement('opening_stock', $item['quantity']);
+                // Decrement the stock
+                $stock->decrement('opening_stock', $item['quantity']);
+            } else {
+                toastr()->error('No stock record found for product: ' . Product::find($item['product_id'])->name);
+                return;
             }
         }
 
-        // Update MasterNumbering with the new format
-        $masterNumbering = MasterNumbering::first();
-        if ($masterNumbering) {
-            $currentFormat = $masterNumbering->sale_format;
-            preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches);
-            $prefix = $matches[1] ?? 'SA';
-            $number = isset($matches[2]) ? (int)$matches[2] + 1 : 1; // Increment the number
-            $suffix = $matches[3] ?? 'GTE';
+        $this->updateMasterNumbering();
 
-            // Ensure the number is zero-padded
-            $newNumberFormatted = str_pad($number, 3, '0', STR_PAD_LEFT);
-
-            // Update MasterNumbering
-            $masterNumbering->update([
-                'sale_format' => sprintf("%s/%s/%s", $prefix, $newNumberFormatted, $suffix)
-            ]);
-        }
-
+        // Success notification
         toastr()->closeButton(true)->success('Created successfully.');
-        return redirect()->route('sales.index');
+        return redirect()->route('sales.index'); // Redirect to sales index
     }
 
     public function render()
     {
-        return view('livewire.inv-management.sale-form',['products' => $this->products,]);
+        return view('livewire.inv-management.sale-form', [
+            'products' => $this->products,
+            'customers' => $this->customers,
+            'branches' => $this->branches,
+            'godowns' => $this->godowns,
+            'saleOrders' => $this->saleOrders,
+        ]);
     }
 }

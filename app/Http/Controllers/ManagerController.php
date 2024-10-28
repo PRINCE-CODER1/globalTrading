@@ -40,22 +40,34 @@ class ManagerController extends Controller
     {
         //
     }
+    
     public function showLeads($userId)
     {
-        $user = User::find($userId);
-
-        // Ensure the user exists
-        if (!$user) {
-            abort(404, 'User not found');
+        // Check if the user has a 'Manager' role
+        if (!auth()->user()->hasRole('Manager')) {
+            abort(403, 'Unauthorized access');
         }
 
-        // Fetch leads and handle if no leads are found
-        $leads = collect($user->leads);
+        $agent = User::findOrFail($userId);
+        $leads = $agent->leads;
 
-
-        return view('manager.team.agent-det', compact('user', 'leads'));
+        return view('manager.team.agent-det', compact('agent', 'leads'));
     }
 
+    
+    public function showManagerLeads($managerId)
+    {
+        if (!auth()->user()->hasRole(['Manager', 'Super Admin'])) {
+            abort(403, 'Unauthorized access');
+        }
+
+
+
+        $manager = User::findOrFail($managerId);
+        $leads = $manager->leads;
+
+        return view('manager.team.manager-leads', compact('manager', 'leads'));
+    }
     /**
      * Show the form for editing the specified resource.
      */

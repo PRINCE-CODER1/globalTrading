@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use App\Models\InternalChalaan;
 use App\Models\Product;
 use App\Models\Branch;
+use App\Models\Stock;
 use App\Models\Godown;
 use App\Models\ChallanType;
 use Illuminate\Support\Facades\DB;
@@ -19,10 +20,11 @@ class InternalChalaanCreate extends Component
     public $chalaan_type_id, $reference_id;
     public $products = [];
     public $branches = [];
-    public $godowns = [];
+    public $from_branch_id, $to_branch_id;
+    public $from_godowns = []; // Godowns for the 'from' branch
+    public $to_godowns = []; // Godowns for the 'to' branch
     public $availableProducts = [];
     public $chalaanTypes = [];
-    public $from_branch_id, $to_branch_id;
 
     protected $rules = [
         'chalaan_type_id' => 'required',
@@ -39,7 +41,6 @@ class InternalChalaanCreate extends Component
     {
         $this->chalaanTypes = ChallanType::where('name', 'Branch Transfer')->get();
         $this->branches = Branch::all();
-        $this->godowns = Godown::all();
         $this->addProduct();
 
         // Set reference ID
@@ -68,6 +69,26 @@ class InternalChalaanCreate extends Component
         $this->products = array_values($this->products); // Reset indexes
     }
 
+    public function updatedFromBranchId()
+    {
+        // Update the available godowns based on the selected 'from' branch
+        $this->from_godowns = Godown::where('branch_id', $this->from_branch_id)->get();
+        // Reset the selected from_godown_id when the branch changes
+        foreach ($this->products as &$product) {
+            $product['from_godown_id'] = null; 
+        }
+    }
+
+    public function updatedToBranchId()
+    {
+        // Update the available godowns based on the selected 'to' branch
+        $this->to_godowns = Godown::where('branch_id', $this->to_branch_id)->get();
+        // Reset the selected to_godown_id when the branch changes
+        foreach ($this->products as &$product) {
+            $product['to_godown_id'] = null; 
+        }
+    }
+
     public function updated($propertyName)
     {
         // Check if the updated property belongs to products
@@ -77,7 +98,10 @@ class InternalChalaanCreate extends Component
 
             if ($fromGodownId) {
                 // Fetch available products based on the selected godown
-                $this->availableProducts[$index] = Product::where('godown_id', $fromGodownId)->get();
+                $this->availableProducts[$index] = Stock::where('godown_id', $fromGodownId)
+                                                        ->with('product') // Load related product data
+                                                        ->get()
+                                                        ->pluck('product'); // Get the associated products
             } else {
                 $this->availableProducts[$index] = [];
                 $this->products[$index]['product_id'] = null; // Reset product ID
@@ -99,7 +123,8 @@ class InternalChalaanCreate extends Component
             // Check the available stock manually
             $availableStock = $this->getAvailableStock($product['from_godown_id'], $product['product_id']);
             if ($product['quantity'] > $availableStock) {
-                session()->flash('error', 'Insufficient stock for product ID: ' . $product['product_id']);
+                toastr()->closeButton(true)->success('Return Chalaan saved successfully!'. $product['product_id']);
+                // session()->flash('error', 'Insufficient stock for product ID: ' . $product['product_id']);
                 return;
             }
         }
@@ -137,10 +162,9 @@ class InternalChalaanCreate extends Component
             // Commit the transaction
             DB::commit();
 
-            session()->flash('message', 'Internal Chalaan created successfully.');
+            toastr()->closeButton(true)->success('Internal Chalaan created successfully.');
             return redirect()->route('internal.index'); 
         } catch (\Exception $e) {
-            // Rollback the transaction if something goes wrong
             DB::rollback();
             Log::error('Internal Chalaan creation failed:', ['error' => $e->getMessage()]);
             session()->flash('error', 'Failed to create Internal Chalaan. Please try again.');
@@ -149,31 +173,50 @@ class InternalChalaanCreate extends Component
 
     private function updateStock($godownId, $productId, $quantity)
     {
-        // Fetch the product and update the stock based on the quantity
-        $product = Product::where('id', $productId)->where('godown_id', $godownId)->first();
+        // Fetch the stock entry from the Stock model
+        $stock = Stock::where('product_id', $productId)
+                       ->where('godown_id', $godownId)
+                       ->first();
 
-        if ($product) {
-            $newStock = $product->opening_stock + $quantity; // Adjust the stock
+        if ($stock) {
+            // Update stock by adding/subtracting the quantity
+            $newStock = $stock->opening_stock + $quantity;
+            
             if ($newStock < 0) {
-                // Handle insufficient stock
                 throw new \Exception('Insufficient stock available for transfer.');
             }
-            $product->update(['opening_stock' => $newStock]);
-            // Debugging: Log the stock update
+
+            // Save the updated stock
+            $stock->opening_stock = $newStock;
+            $stock->save();
+
             Log::info('Stock updated:', ['product_id' => $productId, 'new_stock' => $newStock]);
+        } else {
+            // If no stock entry exists, create a new one
+            Stock::create([
+                'product_id' => $productId,
+                'godown_id' => $godownId,
+                'opening_stock' => $quantity,
+                'branch_id' => $this->from_branch_id, // Assuming branch is relevant here
+            ]);
         }
     }
 
     private function getAvailableStock($godownId, $productId)
     {
-        // Fetch the available stock from the database
-        $product = Product::where('id', $productId)->where('godown_id', $godownId)->first();
+        // Fetch the stock entry from the Stock model, which has the 'godown_id'
+        $stock = Stock::where('product_id', $productId)
+                       ->where('godown_id', $godownId)
+                       ->first();
 
-        return $product ? $product->opening_stock : 0; // Assuming 'opening_stock' is the column name in your products table
+        return $stock ? $stock->opening_stock : 0; // Return stock if available, otherwise 0
     }
 
     public function render()
     {
-        return view('livewire.crm.internal-chalaan-create');
+        return view('livewire.crm.internal-chalaan-create', [
+            'from_godowns' => $this->from_godowns,
+            'to_godowns' => $this->to_godowns,
+        ]);
     }
 }

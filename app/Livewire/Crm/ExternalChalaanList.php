@@ -26,8 +26,6 @@ class ExternalChalaanList extends Component
     {
         $this->search = session()->get('search', '');
         $this->perPage = session()->get('perPage', 10);
-        // $this->sortBy = session()->get('sortBy', 'created_at');
-        // $this->sortDir = session()->get('sortDir', 'desc');
     }
 
     public function render()

@@ -58,7 +58,7 @@
                                     </div>
                                 @endif
                             
-                                @if($leads->count())
+                                {{-- @if($leads->count()) --}}
                                     <table class="table table-bordered text-nowrap">
                                         <thead>
                                             <tr>
@@ -91,7 +91,7 @@
                                                     <td>{{ $lead->subSegment->name ?? 'N/A' }}</td>
                                                     <td>{{ $lead->expected_date }}</td>
                                                     <td>
-                                                        <a href="{{ route('agent.leads.edit', $lead->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>      
+                                                        <a href="{{ route('agent.leads.edit', $lead->id) }}" class="btn btn-info btn-sm text-white"><i class="ri-edit-line"></i> view</a>      
                                                         <button class="btn btn-link text-danger fs-14 lh-1 p-0" data-bs-toggle="modal" data-bs-target="#deleteSegmentModal" wire:click="confirmDelete({{ $lead->id }})">
                                                             <i class="ri-delete-bin-5-line"></i>
                                                         </button>
@@ -128,7 +128,7 @@
                                     <div class="mt-3">
                                         {{ $leads->links('custom-pagination-links') }}
                                     </div>
-                                @endif                              
+                                {{-- @endif                               --}}
                             </div>
                             <!-- Bulk Delete Button -->
                             <div class="mt-2">

@@ -67,7 +67,7 @@
                                             <td>{{ $product->product_description }}</td>
                                             <td>{{ $product->category->name ?? 'N/A' }}</td>
                                             <td>{{ $product->price }}</td>
-                                            <td>{{ $product->opening_stock }}</td>
+                                            <td>{{ $product->stock->opening_stock }}</td>
                                             <td>{{ $product->user->name }}</td>
                                             <td>
                                                 @if($product->modifier && $product->modifier->id === Auth::id())
