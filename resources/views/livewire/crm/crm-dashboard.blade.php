@@ -1,36 +1,38 @@
 <div>
-    
+
     <div class="container my-5">
-        <h1 class="fw-bold">CRM <span class="text-secondary">Dashboard</span></h1>
+        {{-- <h1 class="fw-bold">CRM <span class="text-secondary">Dashboard</span></h1> --}}
+        <h1>CRM Dashboard</h1>
         <hr>
-        <hr>
+
     </div>
 
     <div class="container">
         <!-- Statistics Overview -->
         <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card custom-card card-bg-secondary text-fixed-white">
+            <div class="col-md-3">
+                <div class="card custom-card card-bg-white text-fixed-white">
                     <div class="card-body">
-                      <div class="d-flex align-items-top mb-2">
-                        <div class="flex-fill">
-                          <p class="mb-0 op-7">Total Leads</p>
+                        <div class="d-flex align-items-top mb-2">
+                            <div class="flex-fill">
+                                <p class="mb-0 op-7">Total Leads</p>
+                            </div>
+                            <div class="ms-2">
+                                <span class="avatar avatar-md bg-primary shadow-sm fs-18">
+                                    <i class="bi bi-person-square"></i>
+                                </span>
+                            </div>
                         </div>
-                        <div class="ms-2">
-                          <span class="avatar avatar-md bg-dark shadow-sm fs-18">
-                            <i class="bi bi-person-square"></i>
-                          </span>
-                        </div>
-                      </div>
-                      <span class="fs-5 fw-medium">{{ $leads->total() }}</span>
-                      <span class="fs-12 op-7 ms-1">
-                        <i class="ti ti-trending-{{ $percentageChange >= 0 ? 'up' : 'down' }} me-1 d-inline-block"></i>
-                        {{ number_format(abs($percentageChange), 1) }}%
-                    </span>
+                        <span class="fs-5 fw-medium">{{ $leads->total() }}</span>
+                        <span class="fs-12 op-7 ms-1">
+                            <i
+                                class="ti ti-trending-{{ $percentageChange >= 0 ? 'up' : 'down' }} me-1 d-inline-block"></i>
+                            {{ number_format(abs($percentageChange), 1) }}%
+                        </span>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <div class="card custom-card card-bg-white text-fixed-white">
                     <div class="card-body">
                         <div class="d-flex align-items-top mb-2">
@@ -38,7 +40,7 @@
                                 <p class="mb-0 op-7">Leads This Month</p>
                             </div>
                             <div class="ms-2">
-                                <span class="avatar avatar-md bg-secondary shadow-sm fs-18">
+                                <span class="avatar avatar-md bg-info shadow-sm fs-18">
                                     <i class="ri-calendar-2-line"></i>
                                 </span>
                             </div>
@@ -47,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <div class="card custom-card card-bg-white text-fixed-white">
                     <div class="card-body">
                         <div class="d-flex align-items-top mb-2">
@@ -55,7 +57,7 @@
                                 <p class="mb-0 op-7">Open Leads</p>
                             </div>
                             <div class="ms-2">
-                                <span class="avatar avatar-md bg-secondary shadow-sm fs-18">
+                                <span class="avatar avatar-md bg-warning shadow-sm fs-18">
                                     <i class="bi bi-check-square"></i>
                                 </span>
                             </div>
@@ -64,15 +66,15 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card custom-card card-bg-danger text-fixed-white">
+            <div class="col-md-3">
+                <div class="card custom-card card-bg-white text-fixed-white">
                     <div class="card-body">
                         <div class="d-flex align-items-top mb-2">
                             <div class="flex-fill">
                                 <p class="mb-0 op-7">Closed Leads</p>
                             </div>
                             <div class="ms-2">
-                                <span class="avatar avatar-md bg-dark shadow-sm fs-18">
+                                <span class="avatar avatar-md bg-secondary shadow-sm fs-18">
                                     <i class="bi bi-x-square"></i>
                                 </span>
                             </div>
@@ -81,28 +83,29 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card custom-card card-bg-secondary text-fixed-white">
+            <div class="col-md-3">
+                <div class="card custom-card card-bg-white text-fixed-white">
                     <div class="card-body">
                         <div class="d-flex align-items-top mb-2">
                             <div class="flex-fill">
                                 <p class="mb-0 op-7">Percentage Change</p>
                             </div>
                             <div class="ms-2">
-                                <span class="avatar avatar-md bg-white shadow-sm fs-18">
-                                    <i class="bi bi-check-square text-dark"></i>
+                                <span class="avatar avatar-md bg-dark shadow-sm fs-18">
+                                    <i class="bi bi-check-square "></i>
                                 </span>
                             </div>
                         </div>
                         <span class="fs-5 fw-medium">{{ number_format($percentageChange, 2) }}%</span>
                         <span class="fs-12 op-7 ms-1">
-                            <i class="ti ti-trending-{{ $percentageChange >= 0 ? 'up' : 'down' }} me-1 d-inline-block"></i>
+                            <i
+                                class="ti ti-trending-{{ $percentageChange >= 0 ? 'up' : 'down' }} me-1 d-inline-block"></i>
                             {{ number_format(abs($percentageChange), 1) }}%
                         </span>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <div class="card custom-card card-bg-white text-fixed-white">
                     <div class="card-body">
                         <div class="d-flex align-items-top mb-2">
@@ -110,7 +113,7 @@
                                 <p class="mb-0 op-7">Total Teams</p>
                             </div>
                             <div class="ms-2">
-                                <span class="avatar avatar-md bg-secondary shadow-sm fs-18">
+                                <span class="avatar avatar-md bg-dark shadow-sm fs-18">
                                     <i class="ri-equal-line"></i>
                                 </span>
                             </div>
@@ -122,25 +125,8 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h3 class="fw-bold">Leads Created Per Day <span class="text-secondary">(Last 30 Days)</span></h3>
-                <hr>
-                <canvas id="leadsChart"></canvas>
-            </div>
-            <div class="col-md-6">
-                <h3 class="fw-bold">Lead Status <span class="text-secondary">Distribution</span></h3>
-                <hr>
-                <div style="height:300px">
-                   <div class="d-flex justify-content-center" style="max-height:100%">
-                    <canvas  id="leadStatusCh"></canvas>
-                   </div>
-                </div>
-            </div>
-        </div>
-    </div>
-                
+
+
     <div class="container">
         <div class="row mt-4">
             <!-- Agents Table -->
@@ -162,25 +148,28 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($users as $user)
-                                        @if ($user->role == 'Agent')
+                                        @if ($user->hasRole('Agent'))
                                             <tr>
                                                 <td>
-                                                    <a href="{{ route('agent.leads.index', $user->id) }}" class="text-decoration-none text-secondary fw-bold">
-                                                    {{ $user->name }}
+                                                    <a href="{{ route('lead.agent', $user->id) }}"
+                                                        class="text-decoration-none text-dark">
+                                                        {{ $user->name }}
                                                     </a>
                                                 </td>
                                                 <td>{{ $user->email }}</td>
-                                                <td>{{ $user->leads->count() }}</td>
+                                                <td>
+                                                    {{ $user->leads->count() }}
+                                                </td>
                                                 <td>
                                                     @php
                                                         $teamname = $user->teams->pluck('name');
                                                     @endphp
                                                     <div class="team-container">
                                                         @foreach ($teamname as $index => $team)
-                                                            <span class="badge bg-secondary">
+                                                            <span class="badge bg-dark">
                                                                 {{ $team }}
                                                             </span>
-                                                            @if (($index + 1) % 5 == 0 && !$loop->last) 
+                                                            @if (($index + 1) % 5 == 0 && !$loop->last)
                                                                 <br>
                                                             @endif
                                                         @endforeach
@@ -215,8 +204,9 @@
                                     @foreach ($users as $user)
                                         @if ($user->role == 'Manager')
                                             <tr>
-                                                <td> 
-                                                    <a href="{{ route('managers.leads', $user->id) }}" class="text-decoration-none text-secondary fw-bold">
+                                                <td>
+                                                    <a href="{{ route('managers.leads', $user->id) }}"
+                                                        class="text-decoration-none text-dark">
                                                         {{ $user->name }}
                                                     </a>
                                                 </td>
@@ -232,9 +222,10 @@
                 </div>
             </div>
         </div>
-    
+
     </div>
-    
+
+
     <!-- Leads Table Section -->
     <div class="main-content">
         <div class="container">
@@ -246,39 +237,48 @@
             </div>
         </div>
         <!-- Lead Filters Section -->
-        <div class="container">     
+        <div class="container">
             <div class="row mb-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
                                 Filter: {{ $statusFilter ?: 'All' }}
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" wire:click="$set('statusFilter', '')">All</a></li>
-                                @foreach($statuses as $status)
-                                    <li><a class="dropdown-item" wire:click="$set('statusFilter', '{{ $status->name }}')">{{ $status->name }}</a></li>
+                                @foreach ($statuses as $status)
+                                    <li><a class="dropdown-item"
+                                            wire:click="$set('statusFilter', '{{ $status->name }}')">{{ $status->name }}</a>
+                                    </li>
                                 @endforeach
                             </ul>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-secondary dropdown-toggle"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 Teams : {{ $teamFilter ?: 'All' }}
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" wire:click="$set('teamFilter', '')">All</a></li>
-                                @foreach($teams as $team)
-                                    <li><a class="dropdown-item" wire:click="$set('teamFilter', '{{ $team->name }}')">{{ $team->name }}</a></li>
+                                @foreach ($teams as $team)
+                                    <li><a class="dropdown-item"
+                                            wire:click="$set('teamFilter', '{{ $team->name }}')">{{ $team->name }}</a>
+                                    </li>
                                 @endforeach
                             </ul>
                         </div>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 Per Page: {{ $perPage }}
                             </button>
                             <ul class="dropdown-menu">
                                 @foreach ([2, 5, 10, 20] as $size)
-                                    <li><a class="dropdown-item" href="#" wire:click.prevent="updatePerPage({{ $size }})">{{ $size }}</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            wire:click.prevent="updatePerPage({{ $size }})">{{ $size }}</a>
+                                    </li>
                                 @endforeach
                             </ul>
                         </div>
@@ -286,17 +286,18 @@
                     <!-- Search Input -->
                     <div class="d-flex align-items-center">
                         <div class="col-auto">
-                            <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
+                            <input wire:model.live="search" type="text" id="search" class="form-control"
+                                placeholder="Search">
                         </div>
                     </div>
-                </div>   
+                </div>
             </div>
         </div>
         <div class="container mb-5">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card custom-card">
-                        <div class="card-body">                           
+                        <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered text-nowrap shadow-sm">
                                     <thead class="thead-light">
@@ -311,32 +312,54 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($leads as $lead)
+                                        @foreach ($leads as $lead)
                                             <tr>
-                                                <td><a class="btn btn-sm btn-info" href="{{ route('agent.leads.edit', $lead->id) }}"><i class="ri-eye-2-line"></i> View Lead</a></td>
+                                                <td><a class="btn btn-sm btn-info"
+                                                        href="{{ route('agent.leads.edit', $lead->id) }}"><i
+                                                            class="ri-eye-2-line"></i> View Lead</a></td>
                                                 <td>{{ $lead->customer->name }}</td>
                                                 <td>{{ $lead->leadSource->name }}</td>
                                                 <td>{{ $lead->assignedAgent->name }}</td>
                                                 <td>
-                                                    @foreach($lead->assignedAgent->teams as $index => $team)
+                                                    @foreach ($lead->assignedAgent->teams as $index => $team)
                                                         <span class="badge bg-secondary ">{{ $team->name }}</span>
                                                         @if (($index + 1) % 3 == 0)
                                                             <br>
                                                         @endif
                                                     @endforeach
-                                                </td>  
+                                                </td>
                                                 <td>{{ $lead->created_at->format('Y-m-d') }}</td>
-                                                <td><span class="badge" style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span></td>
+                                                <td><span class="badge"
+                                                        style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                             <!-- Pagination Links -->
+                            <!-- Pagination Links -->
                             <div class="mt-3">
                                 {{ $leads->links('custom-pagination-links') }}
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="fw-bold">Leads Created Per Day <span class="text-secondary">(Last 30 Days)</span></h3>
+                <hr>
+                <canvas id="leadsChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <h3 class="fw-bold">Lead Status <span class="text-secondary">Distribution</span></h3>
+                <hr>
+                <div style="height:300px">
+                    <div class="d-flex justify-content-center" style="max-height:100%">
+                        <canvas id="leadStatusCh"></canvas>
                     </div>
                 </div>
             </div>
@@ -350,7 +373,7 @@
             </div>
         </div>
         <div class="row">
-            @if($remarks->isEmpty())
+            @if ($remarks->isEmpty())
                 <p>No remarks found.</p>
             @else
                 <div class="table-responsive ">
@@ -363,7 +386,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($remarks as $remark)
+                            @foreach ($remarks as $remark)
                                 <tr>
                                     <td>{{ $remark->remark }}</td>
                                     <td>{{ $remark->user->name }}</td>
@@ -386,17 +409,20 @@
                     <div class="card">
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
-                                @foreach($leadLogs as $log)
+                                @foreach ($leadLogs as $log)
                                     <li class="list-group-item d-flex justify-content-between align-items-start">
                                         <div>
-                                            <strong>{{ $log->fromUser->name }}</strong> 
-                                            @if($log->id_to)
-                                                <span class="text-success">reassigned lead to <strong>{{ $log->toUser->name }}</strong></span>
+                                            <strong>{{ $log->fromUser->name }}</strong>
+                                            @if ($log->id_to)
+                                                <span class="text-success">reassigned lead to
+                                                    <strong>{{ $log->toUser->name }}</strong></span>
                                             @else
-                                                <span class="text-muted">{{ str_replace('_', ' ', $log->log_type) }}</span>
+                                                <span
+                                                    class="text-muted">{{ str_replace('_', ' ', $log->log_type) }}</span>
                                             @endif
                                         </div>
-                                        <small class="text-muted">{{ $log->created_at->format('Y-m-d H:i:s') }}</small>
+                                        <small
+                                            class="text-muted">{{ $log->created_at->format('Y-m-d H:i:s') }}</small>
                                     </li>
                                 @endforeach
                             </ul>
@@ -408,22 +434,22 @@
                 <div class="mt-5" style="height:400px">
                     <h4 class="mb-4 fw-bold">Lead Creation Graph</h4>
                     <hr>
-                   <div class="d-flex justify-content-center" style="height:400px">
-                    <canvas  id="leadStatusChart"></canvas>
-                   </div>
+                    <div class="d-flex justify-content-center" style="height:400px">
+                        <canvas id="leadStatusChart"></canvas>
+                    </div>
                 </div>
-            </div>  
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const leadsData = @json($leadsPerDay); // Use the variable passed from the controller
-            
+
             const labels = leadsData.map(data => data.date);
             const counts = leadsData.map(data => data.count);
-            
+
             const ctx = document.getElementById('leadsChart').getContext('2d');
             const leadsChart = new Chart(ctx, {
                 type: 'line',
@@ -471,7 +497,7 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('leadStatusChart').getContext('2d');
 
             const statusCounts = @json($leadStatusCounts); // Your PHP data
@@ -550,7 +576,7 @@
             }]
         };
 
-        
+
         const leadStatusChart = new Chart(ctx, {
             type: 'pie',
             data: leadStatusData,

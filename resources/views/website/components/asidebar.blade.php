@@ -39,6 +39,22 @@
                 </li>
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
+                        <i class="ri-user-2-line side-menu__icon mb-0 d-flex justify-content-center align-items-center"></i>
+                        <span class="side-menu__label">Customer/Supplier</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Customer/Supplier</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('manager.customer-supplier.customer-supplier.index') }}" class="side-menu__item">Customer/Supplier</a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center">
                         <i class="ri-team-fill side-menu__icon d-flex justify-content-center align-items-center"></i>
                         <span class="side-menu__label">Team</span>
                         <i class="fe fe-chevron-right side-menu__angle"></i>
@@ -177,7 +193,7 @@
                             <a href="javascript:void(0)">Master</a>
                         </li>
                         <li class="slide">
-                            <a href="{{ route('customer-supplier.index') }}" class="side-menu__item">Customer/Supplier</a>
+                            <a href="{{ route('admin.customer-supplier.customer-supplier.index') }}" class="side-menu__item">Customer/Supplier</a>
                         </li>
                         <li class="slide">
                             <a href="{{ route('products.index') }}" class="side-menu__item">Products</a>

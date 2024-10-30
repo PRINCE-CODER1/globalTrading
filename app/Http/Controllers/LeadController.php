@@ -34,7 +34,8 @@ class LeadController extends Controller
         $leads = Lead::where('assigned_to',$userId)
                 ->with('remarks')
                 ->get();
-        return view('agent-dash.leads.list', compact('leads'));
+        $agentID = 0;
+        return view('agent-dash.leads.list', compact('leads', 'agentID'));
     }
 
 
@@ -208,6 +209,11 @@ public function edit($id)
 
         $lead->delete();
         return redirect()->route('agent.leads.index')->with('success', 'Lead deleted successfully.');
+    }
+
+    public function leadByAgent($agentID)
+    {
+        return view('agent-dash.leads.list',['agentID' => $agentID]);
     }
 
 }

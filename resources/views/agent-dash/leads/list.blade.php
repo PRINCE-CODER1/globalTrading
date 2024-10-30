@@ -1,8 +1,9 @@
 @extends('website.master')
 
 @section('content')
-@livewire('crm.lead-list')
-{{-- <div class="container">
+    @livewire('crm.lead-list', ['userId' => $agentID ? $agentID : 0])
+
+    {{-- <div class="container">
     <h1>Leads</h1>
 
     @if (session('success'))

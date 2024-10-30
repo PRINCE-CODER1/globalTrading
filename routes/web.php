@@ -89,6 +89,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'role:Manager|Super Admin'])->group(function () {
         Route::get('/manager/dashboard', [ManagerController::class, 'index'])->name('manager.dashboard');
         
+        Route::resource('manager/customer-supplier', CustomerSupplierController::class,  [
+            'as' => 'manager.customer-supplier'
+        ]);
+        Route::resource('admin/customer-supplier', CustomerSupplierController::class, [
+            'as' => 'admin.customer-supplier'
+        ]);
         // Show leads created by managers
         Route::get('/managers/{managerId}/leads', [ManagerController::class, 'showManagerLeads'])
             ->name('managers.leads'); // Ensure the user is a 'Manager'
@@ -110,6 +116,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
     
+    // Manager-specific routes
+    // Route::middleware(['auth', 'role:Manager|Super Admin'])->group(function () {
+    //     Route::get('/manager/dashboard', [ManagerController::class, 'index'])->name('manager.dashboard');
+       
+
+
+    //     // Show leads created by managers
+    //     Route::get('/managers/{managerId}/leads', [ManagerController::class, 'showManagerLeads'])
+    //         ->name('managers.leads'); // Ensure the user is a 'Manager'
+        
+    //     // Nested manager routes
+    //     Route::prefix('manager')->group(function () {
+    //         Route::resource('teams', ManagerTeamController::class)->except(['show']);
+            
+    //         Route::get('teams/{team}/assign-agents', [ManagerTeamController::class, 'showAssignForm'])
+    //             ->name('manager.teams.show-assign-form');
+    //         // Route::get('leads', [ManagerTeamController::class, 'showManagerLeads'])
+    //         //     ->name('manager.leads');
+    //         Route::post('teams/{team}/assign-agents', [ManagerTeamController::class, 'assignAgents'])
+    //             ->name('manager.teams.assign-agents');
+    
+    //         // Manager viewing agent leads
+    //         Route::get('/agents/{userId}/leads', [ManagerController::class, 'showLeads'])
+    //             ->name('agents.leads');
+    //     });
+    // });
+    
 
     // Lead Management Routes
     Route::middleware(['auth','role:Manager|Agent|Super Admin'])->group(function () {
@@ -124,6 +157,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('website.main-erp.index');
     })->name('admin.dashboard');
 
+    // leads by agent
+    Route::get('lead-by-agent/{agentID}', [LeadController::class, 'leadByAgent'])->name('lead.agent');
+    
     // Resourceful routes (users, roles, permissions, etc.)
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);

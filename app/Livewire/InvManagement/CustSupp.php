@@ -19,13 +19,14 @@ class CustSupp extends Component
     public $selectedCustomerSuppliers = [];
     public $customerSupplierIdToDelete = null;
 
-     protected $listeners = ['deleteConfirmed'];
+    protected $listeners = ['deleteConfirmed'];
 
-     public function mount()
+    public function mount()
     {
         $this->search = session()->get('search', '');
         $this->perPage = session()->get('perPage', 10);
     }
+
     public function render()
     {
         $customerSuppliers = CustomerSupplier::with('user')
@@ -36,12 +37,14 @@ class CustSupp extends Component
 
         return view('livewire.inv-management.cust-supp', compact('customerSuppliers'));
     }
+
     public function updatePerPage($value)
     {
         $this->perPage = $value;
         session()->put('perPage', $this->perPage);
         $this->resetPage();
     }
+
     public function updatedSearch($value)
     {
         session()->put('search', $value); 
@@ -64,25 +67,63 @@ class CustSupp extends Component
     public function deleteConfirmed()
     {
         if ($this->customerSupplierIdToDelete) {
-            CustomerSupplier::find($this->customerSupplierIdToDelete)->delete();
-            $this->customerSupplierIdToDelete = null;
+            $customerSupplier = CustomerSupplier::find($this->customerSupplierIdToDelete);
+            
+            if ($customerSupplier) {
+                // Check for related purchase orders
+                if ($customerSupplier->purchaseOrders()->exists()) {
+                    toastr()->closeButton(true)->error('Cannot delete this Customer/Supplier, it has related purchase orders.');
+                    return;
+                }
+
+                $customerSupplier->delete();
+                $this->customerSupplierIdToDelete = null;
+                toastr()->closeButton(true)->success('Customer/Supplier Deleted Successfully');
+            }
         } elseif (!empty($this->selectedCustomerSuppliers)) {
-            CustomerSupplier::whereIn('id', $this->selectedCustomerSuppliers)->delete();
+            foreach ($this->selectedCustomerSuppliers as $id) {
+                $customerSupplier = CustomerSupplier::find($id);
+                
+                if ($customerSupplier) {
+                    // Check for related purchase orders
+                    if ($customerSupplier->purchaseOrders()->exists()) {
+                        toastr()->closeButton(true)->error('Cannot delete Customer/Supplier with ID ' . $id . ', it has related purchase orders.');
+                        continue; // Skip this supplier
+                    }
+
+                    $customerSupplier->delete();
+                }
+            }
             $this->selectedCustomerSuppliers = [];
+            toastr()->closeButton(true)->success('Selected Customer/Suppliers Deleted Successfully');
         }
-        toastr()->closeButton(true)->success('Customer/Suppliers Deleted Successfully');
+
         $this->resetPage();
     }
 
     public function bulkDelete()
     {
         if (!empty($this->selectedCustomerSuppliers)) {
-            CustomerSupplier::whereIn('id', $this->selectedCustomerSuppliers)->delete();
+            foreach ($this->selectedCustomerSuppliers as $id) {
+                $customerSupplier = CustomerSupplier::find($id);
+                
+                if ($customerSupplier) {
+                    // Check for related purchase orders
+                    if ($customerSupplier->purchaseOrders()->exists()) {
+                        toastr()->closeButton(true)->error('Cannot delete Customer/Supplier with ID ' . $id . ', it has related purchase orders.');
+                        continue; // Skip this supplier
+                    }
+
+                    $customerSupplier->delete();
+                }
+            }
             $this->selectedCustomerSuppliers = [];
+            toastr()->closeButton(true)->success('Selected Customer/Suppliers Deleted Successfully');
         }
-        toastr()->closeButton(true)->success('Customer/Suppliers Deleted Successfully');
+
         $this->resetPage();
     }
+
     public function setSortBy($column)
     {
         if ($this->sortBy === $column) {

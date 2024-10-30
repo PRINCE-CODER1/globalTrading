@@ -5,6 +5,7 @@ namespace App\Livewire\Crm;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Lead;
+use App\Models\User;
 use App\Models\LeadStatus;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,9 +21,13 @@ class LeadList extends Component
     public $sortBy = 'created_at';
     public $sortDir = 'asc';
     public $statusFilter = '';
+    public $totalLeadsForAgent = 0;
+
 
     protected $listeners = ['deleteConfirmed'];
     protected $updatesQueryString = ['search'];
+
+    public $userId = 0;
 
     public function mount()
     {
@@ -44,7 +49,7 @@ class LeadList extends Component
 
         // If the user is a manager, they can see all leads
         if ($user->hasRole('Manager')) {
-            $leads = Lead::with('assignedAgent.teams') // Eager load the teams relationship
+            $leads = Lead::with('assignedAgent.teams','creator') // Eager load the teams relationship
                         ->where(function ($query) {
                             $query->whereHas('customer', function ($q) {
                                 $q->where('name', 'like', '%' . $this->search . '%');
@@ -64,8 +69,8 @@ class LeadList extends Component
                         ->orderBy($this->sortBy, $this->sortDir)
                         ->paginate($this->perPage);
         } else {
-            $leads = Lead::with('assignedAgent.teams') // Eager load the teams relationship
-                        ->where('assigned_to', $user->id)
+            $leads = Lead::with('assignedAgent.teams','creator') // Eager load the teams relationship
+                        ->where('assigned_to', $this->userId == 0 ? $user->id : $this->userId)
                         ->where(function ($query) {
                             $query->whereHas('customer', function ($q) {
                                 $q->where('name', 'like', '%' . $this->search . '%');
@@ -89,6 +94,7 @@ class LeadList extends Component
         $statuses = LeadStatus::all();
         return view('livewire.crm.lead-list', compact('leads', 'statuses'));
     }
+
     
     public function updatePerPage($value)
     {

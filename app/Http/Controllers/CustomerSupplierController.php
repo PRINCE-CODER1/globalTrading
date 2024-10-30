@@ -90,7 +90,12 @@ class CustomerSupplierController extends Controller
             ]);
         }
         toastr()->closeButton(true)->success('Created successfully.');
-        return redirect()->route('customer-supplier.index');
+        $redirectRoute = auth()->user()->hasRole('Super Admin')
+        ? 'admin.customer-supplier.customer-supplier.index'
+        : 'manager.customer-supplier.customer-supplier.index';
+
+        return redirect()->route($redirectRoute);
+        // return redirect()->route('admin.customer-supplier.customer-supplier.index');
     }
 
     /**
@@ -138,7 +143,12 @@ class CustomerSupplierController extends Controller
             ]);
         }
         toastr()->closeButton(true)->success('Updated successfully.');
-        return redirect()->route('customer-supplier.index')->with('success', 'Customer/Supplier updated successfully.');
+        $redirectRoute = auth()->user()->hasRole('Super Admin')
+        ? 'admin.customer-supplier.customer-supplier.index'
+        : 'manager.customer-supplier.customer-supplier.index';
+
+        return redirect()->route($redirectRoute);
+        // return redirect()->route('admin.customer-supplier.customer-supplier.index')->with('success', 'Customer/Supplier updated successfully.');
     }
 
     /**
@@ -149,6 +159,6 @@ class CustomerSupplierController extends Controller
         $customerSupplier = CustomerSupplier::findOrFail($id);
         $customerSupplier->delete();
 
-        return redirect()->route('customer-supplier.index')->with('success', 'Customer/Supplier deleted successfully.');
+        return redirect()->route('admin.customer-supplier.index')->with('success', 'Customer/Supplier deleted successfully.');
     }
 }

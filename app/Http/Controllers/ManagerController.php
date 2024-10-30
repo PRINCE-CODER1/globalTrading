@@ -100,7 +100,6 @@ class ManagerController extends Controller
             'customers' => $customers,
         ]);
     }
-
     /**
      * Update the specified resource in storage.
      */
