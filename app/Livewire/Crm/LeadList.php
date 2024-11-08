@@ -29,12 +29,15 @@ class LeadList extends Component
 
     public $userId = 0;
 
+   
+
     public function mount()
     {
         $this->search = session()->get('search', '');
         $this->perPage = session()->get('perPage', 10);
         $this->statusFilter = session()->get('statusFilter', '');
-        $this->userId = Auth::user()->id;
+        
+        //$this->userId = Auth::user()->id;
     }
 
     public function updatingSearch()
@@ -43,70 +46,70 @@ class LeadList extends Component
     }
 
     public function render()
-    {
-        $user = Auth::user(); // Get the logged-in user
+{
+    $user = Auth::user(); // Get the logged-in user
     
-        // If the user is a manager
-        if ($user->hasRole('Manager')) {
-            // Assuming managers are assigned to teams and agents are assigned to teams
-            // Get all teams the manager is associated with
-            $teamIds = $user->teams->pluck('id')->toArray(); // Get teams for manager
+    // If the user is a manager
+    if ($user->hasRole('Manager')) {
+        // Get all teams the manager is associated with
+        $teamIds = $user->teams->pluck('id')->toArray(); // Get teams for manager
     
-            // Get leads assigned to agents in those teams and also leads created by the manager
-            $leads = Lead::with('assignedAgent.teams', 'creator') // Eager load the teams relationship
-                        ->where(function ($query) use ($teamIds, $user) {
-                            // Leads assigned to agents in the manager's teams
-                            $query->whereHas('assignedAgent', function ($query) use ($teamIds) {
-                                $query->whereIn('team_id', $teamIds); // Filter by teams the manager oversees
-                            })
-                            // OR leads created by the manager
-                            ->orWhere('user_id', $user->id); // Assuming 'created_by' stores the creator of the lead
+        // Get leads assigned to agents in those teams and also leads created by the manager
+        $leads = Lead::with('assignedAgent.teams', 'creator') // Eager load the teams relationship
+                    ->where(function ($query) use ($teamIds, $user) {
+                        // Leads assigned to agents in the manager's teams
+                        $query->whereHas('assignedAgent', function ($query) use ($teamIds) {
+                            $query->whereIn('team_id', $teamIds); // Filter by teams the manager oversees
                         })
-                        ->where(function ($query) {
-                            $query->whereHas('customer', function ($q) {
-                                $q->where('name', 'like', '%' . $this->search . '%');
-                            })
-                            ->orWhereHas('leadStatus', function ($q) {
-                                $q->where('name', 'like', '%' . $this->search . '%');
-                            })
-                            ->orWhereHas('leadSource', function ($q) {
-                                $q->where('name', 'like', '%' . $this->search . '%');
-                            });
+                        // OR leads created by the manager
+                        ->orWhere('user_id', $user->id); // Assuming 'created_by' stores the creator of the lead
+                    })
+                    ->where(function ($query) {
+                        $query->whereHas('customer', function ($q) {
+                            $q->where('name', 'like', '%' . $this->search . '%');
                         })
-                        ->when($this->statusFilter, function ($query) {
-                            $query->whereHas('leadStatus', function ($q) {
-                                $q->where('name', $this->statusFilter);
-                            });
+                        ->orWhereHas('leadStatus', function ($q) {
+                            $q->where('name', 'like', '%' . $this->search . '%');
                         })
-                        ->orderBy($this->sortBy, $this->sortDir)
-                        ->paginate($this->perPage);
-        } else {
-            // If the user is an agent, show only leads assigned to them
-            $leads = Lead::with('assignedAgent.teams', 'creator') // Eager load the teams relationship
-                        ->where('assigned_to', $this->userId == 0 ? $user->id : $this->userId)
-                        ->where(function ($query) {
-                            $query->whereHas('customer', function ($q) {
-                                $q->where('name', 'like', '%' . $this->search . '%');
-                            })
-                            ->orWhereHas('leadStatus', function ($q) {
-                                $q->where('name', 'like', '%' . $this->search . '%');
-                            })
-                            ->orWhereHas('leadSource', function ($q) {
-                                $q->where('name', 'like', '%' . $this->search . '%');
-                            });
+                        ->orWhereHas('leadSource', function ($q) {
+                            $q->where('name', 'like', '%' . $this->search . '%');
+                        });
+                    })
+                    ->when($this->statusFilter, function ($query) {
+                        $query->whereHas('leadStatus', function ($q) {
+                            $q->where('name', $this->statusFilter);
+                        });
+                    })
+                    ->orderBy($this->sortBy, $this->sortDir)
+                    ->paginate($this->perPage);
+    } else {
+        // If the user is an agent, show only leads assigned to them
+        $leads = Lead:://with('assignedAgent.teams', 'creator') // Eager load the teams relationship
+                    where('assigned_to', $this->userId == 0 ? $user->id : $this->userId) // Show leads assigned to the agent
+                    ->where(function ($query) {
+                        $query->whereHas('customer', function ($q) {
+                            $q->where('name', 'like', '%' . $this->search . '%');
                         })
-                        ->when($this->statusFilter, function ($query) {
-                            $query->whereHas('leadStatus', function ($q) {
-                                $q->where('name', $this->statusFilter);
-                            });
+                        ->orWhereHas('leadStatus', function ($q) {
+                            $q->where('name', 'like', '%' . $this->search . '%');
                         })
-                        ->orderBy($this->sortBy, $this->sortDir)
-                        ->paginate($this->perPage);
-        }
-    
-        $statuses = LeadStatus::all();
-        return view('livewire.crm.lead-list', compact('leads', 'statuses'));
+                        ->orWhereHas('leadSource', function ($q) {
+                            $q->where('name', 'like', '%' . $this->search . '%');
+                        });
+                    })
+                    ->when($this->statusFilter, function ($query) {
+                        $query->whereHas('leadStatus', function ($q) {
+                            $q->where('name', $this->statusFilter);
+                        });
+                    })
+                   ->orderBy($this->sortBy, $this->sortDir)
+                    ->paginate($this->perPage);
     }
+
+    $statuses = LeadStatus::all();
+    return view('livewire.crm.lead-list', compact('leads', 'statuses'));
+}
+
     
 
     

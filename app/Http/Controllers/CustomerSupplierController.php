@@ -6,9 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CustomerSupplier;
 use App\Models\CustomerSupplierUser;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class CustomerSupplierController extends Controller
+
+class CustomerSupplierController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array{
+        return [
+            new Middleware('permission:view cust-supp', only: ['index']),
+            new Middleware('permission:edit cust-supp', only: ['edit']),
+            new Middleware('permission:create cust-supp', only: ['create']),
+            new Middleware('permission:delete cust-supp', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

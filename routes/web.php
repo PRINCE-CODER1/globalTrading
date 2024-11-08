@@ -63,20 +63,20 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     
     // Single dashboard route that dynamically redirects based on role
-    // Route::get('/dashboard', function () {
-    //     $user = Auth::user();
+    Route::get('/dashboard', function () {
+        $user = Auth::user();
         
-    //     // Dynamically redirect based on role
-    //     if ($user->hasRole('Super Admin')) {
-    //         return view('website.main-erp.index');
-    //     } elseif ($user->hasRole('Agent')) {
-    //         return redirect()->route('agent.dashboard');
-    //     } elseif ($user->hasRole('Manager')) {
-    //         return redirect()->route('manager.dashboard');
-    //     } else {
-    //         abort(403, 'Unauthorized access');
-    //     }
-    // })->name('dashboard.index');
+        // Dynamically redirect based on role
+        if ($user->hasRole('Super Admin')) {
+            return view('website.main-erp.index');
+        } elseif ($user->hasRole('Agent')) {
+            return redirect()->route('agent.dashboard');
+        } elseif ($user->hasRole('Manager')) {
+            return redirect()->route('manager.dashboard');
+        } else {
+            abort(403, 'Unauthorized access');
+        }
+    })->name('dashboard.index');
     
 
     // Agent-specific routes

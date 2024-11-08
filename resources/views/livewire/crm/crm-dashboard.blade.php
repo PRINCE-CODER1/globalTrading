@@ -125,7 +125,22 @@
         </div>
     </div>
 
-
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+               <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Make your <span class="text-secondary">Lead</span> here</h5>
+                        <a href="{{ route('agent.leads.create') }}" class="btn btn-secondary"><i
+                            class="ri-add-circle-line"></i>
+                        Create Lead</a>
+                    </div>
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <div class="container">
         <div class="row mt-4">

@@ -7,6 +7,8 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Lead;
+use App\Models\Team;
+use Illuminate\Support\Facades\DB;
 
 class ManagerController extends Controller implements HasMiddleware
 {
@@ -69,12 +71,19 @@ class ManagerController extends Controller implements HasMiddleware
         if (!auth()->user()->hasRole(['Manager', 'Admin'])) {
             abort(403, 'Unauthorized access');
         }
-        
-        $manager = User::findOrFail($managerId);
-        $leads = $manager->leads;
 
-        return view('manager.team.manager-leads', compact('manager', 'leads'));
+         // Retrieve the manager details
+        $manager = User::findOrFail($managerId);
+        $teams = DB::table('teams')->where('creator_id',$managerId)->get();
+       // $leads = $manager->leads;
+       // $teamCount = $teams->count();
+    //   print_r($teams);
+    //   die();
+        $agents = $manager->agents;
+
+        return view('manager.team.manager-leads', compact('manager','teams'));
     }
+
     /**
      * Show the form for editing the specified resource.
      */

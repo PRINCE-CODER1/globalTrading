@@ -267,78 +267,97 @@
                         <li class="slide side-menu__label1">
                           <a href="javascript:void(0)">Master</a>
                         </li>
-                      
+                        @can('view cust-supp')
                         <li class="slide">
                           <a href="{{ route('customer-supplier.index') }}" class="side-menu__item  {{ request()->routeIs('customer-supplier.index') ? 'active' : '' }}">Customer/Supplier</a>
                         </li>
+                        @endcan 
                       
+                        @can('view products')
                         <li class="slide">
                           <a href="{{ route('products.index') }}" class="side-menu__item  {{ request()->routeIs('products.index') ? 'active' : '' }}">Products</a>
                         </li>
-                      
+                        @endcan
+                        @can('view segment')
                         <li class="slide">
                           <a href="{{ route('segments.index') }}" class="side-menu__item  {{ request()->routeIs('segments.index') ? 'active' : '' }}">Segments</a>
                         </li>
-                      
+                        @endcan
+                        @can('view subsegment')
                         <li class="slide">
                           <a href="{{ route('sub-segments.index') }}" class="side-menu__item  {{ request()->routeIs('sub-segments.index') ? 'active' : '' }}">Sub-Segments</a>
                         </li>
-                      
+                        @endcan
+                        @can('view branch')
                         <li class="slide">
                           <a href="{{ route('branches.index') }}" class="side-menu__item  {{ request()->routeIs('branches.index') ? 'active' : '' }}">Branch</a>
                         </li>
-                      
+                        @endcan
+                        @can('view workshop')
                         <li class="slide">
                           <a href="{{ route('workshops.index') }}" class="side-menu__item  {{ request()->routeIs('workshops.index') ? 'active' : '' }}">Workshop</a>
                         </li>
-                      
+                        @endcan
+                        @can('view unit')
                         <li class="slide">
                           <a href="{{ route('units.index') }}" class="side-menu__item  {{ request()->routeIs('units.index') ? 'active' : '' }}">Unit Of Measurement</a>
                         </li>
-                      
+                        @endcan
+                        @can('view stockcategory')
                         <li class="slide">
                           <a href="{{ route('stocks-categories.index') }}" class="side-menu__item {{ request()->routeIs('stocks-categories.index') ? 'active' : '' }}">Stock Categories</a>
                         </li>
-                      
+                        @endcan
+                        @can('view substockcategory')
                         <li class="slide">
                           <a href="{{ route('child-categories.index') }}" class="side-menu__item  {{ request()->routeIs('child-categories.index') ? 'active' : '' }}">Sub Categories</a>
                         </li>
-                      
+                        @endcan
+                        @can('view godown')
                         <li class="slide">
                           <a href="{{ route('godowns.index') }}" class="side-menu__item  {{ request()->routeIs('godowns.index') ? 'active' : '' }}">Godowns</a>
                         </li>
-                      
+                        @endcan
+                        @can('view tax')
                         <li class="slide">
                           <a href="{{ route('taxes.index') }}" class="side-menu__item  {{ request()->routeIs('taxes.index') ? 'active' : '' }}">Tax</a>
                         </li>
-                      
+                        @endcan
+                        @can('view numbernig')
                         <li class="slide">
                           <a href="{{ route('master-numbering.index') }}" class="side-menu__item  {{ request()->routeIs('master-numbering.index') ? 'active' : '' }}">Master Numbering</a>
                         </li>
-                      
+                        @endcan
+                        @can('view challantype')
                         <li class="slide">
                           <a href="{{ route('challan-types.index') }}" class="side-menu__item  {{ request()->routeIs('challan-types.index') ? 'active' : '' }}">Challan Types</a>
                         </li>
-                      
+                        @endcan
+                        @can('view visit')
                         <li class="slide">
                           <a href="{{ route('visits.index') }}" class="side-menu__item  {{ request()->routeIs('visits.index') ? 'active' : '' }}">Purpose Of Visit</a>
                         </li>
-                      
+                        @endcan
+                        @can('view series')
                         <li class="slide">
                           <a href="{{ route('series.index') }}" class="side-menu__item {{ request()->routeIs('series.index') ? 'active' : '' }}">Series</a>
                         </li>
-                      
+                        @endcan
+                        @can('view leadsource')
                         <li class="slide">
                           <a href="{{ route('lead-source.index') }}" class="side-menu__item  {{ request()->routeIs('lead-source.index') ? 'active' : '' }}">Lead Source</a>
                         </li>
-                      
+                        @endcan
+                        @can('view leadstatus')
                         <li class="slide">
                           <a href="{{ route('leads-status.index') }}" class="side-menu__item {{ request()->routeIs('leads-status.index') ? 'active' : '' }}">Lead Status</a>
                         </li>
-                      
+                        @endcan
+                        @can('view leadtype')
                         <li class="slide">
                           <a href="{{ route('leads-types.index') }}" class="side-menu__item {{ request()->routeIs('leads-types.index') ? 'active' : '' }}">Lead Types</a>
                         </li>
+                        @endcan
                       </ul>
                       
                 </li>

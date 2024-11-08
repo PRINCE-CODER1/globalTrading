@@ -1,7 +1,11 @@
 @extends('website.master')
 
 @section('content')
+    @if(auth()->user()->hasRole("Admin"))
+    @livewire('crm.agent-detail-widget', ['userId' => $agentID ? $agentID : 0])
+    @endif
     @livewire('crm.lead-list', ['userId' => $agentID ? $agentID : 0])
+   
 
     {{-- <div class="container">
     <h1>Leads</h1>

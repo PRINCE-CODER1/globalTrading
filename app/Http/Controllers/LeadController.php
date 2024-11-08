@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Lead;
+use App\Models\User;
 use App\Models\CustomerSupplier;
 use App\Models\LeadStatus;
 use App\Models\LeadSource;
@@ -187,6 +188,9 @@ public function edit($id)
     ]);
 }
 
+
+
+
     /**
      * Remove the specified resource from storage.
      */
@@ -208,9 +212,25 @@ public function edit($id)
         return redirect()->route('agent.leads.index')->with('success', 'Lead deleted successfully.');
     }
 
+    // public function leadByAgent($agentID)
+    // {
+    //     return view('agent-dash.leads.list',['agentID' => $agentID]);
+    // }
+
     public function leadByAgent($agentID)
     {
-        return view('agent-dash.leads.list',['agentID' => $agentID]);
+        // Ensure the user has the necessary role to view agent leads
+        if (!auth()->user()->hasRole(['Manager', 'Admin'])) {
+            abort(403, 'Unauthorized access');
+        }
+        //dump($agentID);
+        // Retrieve the agent with their leads
+        $agent = User::findOrFail($agentID);
+        $leads = $agent->leads()->where('assigned_to', $agentID)->get();
+        
+
+        return view('agent-dash.leads.list', compact('agent', 'leads', 'agentID'));
     }
+
 
 }
