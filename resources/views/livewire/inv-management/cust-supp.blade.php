@@ -3,12 +3,8 @@
         <div class="d-flex justify-content-between">
             <h4 class="mb-0">Customer/Supplier List</h4>
             {{-- <a href="{{ route('admin.customer-supplier.customer-supplier.create') }}" class="btn btn-secondary"><i class="ri-add-circle-line"></i> Create</a> --}}
-            @php
-                $route = auth()->user()->hasRole('Super Admin') 
-                    ? 'admin.customer-supplier.customer-supplier.create' 
-                    : 'manager.customer-supplier.customer-supplier.create';
-            @endphp
-            <a href="{{ route($route) }}" class="btn btn-outline-secondary">
+
+            <a href="{{ route('customer-supplier.create') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-chevron-left me-1"></i> Create
             </a>
         </div>
@@ -101,12 +97,7 @@
                                             <td>{{ $customerSupplier->ip_address }}</td>
                                             <td>
                                                 <div class="btn-group">
-                                                    @php
-                                                    $route = auth()->user()->hasRole('Super Admin') 
-                                                        ? 'admin.customer-supplier.customer-supplier.edit' 
-                                                        : 'manager.customer-supplier.customer-supplier.edit';
-                                                    @endphp
-                                                    <a href="{{ route($route, $customerSupplier->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>
+                                                    <a href="{{ route('customer-supplier.edit', $customerSupplier->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>
                                                     <button class="btn btn-link text-danger fs-14 lh-1 p-0" data-bs-toggle="modal" data-bs-target="#deleteSegmentModal" wire:click="confirmDelete({{ $customerSupplier->id }})"><i class="ri-delete-bin-5-line"></i></button>
                                                 </div>
                                             </td>

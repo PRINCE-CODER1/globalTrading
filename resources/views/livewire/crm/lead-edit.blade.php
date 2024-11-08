@@ -199,6 +199,44 @@
                                         <span class="text-danger small">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                <div class="col-md-4">
+                                    <label for="series" class="form-label text-muted small">Lead Type</label>
+                                    <select wire:model="lead_type_id" class="form-select form-select-sm">
+                                        <option value="">Select Lead Type</option>
+                                        @foreach($leadTypes as $type)
+                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('lead_type_id') <span class="text-danger">{{ $message }}</span> @enderror                                    
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="amount" class="form-label fw-semibold">Amount</label>
+                                    <input type="text" wire:model="amount" id="amount" class="form-control form-control-sm" placeholder="enter amount" />
+                                    @error('amount') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="specification" class="form-label fw-semibold">Specification</label>
+                                    <div class="d-flex gap-3 justify-content-start align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="specification" id="specificationFavourable" value="favourable"
+                                                   wire:model="specification">
+                                            <label class="form-check-label" for="specificationFavourable">
+                                                Favourable
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="specification" id="specificationNonFavourable" value="non-favourable"
+                                                   wire:model="specification">
+                                            <label class="form-check-label" for="specificationNonFavourable">
+                                                Non-Favourable
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @error('specification')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
 
                             <!-- Form Actions -->
@@ -361,7 +399,6 @@
 
                             <form wire:submit.prevent="addRemark" enctype="multipart/form-data">
                                 <div class="mb-4">
-                                    <label for="remark" class="form-label fw-bold">Add Remark</label>
                                     <textarea id="remark" wire:model="remark" class="form-control" rows="3" placeholder="Add a new remark"
                                         required></textarea>
                                     @error('remark')
@@ -381,7 +418,7 @@
                                             <tr>
                                                 <th>User</th>
                                                 <th>Remark</th>
-                                                <th>Date</th>
+                                                <th>created_at</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -390,7 +427,7 @@
                                                     <td>{{ $remark->user->name ?? 'Unknown User' }}</td>
                                                     <td>{{ $remark->remark }}</td>
 
-                                                    <td>{{ $remark->created_at->format('d-m-Y H:i') }}</td>
+                                                    <td>{{ $remark->created_at->format('d-m-Y') }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12 mt-5 mb-2 d-flex align-items-center justify-content-between mb-2">
             <h4 class="mb-0 d-flex justify-content-between align-items-center">Create Lead Source</h4>
-            <a href="{{ route('leads.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('lead-source.index') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-chevron-left me-1"></i> Back
             </a>
         </div>
@@ -19,7 +19,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-style2 mb-0">
                     <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="bi bi-house-door me-1 fs-15"></i>Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('leads.index') }}"><i class="bi bi-person-lines-fill me-1 fs-15"></i>Leads</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('lead-source.index') }}"><i class="bi bi-person-lines-fill me-1 fs-15"></i>Leads</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Create Lead</li>
                 </ol>
             </nav>
@@ -29,7 +29,7 @@
     <!-- Create Lead Form -->
     <div class="row d-flex justify-content-center">
         <div class="col-12 mt-3 mb-5 bg-white p-5 shadow">
-            <form action="{{ route('leads.store') }}" method="POST">
+            <form action="{{ route('lead-source.store') }}" method="POST">
                 @csrf
 
                 <!-- Lead Name Field -->

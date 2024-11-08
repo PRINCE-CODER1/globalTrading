@@ -80,6 +80,7 @@ class CrmDashboard extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
+
         // Recent lead logs
         $leadLogs = LeadLog::with(['lead', 'fromUser', 'toUser'])
             ->orderBy('created_at', 'desc')

@@ -1,8 +1,11 @@
 <div class="container">
-    {{-- <h1 class="h4 mb-3">Create Lead</h1> --}}
     
-    <form wire:submit.prevent="submit">
+    <form wire:submit.prevent="submit" >
         <div class="row g-2 mb-2">
+            <div class="mb-3">
+                <label for="reference_id" class="form-label">Reference ID</label>
+                <input type="text" id="reference_id" class="form-control" wire:model="referenceId" readonly>
+            </div>
             <div class="col-md-3">
                 <label for="customer_id" class="form-label fw-semibold">Customer</label>
                 <select id="customer_id" wire:model="customer_id" class="form-select form-select-sm" required>
@@ -25,6 +28,16 @@
                 @error('lead_status_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
             <div class="col-md-3">
+                <label for="leadtype" class="form-label text-muted small">Lead Type</label>
+                <select wire:model="lead_type_id" class="form-select form-select-sm">
+                    <option value="">Select Lead Type</option>
+                    @foreach($leadTypes as $type)
+                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                    @endforeach
+                </select>
+                @error('lead_type_id') <span class="text-danger">{{ $message }}</span> @enderror                                    
+            </div>
+            <div class="col-md-3">
                 <label for="lead_source_id" class="form-label fw-semibold">Lead Source</label>
                 <select id="lead_source_id" wire:model="lead_source_id" class="form-select form-select-sm" required>
                     <option value="">Select Lead Source</option>
@@ -35,6 +48,11 @@
                 @error('lead_source_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
+            
+        </div>
+
+
+        <div class="row g-2 mb-2">
             <div class="col-md-3">
                 <label for="segment_id" class="form-label fw-semibold">Segment</label>
                 <select id="segment_id" wire:model.live="segment_id" class="form-select form-select-sm" required>
@@ -45,10 +63,6 @@
                 </select>
                 @error('segment_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
-        </div>
-
-
-        <div class="row g-2 mb-2">
             <div class="col-md-3">
                 <label for="sub_segment_id" class="form-label fw-semibold">Sub-Segment</label>
                 <select id="sub_segment_id" wire:model="sub_segment_id" class="form-select form-select-sm">
@@ -76,7 +90,7 @@
                 @error('category_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label for="child_category_id" class="form-label fw-semibold">Child Category</label>
                 <select id="child_category_id" wire:model.live="child_category_id" class="form-select form-select-sm">
                     <option value="">Select Child Category</option>
@@ -86,10 +100,7 @@
                 </select>
                 @error('child_category_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
-        </div>
-
-        <div class="row g-2 mb-3">
-            <div class="col-md-12">
+            <div class="col-md-4">
                 <label for="series" class="form-label fw-semibold">Series</label>
                 <select id="series" wire:model="series" class="form-select form-select-sm" required>
                     <option value="">Select Series</option>
@@ -98,6 +109,32 @@
                     @endforeach
                 </select>
                 @error('series') <small class="text-danger">{{ $message }}</small> @enderror
+            </div>
+            <div class="col-md-4">
+                <label for="amount" class="form-label fw-semibold">Amount</label>
+                <input type="text" wire:model="amount" id="amount" class="form-control form-control-sm" placeholder="enter amount" />
+                @error('amount') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+        
+            <div class="mb-3">
+                <label for="specification" class="form-label fw-semibold">Specification</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="specification" id="specificationFavourable" value="favourable"
+                           wire:model="specification" {{ $specification === 'favourable' ? 'checked' : '' }}>
+                    <label class="form-check-label" for="specificationFavourable">
+                        Favourable
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="specification" id="specificationNonFavourable" value="non-favourable"
+                           wire:model="specification" {{ $specification === 'non-favourable' ? 'checked' : '' }}>
+                    <label class="form-check-label" for="specificationNonFavourable">
+                        Non-Favourable
+                    </label>
+                </div>
+                @error('specification')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 

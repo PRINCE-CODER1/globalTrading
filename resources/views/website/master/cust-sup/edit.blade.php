@@ -6,12 +6,7 @@
     <div class="row">
         <div class="col-12 d-flex justify-content-between mt-5 mb-2">
             <h4 class="mb-0 d-flex justify-content-between align-items-center">{{ isset($customerSupplier) ? 'Edit Cust/Supp' : 'Create Cust/Supp' }}</h4>
-            @php
-            $route = auth()->user()->hasRole('Super Admin') 
-                ? 'admin.customer-supplier.customer-supplier.index' 
-                : 'manager.customer-supplier.customer-supplier.index';
-            @endphp
-            <a href="{{ route($route) }}" class="btn btn-outline-secondary">
+            <a href="{{ route('customer-supplier.index') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-chevron-left me-1"></i> Back
             </a>
         </div>
@@ -23,7 +18,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-style2 mb-0">
                     <li class="breadcrumb-item"><a href="javascript:void(0);"><i class="bi bi-house-door me-1 fs-15"></i>Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('admin.customer-supplier.customer-supplier.index') }}"><i class="bi bi-person-lines-fill me-1 fs-15"></i>Cust/Supp</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('customer-supplier.index') }}"><i class="bi bi-person-lines-fill me-1 fs-15"></i>Cust/Supp</a></li>
                     <li class="breadcrumb-item active" aria-current="page">{{ isset($customerSupplier) ? 'Edit Cust/Supp' : 'Create Cust/Supp' }}</li>
                 </ol>
             </nav>
@@ -34,23 +29,10 @@
     <!-- Create/Edit Form -->
     <div class="row d-flex justify-content-center">
         <div class="container">
-            <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
-                @php
-                $route = auth()->user()->hasRole('Super Admin') 
-                    ? 'admin.customer-supplier.customer-supplier.update' 
-                    : 'manager.customer-supplier.customer-supplier.update';
-            
-                $formAction = isset($customerSupplier)
-                    ? route($route, $customerSupplier->id) 
-                    : route('admin.customer-supplier.customer-supplier.store');
-                @endphp
-            
-                <form action="{{$formAction}}" method="POST">
+            <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">            
+                <form action="{{ route('customer-supplier.update', $customerSupplier->id) }}" method="POST">
                     @csrf
-                    @if(isset($customerSupplier))
-                        @method('PUT')
-                    @endif
-    
+                    @method('PUT')
                     <!-- Form Fields -->
                     <div class="row">
                         <div class="col-md-6 mb-3 p-2">

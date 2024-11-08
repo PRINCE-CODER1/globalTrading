@@ -14,7 +14,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
 
-class LeadController extends Controller
+class LeadController extends Controller implements HasMiddleware
 {
     public static function middleware(): array{
         return [
@@ -186,9 +186,6 @@ public function edit($id)
         'customers' => $customers,
     ]);
 }
-
-
-
 
     /**
      * Remove the specified resource from storage.

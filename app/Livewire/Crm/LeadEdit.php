@@ -5,6 +5,7 @@ namespace App\Livewire\Crm;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Lead;
+use App\Models\LeadType;
 use App\Models\CustomerSupplier;
 use App\Models\Segment;
 use App\Models\LeadStatus;
@@ -23,6 +24,10 @@ class LeadEdit extends Component
     public $series;
     public $seriesList;
     public $categories;
+    public $lead_type_id;
+    public $amount; 
+    public $specification;
+    public $leadTypes;
     public $childCategories = []; // Initialize as empty
     public $customer_id, $lead_status_id, $lead_source_id, $segment_id, $sub_segment_id, $expected_date, $remark, $image;
     public $customers, $leadStatuses, $leadSources, $segments, $subSegments, $remarks, $category_id, $child_category_id;
@@ -39,31 +44,44 @@ class LeadEdit extends Component
         'expected_date' => 'required|date',
         'remark' => 'nullable|string|max:255',
         'image' => 'nullable|image|max:1024',
+        'lead_type_id' => 'required|exists:lead_types,id',
+        'amount' => 'nullable|numeric',
+        'specification' => 'nullable|in:favourable,non-favourable',
     ];
-
+    
     public function mount($leadId)
-    {
-        $this->lead = Lead::findOrFail($leadId);
-        $this->customer_id = $this->lead->customer_id;
-        $this->lead_status_id = $this->lead->lead_status_id;
-        $this->lead_source_id = $this->lead->lead_source_id;
-        $this->segment_id = $this->lead->segment_id;
-        $this->sub_segment_id = $this->lead->sub_segment_id;
-        $this->category_id = $this->lead->category_id;
-        $this->child_category_id = $this->lead->child_category_id;
-        $this->series = $this->lead->series;
-        $this->expected_date = $this->lead->expected_date;
+{
+    $this->lead = Lead::findOrFail($leadId);
+    $this->customer_id = $this->lead->customer_id;
+    $this->lead_status_id = $this->lead->lead_status_id;
+    $this->lead_source_id = $this->lead->lead_source_id;
+    $this->segment_id = $this->lead->segment_id;
+    $this->sub_segment_id = $this->lead->sub_segment_id;
+    $this->category_id = $this->lead->category_id;
+    $this->child_category_id = $this->lead->child_category_id;
+    $this->series = $this->lead->series;
+    $this->expected_date = $this->lead->expected_date;
+    $this->lead_type_id = $this->lead->lead_type_id;
+    $this->amuont = $this->lead->amount;
+    $this->specification = $this->lead->specification;
 
-        $this->remarks = $this->lead->remarks()->orderBy('created_at', 'desc')->get();
-        $this->customers = CustomerSupplier::all();
-        $this->leadStatuses = LeadStatus::all();
-        $this->leadSources = LeadSource::all();
-        $this->segments = Segment::whereNull('parent_id')->get();
-        $this->categories = StockCategory::all();
-        $this->seriesList = Series::all();
-        
-        $this->loadSubSegments();
+    $this->remarks = $this->lead->remarks()->orderBy('created_at', 'desc')->get();
+    $this->customers = CustomerSupplier::all();
+    $this->leadStatuses = LeadStatus::all();
+    $this->leadSources = LeadSource::all();
+    $this->segments = Segment::whereNull('parent_id')->get();
+    $this->categories = StockCategory::all();
+    $this->seriesList = Series::all();
+    $this->leadTypes = LeadType::all();
+    // Load sub-segments based on segment ID
+    $this->loadSubSegments();
+
+    // Load child categories if a category is selected
+    if ($this->category_id) {
+        $this->childCategories = ChildCategory::where('parent_category_id', $this->category_id)->get();
     }
+}
+
 
     public function updatedCategoryId($categoryId)
     {
@@ -106,7 +124,10 @@ class LeadEdit extends Component
             'child_category_id' => $this->child_category_id, // Added child category ID
             'series' => $this->series, 
             'expected_date' => $this->expected_date,
+            'lead_type_id' => $this->lead_type_id,
             'image' => $imagePath,
+            'amount' => $this->amount,
+            'specification' => $this->specification,
         ]);
 
         toastr()->closeButton(true)->success('Lead updated successfully.');
@@ -145,6 +166,8 @@ class LeadEdit extends Component
 
     public function render()
     {
-        return view('livewire.crm.lead-edit');
+        return view('livewire.crm.lead-edit',[
+            'leadTypes' => $this->leadTypes,
+        ]);
     }
 }

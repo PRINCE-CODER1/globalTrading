@@ -20,10 +20,10 @@
                         </div>
                       </div>
                       <span class="fs-5 fw-medium">{{ $leads->total() }}</span>
-                      <span class="fs-12 op-7 ms-1">
+                      {{-- <span class="fs-12 op-7 ms-1">
                         <i class="ti ti-trending-{{ $percentageChange >= 0 ? 'up' : 'down' }} me-1 d-inline-block"></i>
                         {{ number_format(abs($percentageChange), 1) }}%
-                    </span>
+                    </span> --}}
                     </div>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                                 <div class="d-flex align-items-center justify-content-between flex-wrap">
                                     <div>
                                         <p class="text-muted mb-3">{{ $team->name }}</p>
-                                        <h4 class="mt-1">Leads Assigned: {{ $team->members->count()}}</h4>
+                                        <h4 class="mt-1">Leads Assigned: {{ $team->agents->count()}}</h4>
                                     </div>
                                 </div>
                             </div>

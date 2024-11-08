@@ -25,24 +25,10 @@ class ManagerDashboard extends Component
     {
         $user = Auth::user();  // Get the currently logged-in manager
 
-        // Fetch all teams managed by the current manager
-        $teams = Team::where('creator_id', $user->id)->with('members')->get();
-        $teamMemberIds = $teams->pluck('members.*.id')->flatten()->toArray(); // Get IDs of all team members
+        $teams = Team::where('creator_id', $user->id)->get(); 
 
-        // Total leads for the current period (for the manager's team members)
-        $currentLeads = Lead::whereIn('assigned_to', $teamMemberIds)->count(); 
-
-        // Total leads for the previous period (last month)
-        $previousLeads = Lead::whereIn('assigned_to', $teamMemberIds)
-            ->whereBetween('created_at', [now()->subMonth(), now()])
-            ->count();
-
-        // Calculate percentage change in leads between current and previous period
-        $percentageChange = $previousLeads > 0 ? (($currentLeads - $previousLeads) / $previousLeads) * 100 : 0;
-
-        // Fetch all leads assigned to the team members
         $leads = Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
-            ->whereIn('assigned_to', $teamMemberIds)  // Only leads assigned to the manager's team members
+            ->whereIn('assigned_to', $teams->pluck('creator_id'))  // Only leads assigned to the manager's teams
             ->when($this->teamFilter, function($query) {
                 $query->whereHas('assignedAgent.teams', function ($q) {
                     $q->where('name', 'like', '%' . $this->teamFilter . '%');
@@ -61,10 +47,10 @@ class ManagerDashboard extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        // Fetch recent lead logs for the team members
+        // Fetch recent lead logs for the manager's team members
         $leadLogs = LeadLog::with(['lead', 'fromUser', 'toUser'])
-            ->whereIn('id_from', $teamMemberIds)
-            ->orWhereIn('id_to', $teamMemberIds)
+            ->whereIn('id_from', $teams->pluck('creator_id'))
+            ->orWhereIn('id_to', $teams->pluck('creator_id'))
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
@@ -72,8 +58,8 @@ class ManagerDashboard extends Component
         // Get all lead statuses for filtering
         $statuses = LeadStatus::all();
 
-        // Count open leads (new + in progress) for the manager's team members
-        $openLeads = Lead::whereIn('assigned_to', $teamMemberIds)
+        // Count open leads (new + in progress) for the manager's teams
+        $openLeads = Lead::whereIn('assigned_to', $teams->pluck('creator_id'))
             ->whereIn('lead_status_id', function ($query) {
                 $query->select('id')
                     ->from('lead_statuses')
@@ -81,8 +67,8 @@ class ManagerDashboard extends Component
             })
             ->count();
 
-        // Count closed leads (completed + lost) for the manager's team members
-        $closedLeads = Lead::whereIn('assigned_to', $teamMemberIds)
+        // Count closed leads (completed + lost) for the manager's teams
+        $closedLeads = Lead::whereIn('assigned_to', $teams->pluck('creator_id'))
             ->whereIn('lead_status_id', function ($query) {
                 $query->select('id')
                     ->from('lead_statuses')
@@ -92,7 +78,7 @@ class ManagerDashboard extends Component
 
         // Get leads created per day for the past month (for chart purposes)
         $leadsPerDay = Lead::select(\DB::raw('DATE(created_at) as date'), \DB::raw('count(*) as count'))
-            ->whereIn('assigned_to', $teamMemberIds)
+            ->whereIn('assigned_to', $teams->pluck('creator_id'))
             ->where('created_at', '>=', now()->subDays(30))
             ->groupBy('date')
             ->orderBy('date', 'asc')
@@ -100,7 +86,7 @@ class ManagerDashboard extends Component
 
         return view('livewire.crm.manager-dashboard', compact(
             'leadsPerDay', 'openLeads', 'closedLeads', 'leads', 
-            'leadLogs', 'teams', 'statuses', 'percentageChange'
+            'leadLogs', 'teams', 'statuses'
         ));
     }
 

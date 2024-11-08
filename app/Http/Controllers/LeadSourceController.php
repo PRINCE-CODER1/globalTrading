@@ -51,10 +51,10 @@ class LeadSourceController extends Controller
             ]);
 
             toastr()->closeButton(true)->success('Lead Source Added Successfully');
-            return redirect()->route('leads.index');
+            return redirect()->route('lead-source.index');
         } else {
             toastr()->closeButton(true)->error('Validation failed');
-            return redirect()->route('leads.create')->withErrors($validator)->withInput();
+            return redirect()->route('lead-source.create')->withErrors($validator)->withInput();
         }
     }
 
@@ -82,10 +82,10 @@ class LeadSourceController extends Controller
             ]);
 
             toastr()->closeButton(true)->success('Lead Source Updated Successfully');
-            return redirect()->route('leads.index');
+            return redirect()->route('lead-source.index');
         } else {
             toastr()->closeButton(true)->error('Validation failed');
-            return redirect()->route('leads.edit', $id)->withErrors($validator)->withInput();
+            return redirect()->route('lead-source.edit', $id)->withErrors($validator)->withInput();
         }
     }
 
@@ -94,6 +94,6 @@ class LeadSourceController extends Controller
     public function destroy(LeadSource $leadSource)
     {
         $leadSource->delete();
-        return redirect()->route('leads.index')->with('success', 'Lead source deleted successfully.');
+        return redirect()->route('lead-source.index')->with('success', 'Lead source deleted successfully.');
     }
 }

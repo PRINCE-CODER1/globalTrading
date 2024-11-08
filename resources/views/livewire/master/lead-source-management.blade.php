@@ -3,7 +3,7 @@
             <div class="row">
                 <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
                     <h4>Manage Lead Sources</h4>
-                    <a href="{{route('leads.create')}}" class="btn btn-secondary btn-wave float-end" >Create</a>
+                    <a href="{{route('lead-source.create')}}" class="btn btn-secondary btn-wave float-end" >Create</a>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@
                                                 <td>{{ \Carbon\Carbon::parse($leadSource->created_at)->format('d M, Y') }}</td>
                                                 <td>
                                                     <div class="hstack gap-2 flex-wrap">
-                                                        <a href="{{route('leads.edit',$leadSource->id)}}" class="btn btn-link text-info fs-14 lh-1 p-0"><i class="ri-edit-line"></i></a>
+                                                        <a href="{{route('lead-source.edit',$leadSource->id)}}" class="btn btn-link text-info fs-14 lh-1 p-0"><i class="ri-edit-line"></i></a>
                                                         <button class="btn btn-link text-danger fs-14 lh-1 p-0" data-bs-toggle="modal" data-bs-target="#deleteSegmentModal" wire:click="confirmDelete({{ $leadSource->id }})"><i class="ri-delete-bin-5-line"></i></button>
                                                         <!-- Delete Modal -->
                                                         <div wire:ignore.self class="modal fade" data-bs-dismiss="modal" id="deleteSegmentModal" tabindex="-1" aria-labelledby="deleteSegmentModalLabel" aria-hidden="true">

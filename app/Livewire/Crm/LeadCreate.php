@@ -5,11 +5,12 @@ use Livewire\Component;
 use App\Models\Lead;
 use App\Models\LeadStatus;
 use App\Models\LeadSource;
+use App\Models\LeadType;
 use App\Models\Segment;
 use App\Models\CustomerSupplier;
-use App\Models\Series; // Assuming 'Series' model is used
-use App\Models\StockCategory; // Assuming 'StockCategory' model is used
-use App\Models\ChildCategory; // Import the ChildCategory model
+use App\Models\Series; 
+use App\Models\StockCategory; 
+use App\Models\ChildCategory; 
 
 class LeadCreate extends Component
 {
@@ -23,9 +24,14 @@ class LeadCreate extends Component
     public $category_id; // For stock category
     public $child_category_id; // For child category
     public $series; // Selected series
+    public $lead_type_id; // For lead type
+    public $amount; // Amount field
+    public $specification; 
+    public $referenceId;
 
     public $leadStatuses;
     public $leadSources;
+    public $leadTypes;
     public $segments;
     public $subSegments;
     public $customers;
@@ -43,6 +49,20 @@ class LeadCreate extends Component
         $this->categories = StockCategory::all(); // Fetch all stock categories
         $this->childCategories = [];
         $this->seriesList = Series::all(); // Fetch all series
+        $this->leadTypes = LeadType::all();
+        $this->specification = null;
+        $this->referenceId = $this->generateReferenceId(); // Generate initial reference ID
+    }
+
+    private function generateReferenceId()
+    {
+        $lastLead = Lead::orderBy('created_at', 'desc')->first();
+        if ($lastLead && preg_match('/^INT\/(\d+)\/\d{4}$/', $lastLead->reference_id, $matches)) {
+            $number = intval($matches[1]) + 1;
+        } else {
+            $number = 1;
+        }
+        return sprintf('INT/%03d/%d', $number, date('Y'));
     }
 
     public function updatedCategoryId($categoryId)
@@ -60,6 +80,7 @@ class LeadCreate extends Component
         // Filter series based on the selected child category
         $this->seriesList = Series::where('child_category_id', $childCategoryId)->get();
     }
+
     public function updatedSegmentId($segmentId)
     {
         $this->subSegments = Segment::where('parent_id', $segmentId)->get();
@@ -79,7 +100,13 @@ class LeadCreate extends Component
             'child_category_id' => 'nullable|exists:child_categories,id',
             'series' => 'required|exists:series,id',
             'remark' => 'nullable|string',
+            'lead_type_id' => 'required|exists:lead_types,id',
+            'amount' => 'nullable|numeric',
+            'specification' => 'nullable|in:favourable,non-favourable',
         ]);
+
+        // Generate a new reference ID each time a lead is created
+        $this->referenceId = $this->generateReferenceId();
 
         // Create the lead
         $lead = Lead::create([
@@ -92,11 +119,13 @@ class LeadCreate extends Component
             'category_id' => $this->category_id,
             'child_category_id' => $this->child_category_id,
             'series' => $this->series,
+            'lead_type_id' => $this->lead_type_id,
+            'reference_id' => $this->referenceId,
+            'amount' => $this->amount, 
+            'specification' => $this->specification,
             'assigned_to' => auth()->id(),
             'user_id' => auth()->id(),
         ]);
-
-        
 
         toastr()->closeButton(true)->success('Lead added successfully.');
         return redirect()->route('agent.leads.index');
@@ -113,6 +142,7 @@ class LeadCreate extends Component
             'categories' => $this->categories,
             'childCategories' => $this->childCategories, 
             'seriesList' => $this->seriesList, 
+            'leadTypes' => $this->leadTypes,
         ]);
     }
 }

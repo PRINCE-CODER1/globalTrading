@@ -202,7 +202,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($users as $user)
-                                        @if ($user->role == 'Manager')
+                                        @if ($user->hasRole('Manager') )
                                             <tr>
                                                 <td>
                                                     <a href="{{ route('managers.leads', $user->id) }}"

@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Lead;
 
-class ManagerController extends Controller
+class ManagerController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array{
+        return [
+            new Middleware('permission:view manager', only: ['index']),
+            new Middleware('permission:edit manager', only: ['edit']),
+            new Middleware('permission:create manager', only: ['create']),
+            new Middleware('permission:delete manager', only: ['destroy']),
+            new Middleware('permission:showManagerLeads', only: ['showManagerLeads']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -40,7 +51,6 @@ class ManagerController extends Controller
     {
         //
     }
-    
     public function showLeads($userId)
     {
         // Check if the user has a 'Manager' role
@@ -54,15 +64,12 @@ class ManagerController extends Controller
         return view('manager.team.agent-det', compact('agent', 'leads'));
     }
 
-    
     public function showManagerLeads($managerId)
     {
-        if (!auth()->user()->hasRole(['Manager', 'Super Admin'])) {
+        if (!auth()->user()->hasRole(['Manager', 'Admin'])) {
             abort(403, 'Unauthorized access');
         }
-
-
-
+        
         $manager = User::findOrFail($managerId);
         $leads = $manager->leads;
 

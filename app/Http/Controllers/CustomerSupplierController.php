@@ -90,18 +90,13 @@ class CustomerSupplierController extends Controller
             ]);
         }
         toastr()->closeButton(true)->success('Created successfully.');
-        $redirectRoute = auth()->user()->hasRole('Super Admin')
-        ? 'admin.customer-supplier.customer-supplier.index'
-        : 'manager.customer-supplier.customer-supplier.index';
-
-        return redirect()->route($redirectRoute);
-        // return redirect()->route('admin.customer-supplier.customer-supplier.index');
+        return redirect()->route('customer-supplier.index');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, CustomerSupplier $customerSupplier)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -118,7 +113,6 @@ class CustomerSupplierController extends Controller
             'designation.*' => 'required|string|max:100',
         ]);
 
-        $customerSupplier = CustomerSupplier::findOrFail($id);
         $customerSupplier->update([
             'name' => $validatedData['name'],
             'mobile_no' => $validatedData['mobile_no'],
@@ -132,7 +126,7 @@ class CustomerSupplierController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        $customerSupplier->users()->delete(); 
+        $customerSupplier->users()->delete();
 
         foreach ($validatedData['names'] as $index => $name) {
             $customerSupplier->users()->create([
@@ -142,15 +136,10 @@ class CustomerSupplierController extends Controller
                 'designation' => $validatedData['designation'][$index],
             ]);
         }
+
         toastr()->closeButton(true)->success('Updated successfully.');
-        $redirectRoute = auth()->user()->hasRole('Super Admin')
-        ? 'admin.customer-supplier.customer-supplier.index'
-        : 'manager.customer-supplier.customer-supplier.index';
-
-        return redirect()->route($redirectRoute);
-        // return redirect()->route('admin.customer-supplier.customer-supplier.index')->with('success', 'Customer/Supplier updated successfully.');
+        return redirect()->route('customer-supplier.index')->with('success', 'Customer/Supplier updated successfully.');
     }
-
     /**
      * Remove the specified resource from storage.
      */
@@ -159,6 +148,6 @@ class CustomerSupplierController extends Controller
         $customerSupplier = CustomerSupplier::findOrFail($id);
         $customerSupplier->delete();
 
-        return redirect()->route('admin.customer-supplier.index')->with('success', 'Customer/Supplier deleted successfully.');
+        return redirect()->route('customer-supplier.index')->with('success', 'Customer/Supplier deleted successfully.');
     }
 }
