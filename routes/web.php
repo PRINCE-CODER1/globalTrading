@@ -67,7 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $user = Auth::user();
         
         // Dynamically redirect based on role
-        if ($user->hasRole('Super Admin')) {
+        if ($user->hasRole('Admin')) {
             return view('website.main-erp.index');
         } elseif ($user->hasRole('Agent')) {
             return redirect()->route('agent.dashboard');

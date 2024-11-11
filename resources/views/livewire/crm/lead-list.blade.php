@@ -3,7 +3,7 @@
         <div class="row mt-5 mb-3">
             <div class="col-12 d-flex align-items-center justify-content-between">
                 <h4 class="mb-0">Leads</h4>
-                <a href="{{ route('agent.leads.create') }}" class="btn btn-secondary"><i
+                <a href="{{ route('leads.create') }}" class="btn btn-secondary"><i
                         class="ri-add-circle-line"></i>
                     Create Lead</a>
             </div>
@@ -102,7 +102,7 @@
                                                 <td>{{ $lead->subSegment->name ?? 'N/A' }}</td>
                                                 <td>{{ $lead->expected_date }}</td>
                                                 <td>
-                                                    <a href="{{ route('agent.leads.edit', $lead->id) }}"
+                                                    <a href="{{ route('leads.edit', $lead->id) }}"
                                                         class="btn btn-info btn-sm text-white"><i
                                                             class="ri-edit-line"></i> view</a>
                                                     <button class="btn btn-link text-danger fs-14 lh-1 p-0"

@@ -128,7 +128,7 @@ class LeadCreate extends Component
         ]);
 
         toastr()->closeButton(true)->success('Lead added successfully.');
-        return redirect()->route('agent.leads.index');
+        return redirect()->route('leads.index');
     }
 
     public function render()

@@ -144,7 +144,7 @@
                         </li>
                         @can('view lead')
                         <li class="slide">
-                            <a href="{{ route('agent.leads.index') }}" class="side-menu__item {{ request()->routeIs('agent.leads.index') ? 'active' : '' }}">Leads</a>
+                            <a href="{{ route('leads.index') }}" class="side-menu__item {{ request()->routeIs('leads.index') ? 'active' : '' }}">Leads</a>
                         </li>
                         @endcan
                     </ul>

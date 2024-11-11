@@ -5,7 +5,7 @@
                 <h5 class="mb-0 ">Edit Lead : <span class="text-secondary"> {{ $lead->id }}</span>
                 </h5>
                 @if (auth()->user()->hasRole('Agent'))
-                    <a href="{{ route('agent.leads.index') }}" class="btn btn-secondary btn-wave float-end">
+                    <a href="{{ route('leads.index') }}" class="btn btn-secondary btn-wave float-end">
                         <i class="bi bi-arrow-left me-1"></i> Back
                     </a>
                 @endif
@@ -244,7 +244,7 @@
                                 <button type="submit" class="btn btn-secondary btn-md"><i
                                         class="ri-save-3-line"></i> Update</button>
                                 @if (auth()->user()->hasRole('Agent'))
-                                    <a href="{{ route('agent.leads.index') }}" class="btn btn-outline-danger btn-sm d-flex justify-content-center align-items-center ">
+                                    <a href="{{ route('leads.index') }}" class="btn btn-outline-danger btn-sm d-flex justify-content-center align-items-center ">
                                         <i class="bi bi-arrow-left me-1"></i> Back
                                     </a>
                                 @endif

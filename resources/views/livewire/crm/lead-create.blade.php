@@ -140,7 +140,7 @@
 
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-secondary btn-sm me-2"><i class="ri-add-circle-line"></i> Create Lead</button>
-            <a href="{{ route('agent.leads.index') }}" class="btn btn-danger btn-sm">Cancel</a>
+            <a href="{{ route('leads.index') }}" class="btn btn-danger btn-sm">Cancel</a>
         </div>
     </form>
 </div>
