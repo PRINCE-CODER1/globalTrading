@@ -132,9 +132,10 @@
                <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Make your <span class="text-secondary">Lead</span> here</h5>
-                        <a href="{{ route('agent.leads.create') }}" class="btn btn-secondary"><i
+                        <a href="{{ route('leads.create') }}" class="btn btn-secondary"><i
                             class="ri-add-circle-line"></i>
-                        Create Lead</a>
+                            Create Lead
+                        </a>
                     </div>
                </div>
             </div>
@@ -330,7 +331,7 @@
                                         @foreach ($leads as $lead)
                                             <tr>
                                                 <td><a class="btn btn-sm btn-info"
-                                                        href="{{ route('agent.leads.edit', $lead->id) }}"><i
+                                                        href="{{ route('leads.edit', $lead->id) }}"><i
                                                             class="ri-eye-2-line"></i> View Lead</a></td>
                                                 <td>{{ $lead->customer->name }}</td>
                                                 <td>{{ $lead->leadSource->name }}</td>

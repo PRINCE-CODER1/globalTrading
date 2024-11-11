@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12 mt-1 d-flex align-items-center justify-content-between mb-2">
             <h4 class="mb-0">Create Lead </h4>
-            <a href="{{ route('agent.leads.index') }}" class="btn btn-secondary btn-wave float-end">
+            <a href="{{ route('leads.index') }}" class="btn btn-secondary btn-wave float-end">
                 <i class="bi bi-arrow-left me-1"></i> Back
             </a>
         </div>
@@ -21,7 +21,7 @@
                         <a href="javascript:void(0);"><i class="bi bi-house-door me-1 fs-15"></i> Dashboard</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('agent.leads.create') }}"><i class="bi bi-clipboard me-1 fs-15"></i> Lead </a>
+                        <a href="{{ route('leads.create') }}"><i class="bi bi-clipboard me-1 fs-15"></i> Lead </a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Create Lead </li>
                 </ol>

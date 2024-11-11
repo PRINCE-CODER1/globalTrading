@@ -237,7 +237,8 @@
                         'series.index',
                         'lead-source.index',
                         'leads-status.index',
-                        'leads-types.index'
+                        'leads-types.index',
+                        'contractor.index'
                     ]) ? 'open' : '' }}">
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center {{ request()->routeIs([
                         'customer-supplier.index',
@@ -257,7 +258,8 @@
                         'series.index',
                         'lead-source.index',
                         'leads-status.index',
-                        'leads-types.index'
+                        'leads-types.index',
+                        'contractor.index',
                     ]) ? 'active' : '' }}">
                         <i class="bi bi-grid side-menu__icon mb-0 me-2"></i>
                             <span class="side-menu__label">Master</span>
@@ -356,6 +358,11 @@
                         @can('view leadtype')
                         <li class="slide">
                           <a href="{{ route('leads-types.index') }}" class="side-menu__item {{ request()->routeIs('leads-types.index') ? 'active' : '' }}">Lead Types</a>
+                        </li>
+                        @endcan
+                        @can('view contractor')
+                        <li class="slide">
+                          <a href="{{ route('contractor.index') }}" class="side-menu__item {{ request()->routeIs('contractor.index') ? 'active' : '' }}">Contractors</a>
                         </li>
                         @endcan
                       </ul>

@@ -38,6 +38,7 @@ use App\Http\Controllers\ChalaanController;
 use App\Http\Controllers\ExternalChalaanController;
 use App\Http\Controllers\InternalChalaanController;
 use App\Http\Controllers\ReturnChalaanController;
+use App\Http\Controllers\ContractorController;
 
 
 // Agent Controller 
@@ -141,6 +142,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('challan/external', ExternalChalaanController::class);
     Route::resource('challan/internal', InternalChalaanController::class);
     Route::resource('return-chalaan', ReturnChalaanController::class);
+    Route::resource('contractor', ContractorController::class);
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

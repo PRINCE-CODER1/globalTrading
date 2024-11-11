@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
+            $table->string('reference_id')->unique();
             $table->foreignId('customer_id')->constrained('customer_suppliers');
             $table->foreignId('lead_status_id')->constrained('lead_statuses');   
             $table->foreignId('lead_source_id')->constrained('lead_sources');  
@@ -22,6 +23,9 @@ return new class extends Migration
             $table->foreignId('child_category_id')->constrained('child_categories'); 
             $table->string('series');
             $table->date('expected_date')->nullable();
+            $table->foreignId('lead_type_id')->nullable()->constrained('lead_types')->onDelete('cascade');
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->enum('specification', ['favourable', 'non-favourable'])->nullable();
             $table->foreignId('assigned_to')->constrained('users');  
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();

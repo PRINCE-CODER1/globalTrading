@@ -99,7 +99,7 @@ public function store(Request $request)
     ]);
 
 
-    return redirect()->route('agent.leads.index')->with('success', 'Lead added successfully');
+    return redirect()->route('leads.index')->with('success', 'Lead added successfully');
 }
 
 // Update method
@@ -155,7 +155,7 @@ public function update(Request $request, Lead $lead)
         'id_to' => null,
     ]);
 
-    return redirect()->route('agent.leads.index')->with('success', 'Lead updated successfully.');
+    return redirect()->route('leads.index')->with('success', 'Lead updated successfully.');
 }
 
 public function edit($id)
@@ -209,7 +209,7 @@ public function edit($id)
         $lead->remarks()->delete();
 
         $lead->delete();
-        return redirect()->route('agent.leads.index')->with('success', 'Lead deleted successfully.');
+        return redirect()->route('leads.index')->with('success', 'Lead deleted successfully.');
     }
 
     // public function leadByAgent($agentID)
