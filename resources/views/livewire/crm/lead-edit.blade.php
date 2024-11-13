@@ -199,7 +199,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="series" class="form-label text-muted small">Lead Type</label>
-                                    <select wire:model="lead_type_id" class="form-select form-select-sm">
+                                    <select wire:model.live="lead_type_id" class="form-select form-select-sm">
                                         <option value="">Select Lead Type</option>
                                         @foreach($leadTypes as $type)
                                             <option value="{{ $type->id }}">{{ $type->name }}</option>
@@ -235,6 +235,19 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
+                            </div>
+                            <div class="col-md-4">
+                                @if($showContractOptions)
+                                <div class="mb-3">
+                                    <label for="contractor_id">Contractor</label>
+                                    <select wire:model="contractor_id" id="contractor_id" class="form-select form-select-sm">
+                                        <option value="">Select Contractor</option>
+                                        @foreach($contractors as $contractor)
+                                            <option value="{{ $contractor->id }}">{{ $contractor->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @endif  
                             </div>
 
                             <!-- Form Actions -->
@@ -278,7 +291,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>      
+                            </div>    
                         </form>
                     </div>
                 </div>

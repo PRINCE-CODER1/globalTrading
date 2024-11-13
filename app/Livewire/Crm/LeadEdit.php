@@ -13,6 +13,7 @@ use App\Models\LeadSource;
 use App\Models\Remark;
 use App\Models\StockCategory;
 use App\Models\ChildCategory;
+use App\Models\Contractor;
 use App\Models\Series;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,11 @@ class LeadEdit extends Component
     public $lead_type_id;
     public $amount; 
     public $specification;
+
+    public $contractors = null; 
+    public $contractor_id; 
+    public $showContractOptions = false; 
+
     public $leadTypes;
     public $assigned_to; 
     public $teamAgents = [];
@@ -51,12 +57,13 @@ class LeadEdit extends Component
         'amount' => 'nullable|numeric',
         'specification' => 'nullable|in:favourable,non-favourable',
         'assigned_to' => 'nullable|exists:users,id',
+        'contractor_id' => 'nullable|exists:contractors,id',
     ];
     
     public function mount($leadId)
     {
         $this->lead = Lead::findOrFail($leadId);
-        $this->assigned_to = $this->lead->assigned_to;
+        $this->assigned_to = $this->lead->assigned_to ?? auth()->id();
         $this->customer_id = $this->lead->customer_id;
         $this->lead_status_id = $this->lead->lead_status_id;
         $this->lead_source_id = $this->lead->lead_source_id;
@@ -69,6 +76,8 @@ class LeadEdit extends Component
         $this->lead_type_id = $this->lead->lead_type_id;
         $this->amount = $this->lead->amount;
         $this->specification = $this->lead->specification;
+        
+        $this->contractors = Contractor::all();
 
         $this->remarks = $this->lead->remarks()->orderBy('created_at', 'desc')->get();
         $this->customers = CustomerSupplier::all();
@@ -110,6 +119,11 @@ class LeadEdit extends Component
     {
         $this->subSegments = Segment::where('parent_id', $this->segment_id)->get();
     }
+    public function updatedLeadTypeId($leadTypeId)
+    {
+        $projectTypeId = LeadType::where('name', 'Project')->value('id');
+        $this->showContractOptions = $leadTypeId == $projectTypeId;
+    }
 
     public function save()
     {
@@ -132,6 +146,7 @@ class LeadEdit extends Component
             'series' => $this->series,
             'expected_date' => $this->expected_date,
             'lead_type_id' => $this->lead_type_id,
+            'contractors' => $this->contractor_id, 
             'image' => $imagePath,
             'amount' => $this->amount,
             'specification' => $this->specification,
@@ -143,7 +158,13 @@ class LeadEdit extends Component
 
     public function assignAgent()
     {
+        if ($this->assigned_to === null) {
+            toastr()->error('Please assign an agent.');
+            return;
+        }
+
         $this->validate(['assigned_to' => 'required']);
+
         $this->lead->update(['assigned_to' => $this->assigned_to]);
 
         $agentName = User::find($this->assigned_to)->name;
@@ -187,6 +208,7 @@ class LeadEdit extends Component
     {
         return view('livewire.crm.lead-edit', [
             'leadTypes' => $this->leadTypes,
+            'contractors' => $this->contractors,
         ]);
     }
 }
