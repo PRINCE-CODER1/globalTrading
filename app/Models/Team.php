@@ -10,8 +10,7 @@ class Team extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'creator_id'];
-
-    // Define the many-to-many relationship between teams and agents (users)
+    
     public function agents()
     {
         return $this->belongsToMany(User::class, 'user_team', 'team_id', 'user_id');

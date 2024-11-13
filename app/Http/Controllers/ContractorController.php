@@ -45,6 +45,7 @@ class ContractorController extends Controller implements HasMiddleware
         $request->validate([
             'name' => 'required|string|max:255',
             'details' => 'nullable|string',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         Contractor::create($request->all());
@@ -58,6 +59,7 @@ class ContractorController extends Controller implements HasMiddleware
         $request->validate([
             'name' => 'required|string|max:255',
             'details' => 'nullable|string',
+            'user_id' => 'required|exists:users,id',
         ]);
 
         $lead = Contractor::findOrFail($id);

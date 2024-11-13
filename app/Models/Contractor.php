@@ -11,6 +11,11 @@ class Contractor extends Model
     
     protected $fillable = [
         'name',
-        'details'
+        'details',
+        'user_id'
     ];
+    public function leads()
+    {
+        return $this->belongsTo(Lead::class);
+    }
 }

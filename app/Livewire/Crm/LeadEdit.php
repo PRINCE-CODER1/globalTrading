@@ -14,6 +14,7 @@ use App\Models\Remark;
 use App\Models\StockCategory;
 use App\Models\ChildCategory;
 use App\Models\Series;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class LeadEdit extends Component
@@ -28,6 +29,8 @@ class LeadEdit extends Component
     public $amount; 
     public $specification;
     public $leadTypes;
+    public $assigned_to; 
+    public $teamAgents = [];
     public $childCategories = []; // Initialize as empty
     public $customer_id, $lead_status_id, $lead_source_id, $segment_id, $sub_segment_id, $expected_date, $remark, $image;
     public $customers, $leadStatuses, $leadSources, $segments, $subSegments, $remarks, $category_id, $child_category_id;
@@ -39,7 +42,7 @@ class LeadEdit extends Component
         'segment_id' => 'required|exists:segments,id',
         'sub_segment_id' => 'nullable|exists:segments,id',
         'category_id' => 'nullable|exists:stock_categories,id',
-        'child_category_id' => 'nullable|exists:child_categories,id', // Ensure this points to the right table
+        'child_category_id' => 'nullable|exists:child_categories,id',
         'series' => 'required|exists:series,id',
         'expected_date' => 'required|date',
         'remark' => 'nullable|string|max:255',
@@ -47,49 +50,53 @@ class LeadEdit extends Component
         'lead_type_id' => 'required|exists:lead_types,id',
         'amount' => 'nullable|numeric',
         'specification' => 'nullable|in:favourable,non-favourable',
+        'assigned_to' => 'nullable|exists:users,id',
     ];
     
     public function mount($leadId)
-{
-    $this->lead = Lead::findOrFail($leadId);
-    $this->customer_id = $this->lead->customer_id;
-    $this->lead_status_id = $this->lead->lead_status_id;
-    $this->lead_source_id = $this->lead->lead_source_id;
-    $this->segment_id = $this->lead->segment_id;
-    $this->sub_segment_id = $this->lead->sub_segment_id;
-    $this->category_id = $this->lead->category_id;
-    $this->child_category_id = $this->lead->child_category_id;
-    $this->series = $this->lead->series;
-    $this->expected_date = $this->lead->expected_date;
-    $this->lead_type_id = $this->lead->lead_type_id;
-    $this->amuont = $this->lead->amount;
-    $this->specification = $this->lead->specification;
+    {
+        $this->lead = Lead::findOrFail($leadId);
+        $this->assigned_to = $this->lead->assigned_to;
+        $this->customer_id = $this->lead->customer_id;
+        $this->lead_status_id = $this->lead->lead_status_id;
+        $this->lead_source_id = $this->lead->lead_source_id;
+        $this->segment_id = $this->lead->segment_id;
+        $this->sub_segment_id = $this->lead->sub_segment_id;
+        $this->category_id = $this->lead->category_id;
+        $this->child_category_id = $this->lead->child_category_id;
+        $this->series = $this->lead->series;
+        $this->expected_date = $this->lead->expected_date;
+        $this->lead_type_id = $this->lead->lead_type_id;
+        $this->amount = $this->lead->amount;
+        $this->specification = $this->lead->specification;
 
-    $this->remarks = $this->lead->remarks()->orderBy('created_at', 'desc')->get();
-    $this->customers = CustomerSupplier::all();
-    $this->leadStatuses = LeadStatus::all();
-    $this->leadSources = LeadSource::all();
-    $this->segments = Segment::whereNull('parent_id')->get();
-    $this->categories = StockCategory::all();
-    $this->seriesList = Series::all();
-    $this->leadTypes = LeadType::all();
-    // Load sub-segments based on segment ID
-    $this->loadSubSegments();
+        $this->remarks = $this->lead->remarks()->orderBy('created_at', 'desc')->get();
+        $this->customers = CustomerSupplier::all();
+        $this->leadStatuses = LeadStatus::all();
+        $this->leadSources = LeadSource::all();
+        $this->segments = Segment::whereNull('parent_id')->get();
+        $this->categories = StockCategory::all();
+        $this->seriesList = Series::all();
+        $this->leadTypes = LeadType::all();
+        
+        $this->loadSubSegments();
 
-    // Load child categories if a category is selected
-    if ($this->category_id) {
-        $this->childCategories = ChildCategory::where('parent_category_id', $this->category_id)->get();
+        if ($this->category_id) {
+            $this->childCategories = ChildCategory::where('parent_category_id', $this->category_id)->get();
+        }
+
+        $managerTeams = Auth::user()->teams()->pluck('team_id');
+        $this->teamAgents = User::whereIn('id', function ($query) use ($managerTeams) {
+            $query->select('user_id')
+                ->from('user_team')
+                ->whereIn('team_id', $managerTeams);
+        })->get();
     }
-}
-
 
     public function updatedCategoryId($categoryId)
     {
-        // Fetch child categories based on the selected stock category
         $this->childCategories = ChildCategory::where('parent_category_id', $categoryId)->get();
-        $this->child_category_id = null; // Reset selected child category
-    
-        // Fetch series based on the selected stock category
+        $this->child_category_id = null;
         $this->seriesList = Series::where('stock_category_id', $categoryId)->get();
     }
 
@@ -121,17 +128,29 @@ class LeadEdit extends Component
             'segment_id' => $this->segment_id,
             'sub_segment_id' => $this->sub_segment_id,
             'category_id' => $this->category_id,
-            'child_category_id' => $this->child_category_id, // Added child category ID
-            'series' => $this->series, 
+            'child_category_id' => $this->child_category_id,
+            'series' => $this->series,
             'expected_date' => $this->expected_date,
             'lead_type_id' => $this->lead_type_id,
             'image' => $imagePath,
             'amount' => $this->amount,
             'specification' => $this->specification,
+            'assigned_to' => $this->assigned_to,
         ]);
 
-        toastr()->closeButton(true)->success('Lead updated successfully.');
+        $this->assignAgent();
     }
+
+    public function assignAgent()
+    {
+        $this->validate(['assigned_to' => 'required']);
+        $this->lead->update(['assigned_to' => $this->assigned_to]);
+
+        $agentName = User::find($this->assigned_to)->name;
+        toastr()->closeButton(true)->success("Successfully assigned to $agentName");
+        $this->reset(['assigned_to']);
+    }
+
 
     public function addRemark()
     {
@@ -166,7 +185,7 @@ class LeadEdit extends Component
 
     public function render()
     {
-        return view('livewire.crm.lead-edit',[
+        return view('livewire.crm.lead-edit', [
             'leadTypes' => $this->leadTypes,
         ]);
     }

@@ -21,9 +21,9 @@
                         </ul>
                     </div>
                     <div class="d-flex align-items-center">
-                        <div class="col-auto">
+                        {{-- <div class="col-auto">
                             <label for="search" class="form-label">Search</label>
-                        </div>
+                        </div> --}}
                         <div class="col-auto">
                             <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
                         </div>

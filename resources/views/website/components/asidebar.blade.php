@@ -131,7 +131,7 @@
                 </li>
                 @endcan
 
-                @can('view lead')
+                @can('view leadside')
                 <li class="slide has-sub {{ request()->routeIs('agent.lead') || request()->routeIs('agent.leads.create') ? 'open' : '' }}">
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center {{ request()->routeIs('agent.lead') || request()->routeIs('agent.leads.create') ? 'active' : '' }}">
                         <i class="ri-group-line side-menu__icon d-flex justify-content-center align-items-center"></i>

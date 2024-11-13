@@ -51,10 +51,6 @@
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
-                {{-- <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" name="name" id="name" class="form-control" required>
-                </div> --}}
                 <div class="mb-3">
                     <label for="details" class="form-label fs-14 text-dark">
                         <i class="bi bi-geo-alt me-1"></i> Details
@@ -64,11 +60,8 @@
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
+                <input type="hidden" name="user_id" value="{{ auth()->id() }}">
         
-                {{-- <div class="mb-3">
-                    <label for="details" class="form-label">Details</label>
-                    <textarea name="details" id="details" class="form-control"></textarea>
-                </div> --}}
                 <button type="submit" class="btn btn-secondary"><i class="ri-add-circle-line me-1"></i> Create Contractor</button>
             </form>
         </div>

@@ -28,8 +28,8 @@
                 @error('lead_status_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
             <div class="col-md-3">
-                <label for="leadtype" class="form-label text-muted small">Lead Type</label>
-                <select wire:model="lead_type_id" class="form-select form-select-sm">
+                <label for="leadtype" class="form-label fw-semibold">Lead Type</label>
+                <select wire:model.live="lead_type_id" class="form-select form-select-sm">
                     <option value="">Select Lead Type</option>
                     @foreach($leadTypes as $type)
                         <option value="{{ $type->id }}">{{ $type->name }}</option>
@@ -90,7 +90,7 @@
                 @error('category_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="child_category_id" class="form-label fw-semibold">Child Category</label>
                 <select id="child_category_id" wire:model.live="child_category_id" class="form-select form-select-sm">
                     <option value="">Select Child Category</option>
@@ -100,7 +100,7 @@
                 </select>
                 @error('child_category_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="series" class="form-label fw-semibold">Series</label>
                 <select id="series" wire:model="series" class="form-select form-select-sm" required>
                     <option value="">Select Series</option>
@@ -110,11 +110,22 @@
                 </select>
                 @error('series') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="amount" class="form-label fw-semibold">Amount</label>
                 <input type="text" wire:model="amount" id="amount" class="form-control form-control-sm" placeholder="enter amount" />
                 @error('amount') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
+            @if($showContractOptions)
+            <div class="col-md-3">
+                <label for="contract_details" class="form-label fw-semibold">Contract Type</label>
+                <select wire:model="contractor_id" id="contract" class="form-select form-select-sm">
+                    <option value="">Select Contract Type</option>
+                    @foreach($contractors as $option)
+                        <option value="{{ $option->id }}">{{ $option->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
         
             <div class="mb-3">
                 <label for="specification" class="form-label fw-semibold">Specification</label>

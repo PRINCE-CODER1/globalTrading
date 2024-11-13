@@ -34,8 +34,6 @@
             </div>
         </div>
     </div>
-
-
     <div class="container mb-5">
         <div class="row">
             <!-- Lead Information Card -->
@@ -248,7 +246,39 @@
                                         <i class="bi bi-arrow-left me-1"></i> Back
                                     </a>
                                 @endif
-                            </div> 
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#assignAgentModal">
+                                    <i class="ri-links-line me-1"></i> Assign to Agent
+                                </button>
+                            </div>
+                             
+                            <!-- Modal for assigning the lead to an agent -->
+                            <div wire:ignore class="modal fade"  id="assignAgentModal" tabindex="-1" aria-labelledby="assignAgentModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="assignAgentModalLabel">Assign Lead to an Agent</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Select an agent to assign this lead. Leave unassigned if you do not want to assign:</p>
+                                            
+                                            <!-- Dropdown to select an agent -->
+                                            <select wire:model="assigned_to" class="form-control">
+                                                <option value="">Do not assign</option>
+                                                @foreach ($teamAgents as $agent)
+                                                    <option value="{{ $agent->id }}">{{ $agent->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('assigned_to') <span class="text-danger">{{ $message }}</span> @enderror
+                                            <p class="mt-2"><strong>Note :</strong><span class="text-danger"> After assigning lead to agent, i will not appear in you panel.</span></p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" wire:click="$set('assigned_to', '')" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-secondary" wire:click="assignAgent" data-bs-dismiss="modal">Assign</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>      
                         </form>
                     </div>
                 </div>

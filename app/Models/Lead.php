@@ -21,6 +21,7 @@ class Lead extends Model
         'category_id',
         'child_category_id',
         'lead_type_id',
+        'contractors',
         'amount',
         'specification',
         'series',
@@ -95,5 +96,9 @@ class Lead extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    public function contractor()
+    {
+        return $this->belongsTo(Contractor::class);
     }
 }

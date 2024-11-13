@@ -27,12 +27,9 @@
 
                 <!-- Search Input -->
                 <div class="d-flex align-items-center">
-                    {{-- <div class="col-auto d-none d-md-block">
-                        <label for="search" class="form-label d-none">Search</label>
-                    </div> --}}
-                    <div class="col-auto">
+                    <div>
                         <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
-                    </div>
+                    </div>                    
                 </div>
             </div>
         </div>

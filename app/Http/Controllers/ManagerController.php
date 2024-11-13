@@ -66,22 +66,34 @@ class ManagerController extends Controller implements HasMiddleware
         return view('manager.team.agent-det', compact('agent', 'leads'));
     }
 
+    // public function showManagerLeads($managerId)
+    // {
+    //     if (!auth()->user()->hasRole(['Manager', 'Admin'])) {
+    //         abort(403, 'Unauthorized access');
+    //     }
+
+    //      // Retrieve the manager details
+    //     $manager = User::findOrFail($managerId);
+    //     $teams = DB::table('teams')->where('creator_id',$managerId)->get();
+       
+    //     $agents = $manager->agents;
+
+    //     return view('manager.team.manager-leads', compact('manager','teams','agents'));
+    // }
     public function showManagerLeads($managerId)
     {
         if (!auth()->user()->hasRole(['Manager', 'Admin'])) {
             abort(403, 'Unauthorized access');
         }
 
-         // Retrieve the manager details
+        // Retrieve the manager details
         $manager = User::findOrFail($managerId);
-        $teams = DB::table('teams')->where('creator_id',$managerId)->get();
-       // $leads = $manager->leads;
-       // $teamCount = $teams->count();
-    //   print_r($teams);
-    //   die();
-        $agents = $manager->agents;
+        
+        // Get the manager's teams
+        // $teams = DB::table('teams')->where('creator_id', $managerId)->get();
+        $teams = Team::with('agents')->where('creator_id', $managerId)->get();
 
-        return view('manager.team.manager-leads', compact('manager','teams'));
+        return view('manager.team.manager-leads', compact('manager', 'teams'));
     }
 
     /**

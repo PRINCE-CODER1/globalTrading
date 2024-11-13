@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Livewire\Crm;
 
 use Livewire\Component;
@@ -11,6 +12,7 @@ use App\Models\CustomerSupplier;
 use App\Models\Series; 
 use App\Models\StockCategory; 
 use App\Models\ChildCategory; 
+use App\Models\Contractor; 
 
 class LeadCreate extends Component
 {
@@ -28,6 +30,9 @@ class LeadCreate extends Component
     public $amount; // Amount field
     public $specification; 
     public $referenceId;
+    public $contractors = null; 
+    public $contractor_id; 
+    public $showContractOptions = false; 
 
     public $leadStatuses;
     public $leadSources;
@@ -46,12 +51,13 @@ class LeadCreate extends Component
         $this->segments = Segment::whereNull('parent_id')->get();
         $this->subSegments = [];
         $this->customers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
-        $this->categories = StockCategory::all(); // Fetch all stock categories
+        $this->categories = StockCategory::all();
         $this->childCategories = [];
-        $this->seriesList = Series::all(); // Fetch all series
+        $this->seriesList = Series::all();
         $this->leadTypes = LeadType::all();
+        $this->contractors = Contractor::all();
         $this->specification = null;
-        $this->referenceId = $this->generateReferenceId(); // Generate initial reference ID
+        $this->referenceId = $this->generateReferenceId();
     }
 
     private function generateReferenceId()
@@ -67,17 +73,13 @@ class LeadCreate extends Component
 
     public function updatedCategoryId($categoryId)
     {
-        // Fetch child categories based on the selected stock category
         $this->childCategories = ChildCategory::where('parent_category_id', $categoryId)->get();
         $this->child_category_id = null;
-
-        // Fetch series based on the selected stock category
         $this->seriesList = Series::where('stock_category_id', $categoryId)->get();
     }
 
     public function updatedChildCategoryId($childCategoryId)
     {
-        // Filter series based on the selected child category
         $this->seriesList = Series::where('child_category_id', $childCategoryId)->get();
     }
 
@@ -85,6 +87,12 @@ class LeadCreate extends Component
     {
         $this->subSegments = Segment::where('parent_id', $segmentId)->get();
         $this->sub_segment_id = null;
+    }
+
+    public function updatedLeadTypeId($leadTypeId)
+    {
+        $projectTypeId = LeadType::where('name', 'Project')->value('id');
+        $this->showContractOptions = $leadTypeId == $projectTypeId;
     }
 
     public function submit()
@@ -103,12 +111,11 @@ class LeadCreate extends Component
             'lead_type_id' => 'required|exists:lead_types,id',
             'amount' => 'nullable|numeric',
             'specification' => 'nullable|in:favourable,non-favourable',
+            'contractor_id' => 'nullable|exists:contractors,id',
         ]);
 
-        // Generate a new reference ID each time a lead is created
         $this->referenceId = $this->generateReferenceId();
 
-        // Create the lead
         $lead = Lead::create([
             'customer_id' => $this->customer_id,
             'lead_status_id' => $this->lead_status_id,
@@ -120,6 +127,7 @@ class LeadCreate extends Component
             'child_category_id' => $this->child_category_id,
             'series' => $this->series,
             'lead_type_id' => $this->lead_type_id,
+            'contractors' => $this->contractor_id, 
             'reference_id' => $this->referenceId,
             'amount' => $this->amount, 
             'specification' => $this->specification,
@@ -143,6 +151,7 @@ class LeadCreate extends Component
             'childCategories' => $this->childCategories, 
             'seriesList' => $this->seriesList, 
             'leadTypes' => $this->leadTypes,
+            'contractors' => $this->contractors,
         ]);
     }
 }
