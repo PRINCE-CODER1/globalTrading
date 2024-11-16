@@ -110,6 +110,7 @@ class LeadCreate extends Component
             'remark' => 'nullable|string',
             'lead_type_id' => 'required|exists:lead_types,id',
             'amount' => 'nullable|numeric',
+            'application' => 'required|numeric',
             'specification' => 'nullable|in:favourable,non-favourable',
             'contractor_id' => 'nullable|exists:contractors,id',
         ]);
@@ -127,6 +128,7 @@ class LeadCreate extends Component
             'child_category_id' => $this->child_category_id,
             'series' => $this->series,
             'lead_type_id' => $this->lead_type_id,
+            'application' => $this->application,
             'contractors' => $this->contractor_id, 
             'reference_id' => $this->referenceId,
             'amount' => $this->amount, 

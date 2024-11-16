@@ -239,7 +239,7 @@
                             <div class="col-md-4">
                                 @if($showContractOptions)
                                 <div class="mb-3">
-                                    <label for="contractor_id">Contractor</label>
+                                    <label for="contractor_id" class="form-label text-muted small">Contractor</label>
                                     <select wire:model="contractor_id" id="contractor_id" class="form-select form-select-sm">
                                         <option value="">Select Contractor</option>
                                         @foreach($contractors as $contractor)
@@ -448,7 +448,11 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-
+                                <div class="mb-4">
+                                    <label for="date" class="form-label text-muted small">New Follow Up Date</label>
+                                    <input type="date" id="date" class="form-control" wire:model="date">
+                                    @error('date') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
                                 <button type="submit" class="btn btn-secondary mb-3">
                                     <i class="ri-links-line"></i> Add Remark
                                 </button>
@@ -462,6 +466,7 @@
                                                 <th>User</th>
                                                 <th>Remark</th>
                                                 <th>created_at</th>
+                                                <th>New Follow Up Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -469,8 +474,8 @@
                                                 <tr>
                                                     <td>{{ $remark->user->name ?? 'Unknown User' }}</td>
                                                     <td>{{ $remark->remark }}</td>
-
                                                     <td>{{ $remark->created_at->format('d-m-Y') }}</td>
+                                                    <td>{{ $remark->date ? \Carbon\Carbon::parse($remark->date)->format('d-m-Y') : 'N/A' }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

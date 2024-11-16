@@ -25,6 +25,7 @@ class SaleOrderForm extends Component
     public $customer_id;
     public $agent_id;
     public $segment_id;
+    public $sub_segment_id;
     public $lead_source_id;
     public $order_branch_id;
     public $delivery_branch_id;
@@ -35,6 +36,7 @@ class SaleOrderForm extends Component
     public $customers;
     public $agents;
     public $segments;
+    public $subsegments = [];
     public $leadSources;
     public $branches;
     public $godowns = [];
@@ -45,6 +47,7 @@ class SaleOrderForm extends Component
         'customer_id' => 'required|exists:customer_suppliers,id',
         'agent_id' => 'required|exists:users,id',
         'segment_id' => 'required|exists:segments,id',
+        'sub_segment_id' => 'nullable|exists:segments,id',
         'lead_source_id' => 'required|exists:lead_sources,id',
         'order_branch_id' => 'required|exists:branches,id',
         'delivery_branch_id' => 'required|exists:godowns,id',
@@ -59,7 +62,7 @@ class SaleOrderForm extends Component
     {
         $this->customers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
         $this->agents = User::where('role', 'agent')->get();
-        $this->segments = Segment::all();
+        $this->segments = Segment::whereNull('parent_id')->get();
         $this->leadSources = LeadSource::all();
         $this->branches = Branch::all();
         $this->productsList = Product::all(); 
@@ -95,6 +98,11 @@ class SaleOrderForm extends Component
         // Recalculate net amount based on the selected godown
         $this->calculateNetAmount();
     }
+    public function updatedSegmentId($segmentId)
+    {
+        $this->subsegments = Segment::where('parent_id', $segmentId)->get(); 
+        $this->reset('sub_segment_id'); 
+    }
 
     public function addProduct()
     {
@@ -129,6 +137,7 @@ class SaleOrderForm extends Component
                 'customer_id' => $this->customer_id,
                 'agent_id' => $this->agent_id,
                 'segment_id' => $this->segment_id,
+                'sub_segment_id' => $this->sub_segment_id, 
                 'lead_source_id' => $this->lead_source_id,
                 'order_branch_id' => $this->order_branch_id,
                 'delivery_branch_id' => $this->delivery_branch_id,

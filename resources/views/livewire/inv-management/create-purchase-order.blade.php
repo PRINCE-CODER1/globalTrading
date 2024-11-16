@@ -70,10 +70,22 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="segment_id" class="form-label fs-14 text-dark">Segment</label>
-                            <select class="form-select" wire:model="segment_id" required>
+                            <select class="form-select" wire:model.live="segment_id" required>
                                 <option value="">Select Segment</option>
                                 @foreach($segments as $segment)
                                     <option value="{{ $segment->id }}">{{ $segment->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Sub Segment Field -->
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="sub_segment_id" class="form-label fs-14 text-dark">Sub Segment</label>
+                            <select class="form-select" wire:model="sub_segment_id" required>
+                                <option value="">Select Sub Segment</option>
+                                @foreach($sub_segments as $sub_segment)
+                                    <option value="{{ $sub_segment->id }}">{{ $sub_segment->name }}</option>
                                 @endforeach
                             </select>
                         </div>

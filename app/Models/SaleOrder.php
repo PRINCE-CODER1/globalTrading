@@ -15,6 +15,7 @@ class SaleOrder extends Model
         'customer_id',
         'agent_id',
         'segment_id',
+        'sub_segment_id',
         'lead_source_id',
         'order_branch_id',
         'delivery_branch_id',
@@ -37,6 +38,11 @@ class SaleOrder extends Model
     public function segment()
     {
         return $this->belongsTo(Segment::class);
+    }
+
+    public function subSegment()
+    {
+        return $this->belongsTo(Segment::class, 'sub_segment_id');
     }
 
     public function leadSource()

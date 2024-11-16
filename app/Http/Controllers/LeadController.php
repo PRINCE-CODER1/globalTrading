@@ -68,6 +68,7 @@ public function store(Request $request)
         'sub_segment_id' => 'nullable|exists:segments,id',
         'expected_date' => 'required|date',
         'remark' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
     $lead = Lead::create([
@@ -86,6 +87,7 @@ public function store(Request $request)
             'lead_id' => $lead->id,
             'user_id' => auth()->id(),
             'remark' => $request->remark,
+            'image' => $request->hasFile('image') ? $request->file('image')->store('remarks', 'public') : null,
         ]);
     }
 
@@ -133,6 +135,7 @@ public function update(Request $request, Lead $lead)
             'lead_id' => $lead->id,
             'user_id' => auth()->id(),
             'remark' => $request->remark,
+            'image' => $request->hasFile('image') ? $request->file('image')->store('remarks', 'public') : null,
         ]);
     }
 

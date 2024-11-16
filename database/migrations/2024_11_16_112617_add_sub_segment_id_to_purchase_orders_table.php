@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('leads', function (Blueprint $table) {
-            $table->foreignId('contractor_id')->nullable()->constrained('contractors')->onDelete('set null')->after('lead_type_id');
+        Schema::table('purchase_orders', function (Blueprint $table) {
+            $table->foreignId('sub_segment_id')
+                ->nullable()
+                ->after('segment_id')
+                ->constrained('segments')
+                ->onDelete('cascade');
         });
     }
 
@@ -21,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('leads', function (Blueprint $table) {
+        Schema::table('purchase_orders', function (Blueprint $table) {
             //
         });
     }

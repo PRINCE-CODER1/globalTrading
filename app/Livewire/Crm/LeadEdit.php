@@ -29,6 +29,7 @@ class LeadEdit extends Component
     public $lead_type_id;
     public $amount; 
     public $specification;
+    public $date;
 
     public $contractors = null; 
     public $contractor_id; 
@@ -52,7 +53,7 @@ class LeadEdit extends Component
         'series' => 'required|exists:series,id',
         'expected_date' => 'required|date',
         'remark' => 'nullable|string|max:255',
-        'image' => 'nullable|image|max:1024',
+        'image' => 'nullable|image|max:2048',
         'lead_type_id' => 'required|exists:lead_types,id',
         'amount' => 'nullable|numeric',
         'specification' => 'nullable|in:favourable,non-favourable',
@@ -77,6 +78,11 @@ class LeadEdit extends Component
         $this->amount = $this->lead->amount;
         $this->specification = $this->lead->specification;
         
+        $this->showContractOptions = $this->lead_type_id == LeadType::where('name', 'Project')->value('id');
+        
+        if ($this->showContractOptions) {
+            $this->contractor_id = $this->lead->contractor_id; // Assuming it's set if the lead type is "Project"
+        }
         $this->contractors = Contractor::all();
 
         $this->remarks = $this->lead->remarks()->orderBy('created_at', 'desc')->get();
@@ -123,61 +129,72 @@ class LeadEdit extends Component
     {
         $projectTypeId = LeadType::where('name', 'Project')->value('id');
         $this->showContractOptions = $leadTypeId == $projectTypeId;
+        $this->contractor_id = null;
     }
 
     public function save()
-    {
-        $this->validate();
-
-        $imagePath = null;
-        if ($this->image) {
-            $fileName = uniqid() . '.' . $this->image->getClientOriginalExtension();
-            $imagePath = $this->image->storeAs('remarks', $fileName, 'public');
-        }
-
-        $this->lead->update([
-            'customer_id' => $this->customer_id,
-            'lead_status_id' => $this->lead_status_id,
-            'lead_source_id' => $this->lead_source_id,
-            'segment_id' => $this->segment_id,
-            'sub_segment_id' => $this->sub_segment_id,
-            'category_id' => $this->category_id,
-            'child_category_id' => $this->child_category_id,
-            'series' => $this->series,
-            'expected_date' => $this->expected_date,
-            'lead_type_id' => $this->lead_type_id,
-            'contractors' => $this->contractor_id, 
-            'image' => $imagePath,
-            'amount' => $this->amount,
-            'specification' => $this->specification,
-            'assigned_to' => $this->assigned_to,
-        ]);
-
-        $this->assignAgent();
+{
+    // Validate assigned_to before proceeding
+    if ($this->assigned_to === null) {
+        toastr()->error('Please assign an agent.');
+        return;
     }
 
-    public function assignAgent()
-    {
-        if ($this->assigned_to === null) {
-            toastr()->error('Please assign an agent.');
-            return;
-        }
+    // Validate other fields if necessary
+    $this->validate();
 
-        $this->validate(['assigned_to' => 'required']);
-
-        $this->lead->update(['assigned_to' => $this->assigned_to]);
-
-        $agentName = User::find($this->assigned_to)->name;
-        toastr()->closeButton(true)->success("Successfully assigned to $agentName");
-        $this->reset(['assigned_to']);
+    $imagePath = $this->lead->image; // Retain the existing image if no new one is uploaded
+    if ($this->image) {
+        $fileName = uniqid() . '.' . $this->image->getClientOriginalExtension();
+        $imagePath = $this->image->storeAs('remarks', $fileName, 'public');
     }
+
+    // Update the lead record
+    $this->lead->update([
+        'customer_id' => $this->customer_id,
+        'lead_status_id' => $this->lead_status_id,
+        'lead_source_id' => $this->lead_source_id,
+        'segment_id' => $this->segment_id,
+        'sub_segment_id' => $this->sub_segment_id,
+        'category_id' => $this->category_id,
+        'child_category_id' => $this->child_category_id,
+        'series' => $this->series,
+        'expected_date' => $this->expected_date,
+        'lead_type_id' => $this->lead_type_id,
+        'contractor_id' => $this->contractor_id,
+        'image' => $imagePath,
+        'amount' => $this->amount,
+        'specification' => $this->specification,
+        'assigned_to' => $this->assigned_to, // Set assigned_to here directly
+    ]);
+
+    // Assign agent after lead update
+    $this->assignAgent();
+}
+
+public function assignAgent()
+{
+    // No need for validation here since we already validate in save()
+    if ($this->assigned_to === null) {
+        toastr()->error('Please assign an agent.');
+        return;
+    }
+
+    $agentName = User::find($this->assigned_to)->name;
+    toastr()->closeButton(true)->success("Successfully assigned to $agentName");
+
+    // You don't need to update 'assigned_to' again if it's already done in the save method.
+    $this->reset(['assigned_to']);
+}
+
 
 
     public function addRemark()
     {
         $this->validate([
             'remark' => 'required|string|max:255',
-            'image' => 'nullable|image|max:1024',
+            'image' => 'nullable|image|max:2048',
+            'date' => 'nullable|date',
         ]);
 
         $imagePath = null;
@@ -191,11 +208,13 @@ class LeadEdit extends Component
             'user_id' => Auth::id(),
             'remark' => $this->remark,
             'image' => $imagePath,
+            'date' => $this->date,
         ]);
 
         $this->refreshRemarks();
         $this->remark = '';
         $this->image = null;
+        $this->date = null;
         session()->flash('message', 'Remark added successfully!');
     }
 

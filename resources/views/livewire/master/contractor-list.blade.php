@@ -56,7 +56,7 @@
                                                 <i class="ri-expand-up-down-fill"></i>
                                             @endif
                                         </th>
-                                        <th scope="col">Details</th>
+                                        <th scope="col">Address</th>
                                         <th scope="col" wire:click="setSortBy('created_at')">Created At
                                             @if ($sortBy === 'created_at')
                                                 @if ($sortDir === 'asc')
@@ -78,7 +78,7 @@
                                                 <input type="checkbox" wire:model.live="selectedContractor" value="{{ $contractor->id }}">
                                             </td>
                                             <td>{{ $contractor->name }}</td>
-                                            <td>{{ $contractor->details }}</td>
+                                            <td>{{ $contractor->address }}</td>
                                             <td>{{ $contractor->created_at->format('d M, Y') }}</td>
                                             <td>
                                                 <div class="btn-group">

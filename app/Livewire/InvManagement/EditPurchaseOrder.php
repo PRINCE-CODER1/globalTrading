@@ -20,6 +20,10 @@ class EditPurchaseOrder extends Component
     public $supplier_sale_order_no;
     public $agent_id;
     public $segment_id;
+    
+    public $sub_segment_id;
+    public $sub_segments = [];
+
     public $order_branch_id;
     public $delivery_branch_id;
     public $customer_id;
@@ -42,7 +46,7 @@ class EditPurchaseOrder extends Component
         $this->suppliers = CustomerSupplier::where('customer_supplier', 'onlySupplier')->get();
         $this->customers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
         $this->agents = User::all();
-        $this->segments = Segment::all();
+        $this->segments = Segment::whereNull('parent_id')->get();
         $this->branches = Branch::all();
         $this->loadGodowns();
         $this->loadProducts();
@@ -63,6 +67,8 @@ class EditPurchaseOrder extends Component
         $this->supplier_sale_order_no = $purchaseOrder->supplier_sale_order_no;
         $this->agent_id = $purchaseOrder->agent_id;
         $this->segment_id = $purchaseOrder->segment_id;
+        $this->sub_segments = Segment::where('parent_id', $this->segment_id)->get();
+        $this->sub_segment_id = $purchaseOrder->sub_segment_id;
         $this->order_branch_id = $purchaseOrder->order_branch_id;
         $this->delivery_branch_id = $purchaseOrder->delivery_branch_id;
         $this->customer_id = $purchaseOrder->customer_id;
@@ -102,7 +108,11 @@ class EditPurchaseOrder extends Component
         $this->delivery_branch_id = null;
         $this->loadProducts();
     }
-
+    public function updatedSegmentId($value)
+    {
+        $this->sub_segments = Segment::where('parent_id', $value)->get(); 
+        $this->sub_segment_id = null; 
+    }
     public function updatedDeliveryBranchId()
     {
         $this->loadProducts();
@@ -170,6 +180,7 @@ class EditPurchaseOrder extends Component
             'supplier_id' => 'required|exists:customer_suppliers,id',
             'agent_id' => 'required|exists:users,id',
             'segment_id' => 'required|exists:segments,id',
+            'sub_segment_id' => 'nullable|exists:segments,id',
             'order_branch_id' => 'required|exists:branches,id',
             'delivery_branch_id' => 'required|exists:godowns,id',
             'items' => 'required|array|min:1',
@@ -188,6 +199,7 @@ class EditPurchaseOrder extends Component
                 'supplier_sale_order_no' => $this->supplier_sale_order_no,
                 'agent_id' => $this->agent_id,
                 'segment_id' => $this->segment_id,
+                'sub_segment_id' => $this->sub_segment_id,
                 'order_branch_id' => $this->order_branch_id,
                 'delivery_branch_id' => $this->delivery_branch_id,
                 'customer_id' => $this->customer_id,

@@ -55,7 +55,7 @@
             <!-- Segment -->
             <div class="col-md-6">
                 <label for="segment_id" class="form-label"><i class="ri-folder-line"></i> Select Segment <span class="text-danger">*</span></label>
-                <select id="segment_id" class="form-select @error('segment_id') is-invalid @enderror" wire:model.defer="segment_id" required>
+                <select id="segment_id" class="form-select @error('segment_id') is-invalid @enderror" wire:model.live.defer="segment_id" required>
                     <option value="">Select Segment</option>
                     @foreach ($segments as $segment)
                         <option value="{{ $segment->id }}">
@@ -64,6 +64,21 @@
                     @endforeach
                 </select>
                 @error('segment_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            <!-- Sub Segment -->
+            <div class="col-md-6 mt-3">
+                <label for="subsegment_id" class="form-label"><i class="ri-folder-line"></i> Select Sub-Segment <span class="text-danger">*</span></label>
+                <select id="subsegment_id" class="form-select @error('sub_segment_id') is-invalid @enderror" wire:model.defer="sub_segment_id">
+                    <option value="">Select Sub-Segment</option>
+                    @foreach ($subsegments  as $subSegment)
+                        <option value="{{ $subSegment->id }}">
+                            {{ $subSegment->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('subsegment_id')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>

@@ -5,18 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Contractor extends Model
+class Application extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'name',
-        'address',
-        'contractor_type',
-        'user_id'
+        'user_id',
     ];
-    public function leads()
-    {
-        return $this->belongsTo(Lead::class);
-    }
 }

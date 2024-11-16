@@ -42,13 +42,24 @@
             <!-- Segment -->
             <div class="mb-3">
                 <label for="segment_id" class="form-label">Segment</label>
-                <select id="segment_id" wire:model="segment_id" class="form-select">
+                <select id="segment_id" wire:model.live="segment_id" class="form-select">
                     <option value="">Select a segment</option>
                     @foreach ($segments as $segment)
                         <option value="{{ $segment->id }}">{{ $segment->name }}</option>
                     @endforeach
                 </select>
                 @error('segment_id') <div class="text-danger">{{ $message }}</div> @enderror
+            </div>
+            <!-- Sub Segment -->
+            <div class="mb-3">
+                <label for="sub_segment_id" class="form-label">Sub-segment</label>
+                <select id="sub_segment_id" wire:model="sub_segment_id" class="form-select">
+                    <option value="">Select a sub-segment</option>
+                    @foreach ($sub_segments as $segment)
+                        <option value="{{ $segment->id }}">{{ $segment->name }}</option>
+                    @endforeach
+                </select>
+                @error('sub_segment_id') <div class="text-danger">{{ $message }}</div> @enderror
             </div>
         
             <!-- Order Branch -->

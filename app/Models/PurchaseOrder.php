@@ -16,6 +16,7 @@ class PurchaseOrder extends Model
         'supplier_sale_order_no',
         'agent_id',
         'segment_id',
+        'sub_segment_id',
         'order_branch_id',
         'delivery_branch_id',
         'customer_id',

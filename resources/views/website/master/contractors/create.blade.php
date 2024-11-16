@@ -29,6 +29,7 @@
         </div>
     </div>
 </div>
+
 <div class="container">
     <div class="row d-flex justify-content-center">
         <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
@@ -39,6 +40,8 @@
             @endif
             <form action="{{ route('contractor.store') }}" method="POST">
                 @csrf
+
+                <!-- Name Field -->
                 <div class="mb-3">
                     <label for="branch_name" class="form-label fs-14 text-dark">
                         <i class="bi bi-building me-1"></i> Name
@@ -51,18 +54,43 @@
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <!-- Address Field -->
                 <div class="mb-3">
-                    <label for="details" class="form-label fs-14 text-dark">
-                        <i class="bi bi-geo-alt me-1"></i> Details
+                    <label for="address" class="form-label fs-14 text-dark">
+                        <i class="bi bi-geo-alt me-1"></i> Address
                     </label>
-                    <textarea name="details" class="form-control" id="details" rows="3" placeholder="Enter details" required>{{ old('details') }}</textarea>
-                    @error('details')
+                    <textarea name="address" class="form-control" id="address" rows="3" placeholder="Enter Address" required>{{ old('address') }}</textarea>
+                    @error('address')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <!-- Contractor Type Field with Radio Buttons -->
+                <div class="mb-3">
+                    <label class="form-label fs-14 text-dark">
+                        <i class="bi bi-tools me-1"></i> Contractor Type
+                    </label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="contractor_type" id="hvac" value="HVAC" {{ old('contractor_type') == 'HVAC' ? 'checked' : '' }} required>
+                            <label class="form-check-label" for="hvac">HVAC</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="contractor_type" id="plumbing" value="Plumbing" {{ old('contractor_type') == 'Plumbing' ? 'checked' : '' }} required>
+                            <label class="form-check-label" for="plumbing">Plumbing</label>
+                        </div>
+                    </div>
+                    @error('contractor_type')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-        
-                <button type="submit" class="btn btn-secondary"><i class="ri-add-circle-line me-1"></i> Create Contractor</button>
+
+                <button type="submit" class="btn btn-secondary">
+                    <i class="ri-add-circle-line me-1"></i> Create Contractor
+                </button>
             </form>
         </div>
     </div>

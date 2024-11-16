@@ -238,7 +238,8 @@
                         'lead-source.index',
                         'leads-status.index',
                         'leads-types.index',
-                        'contractor.index'
+                        'contractor.index',
+                        'application.index',
                     ]) ? 'open' : '' }}">
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center {{ request()->routeIs([
                         'customer-supplier.index',
@@ -260,6 +261,7 @@
                         'leads-status.index',
                         'leads-types.index',
                         'contractor.index',
+                        'application.index'
                     ]) ? 'active' : '' }}">
                         <i class="bi bi-grid side-menu__icon mb-0 me-2"></i>
                             <span class="side-menu__label">Master</span>
@@ -363,6 +365,11 @@
                         @can('view contractor')
                         <li class="slide">
                           <a href="{{ route('contractor.index') }}" class="side-menu__item {{ request()->routeIs('contractor.index') ? 'active' : '' }}">Contractors</a>
+                        </li>
+                        @endcan
+                        @can('view contractor')
+                        <li class="slide">
+                          <a href="{{route('application.index')}}" class="side-menu__item {{ request()->routeIs('application.index') ? 'active' : '' }}">Appliation</a>
                         </li>
                         @endcan
                       </ul>

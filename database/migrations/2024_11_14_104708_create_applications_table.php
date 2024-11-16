@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contractors', function (Blueprint $table) {
+        Schema::create('applications', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('address');
-            $table->enum('contractor_type', ['HVAC', 'Plumbing']);
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade'); 
             $table->timestamps();
         });
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contractors');
+        Schema::dropIfExists('applications');
     }
 };

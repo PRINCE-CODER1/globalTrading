@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-12 d-flex justify-content-between mt-5 mb-2">
-            <h2 class="mb-0 d-flex justify-content-between align-items-center">Create Visit</h2>
+            <h2 class="mb-0 d-flex justify-content-between align-items-center">Create Purspose</h2>
             <a href="{{ route('visits.index') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-1"></i> Back
             </a>
@@ -21,9 +21,9 @@
                         <a href="javascript:void(0);"><i class="bi bi-house-door me-1 fs-15"></i> Dashboard</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('visits.index') }}"><i class="bi bi-calendar-check me-1 fs-15"></i> Visits</a>
+                        <a href="{{ route('visits.index') }}"><i class="bi bi-calendar-check me-1 fs-15"></i> Purspose</a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page">Create Visit</li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Purspose</li>
                 </ol>
             </nav>
         </div>
@@ -39,7 +39,7 @@
                 <!-- Visitor Name Field -->
                 <div class="mb-3">
                     <label for="visitor_name" class="form-label fs-14 text-dark">
-                        <i class="bi bi-person me-1"></i> Visitor Name <sup class="text-danger">*</sup>
+                        <i class="bi bi-person me-1"></i> Purspose Name <sup class="text-danger">*</sup>
                     </label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>

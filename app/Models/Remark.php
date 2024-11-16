@@ -9,7 +9,7 @@ class Remark extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['lead_id', 'user_id', 'remark','image'];
+    protected $fillable = ['lead_id', 'user_id', 'remark','image','date'];
 
     public function lead()
     {
