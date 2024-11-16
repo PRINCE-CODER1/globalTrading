@@ -13,6 +13,7 @@ use App\Models\Series;
 use App\Models\StockCategory; 
 use App\Models\ChildCategory; 
 use App\Models\Contractor; 
+use App\Models\Application; 
 
 class LeadCreate extends Component
 {
@@ -32,6 +33,8 @@ class LeadCreate extends Component
     public $referenceId;
     public $contractors = null; 
     public $contractor_id; 
+    public $applications;
+    public $application_id;
     public $showContractOptions = false; 
 
     public $leadStatuses;
@@ -57,6 +60,7 @@ class LeadCreate extends Component
         $this->leadTypes = LeadType::all();
         $this->contractors = Contractor::all();
         $this->specification = null;
+        $this->applications = Application::all(); 
         $this->referenceId = $this->generateReferenceId();
     }
 
@@ -110,7 +114,7 @@ class LeadCreate extends Component
             'remark' => 'nullable|string',
             'lead_type_id' => 'required|exists:lead_types,id',
             'amount' => 'nullable|numeric',
-            'application' => 'required|numeric',
+            'application_id' => 'required|exists:applications,id', 
             'specification' => 'nullable|in:favourable,non-favourable',
             'contractor_id' => 'nullable|exists:contractors,id',
         ]);
@@ -128,7 +132,7 @@ class LeadCreate extends Component
             'child_category_id' => $this->child_category_id,
             'series' => $this->series,
             'lead_type_id' => $this->lead_type_id,
-            'application' => $this->application,
+            'application_id' => $this->application_id,
             'contractors' => $this->contractor_id, 
             'reference_id' => $this->referenceId,
             'amount' => $this->amount, 

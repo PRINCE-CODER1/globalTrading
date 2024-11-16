@@ -208,6 +208,16 @@
                                     @error('lead_type_id') <span class="text-danger">{{ $message }}</span> @enderror                                    
                                 </div>
                                 <div class="col-md-4">
+                                    <label for="application" class="form-label text-muted small">Application</label>
+                                    <select wire:model="application_id" class="form-select form-select-sm">
+                                        <option value="">Select Application</option>
+                                        @foreach($applications as $application)
+                                            <option value="{{ $application->id }}">{{ $application->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('application_id') <span class="text-danger">{{ $message }}</span> @enderror                                    
+                                </div>
+                                <div class="col-md-4">
                                     <label for="amount" class="form-label fw-semibold">Amount</label>
                                     <input type="text" wire:model="amount" id="amount" class="form-control form-control-sm" placeholder="enter amount" />
                                     @error('amount') <span class="text-danger">{{ $message }}</span> @enderror

@@ -14,6 +14,7 @@ use App\Models\Remark;
 use App\Models\StockCategory;
 use App\Models\ChildCategory;
 use App\Models\Contractor;
+use App\Models\Application;
 use App\Models\Series;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,8 @@ class LeadEdit extends Component
     public $lead_type_id;
     public $amount; 
     public $specification;
+    public $applications;
+    public $application_id;
     public $date;
 
     public $contractors = null; 
@@ -59,11 +62,18 @@ class LeadEdit extends Component
         'specification' => 'nullable|in:favourable,non-favourable',
         'assigned_to' => 'nullable|exists:users,id',
         'contractor_id' => 'nullable|exists:contractors,id',
+        'application_id' => 'required|exists:applications,id',
     ];
     
     public function mount($leadId)
     {
         $this->lead = Lead::findOrFail($leadId);
+
+        // Bind the lead_type_id and contractor_id (ID)
+        $this->lead_type_id = $this->lead->lead_type_id;
+        $this->contractor_id = $this->lead->contractor_id;
+
+        // Bind other fields...
         $this->assigned_to = $this->lead->assigned_to ?? auth()->id();
         $this->customer_id = $this->lead->customer_id;
         $this->lead_status_id = $this->lead->lead_status_id;
@@ -74,17 +84,16 @@ class LeadEdit extends Component
         $this->child_category_id = $this->lead->child_category_id;
         $this->series = $this->lead->series;
         $this->expected_date = $this->lead->expected_date;
-        $this->lead_type_id = $this->lead->lead_type_id;
         $this->amount = $this->lead->amount;
         $this->specification = $this->lead->specification;
-        
-        $this->showContractOptions = $this->lead_type_id == LeadType::where('name', 'Project')->value('id');
-        
-        if ($this->showContractOptions) {
-            $this->contractor_id = $this->lead->contractor_id; // Assuming it's set if the lead type is "Project"
-        }
-        $this->contractors = Contractor::all();
+        $this->application_id = $this->lead->application_id;
 
+        // Set the flag for showing contractor options based on the lead type
+        $this->showContractOptions = $this->lead_type_id == LeadType::where('name', 'Project')->value('id');
+
+        // Load contractors and other options
+        $this->applications = Application::all();
+        $this->contractors = Contractor::all();
         $this->remarks = $this->lead->remarks()->orderBy('created_at', 'desc')->get();
         $this->customers = CustomerSupplier::all();
         $this->leadStatuses = LeadStatus::all();
@@ -93,20 +102,38 @@ class LeadEdit extends Component
         $this->categories = StockCategory::all();
         $this->seriesList = Series::all();
         $this->leadTypes = LeadType::all();
-        
-        $this->loadSubSegments();
 
+        // Load sub-segments and categories
+        $this->loadSubSegments();
         if ($this->category_id) {
             $this->childCategories = ChildCategory::where('parent_category_id', $this->category_id)->get();
         }
 
-        $managerTeams = Auth::user()->teams()->pluck('team_id');
-        $this->teamAgents = User::whereIn('id', function ($query) use ($managerTeams) {
-            $query->select('user_id')
-                ->from('user_team')
-                ->whereIn('team_id', $managerTeams);
-        })->get();
+        // Get the user's teams for agent selection
+        if (Auth::user()->hasRole('Admin')) {
+            // Admins see all agents
+            $this->teamAgents = User::where('role', 'Agent')->get();
+        } else {
+            // Managers and agents see agents only in their teams
+            $managerTeams = Auth::user()->teams()->pluck('team_id');
+            $this->teamAgents = User::whereIn('id', function ($query) use ($managerTeams) {
+                $query->select('user_id')
+                    ->from('user_team')
+                    ->whereIn('team_id', $managerTeams);
+            })->where('role', 'Agent')->get(); // Ensure to fetch only agents
+        }
+
     }
+
+
+    public function updatedLeadTypeId($leadTypeId)
+    {
+        $projectTypeId = LeadType::where('name', 'Project')->value('id');
+        $this->showContractOptions = $leadTypeId == $projectTypeId;
+
+        $this->contractor_id = null;
+    }
+
 
     public function updatedCategoryId($categoryId)
     {
@@ -125,68 +152,55 @@ class LeadEdit extends Component
     {
         $this->subSegments = Segment::where('parent_id', $this->segment_id)->get();
     }
-    public function updatedLeadTypeId($leadTypeId)
-    {
-        $projectTypeId = LeadType::where('name', 'Project')->value('id');
-        $this->showContractOptions = $leadTypeId == $projectTypeId;
-        $this->contractor_id = null;
-    }
 
     public function save()
-{
-    // Validate assigned_to before proceeding
-    if ($this->assigned_to === null) {
-        toastr()->error('Please assign an agent.');
-        return;
+    { 
+        $this->validate();
+
+        $imagePath = $this->lead->image; // Retain the existing image if no new one is uploaded
+        if ($this->image) {
+            $fileName = uniqid() . '.' . $this->image->getClientOriginalExtension();
+            $imagePath = $this->image->storeAs('remarks', $fileName, 'public');
+        }
+
+
+        $this->lead->update([
+            'customer_id' => $this->customer_id,
+            'lead_status_id' => $this->lead_status_id,
+            'lead_source_id' => $this->lead_source_id,
+            'segment_id' => $this->segment_id,
+            'sub_segment_id' => $this->sub_segment_id,
+            'category_id' => $this->category_id,
+            'child_category_id' => $this->child_category_id,
+            'series' => $this->series,
+            'expected_date' => $this->expected_date,
+            'lead_type_id' => $this->lead_type_id,
+            'contractor_id' => $this->contractor_id,
+            'image' => $imagePath,
+            'amount' => $this->amount,
+            'application_id' => $this->application_id,
+            'specification' => $this->specification,
+            'assigned_to' => $this->assigned_to,
+        ]);
+
+        $this->assignAgent();
     }
 
-    // Validate other fields if necessary
-    $this->validate();
+    public function assignAgent()
+    {
+        if ($this->assigned_to === null) {
+            toastr()->error('Please assign an agent.');
+            return;
+        }
 
-    $imagePath = $this->lead->image; // Retain the existing image if no new one is uploaded
-    if ($this->image) {
-        $fileName = uniqid() . '.' . $this->image->getClientOriginalExtension();
-        $imagePath = $this->image->storeAs('remarks', $fileName, 'public');
+        $this->validate(['assigned_to' => 'required']);
+
+        $this->lead->update(['assigned_to' => $this->assigned_to]);
+
+        $agentName = User::find($this->assigned_to)->name;
+        toastr()->closeButton(true)->success("Successfully assigned to $agentName");
+        $this->reset(['assigned_to']);
     }
-
-    // Update the lead record
-    $this->lead->update([
-        'customer_id' => $this->customer_id,
-        'lead_status_id' => $this->lead_status_id,
-        'lead_source_id' => $this->lead_source_id,
-        'segment_id' => $this->segment_id,
-        'sub_segment_id' => $this->sub_segment_id,
-        'category_id' => $this->category_id,
-        'child_category_id' => $this->child_category_id,
-        'series' => $this->series,
-        'expected_date' => $this->expected_date,
-        'lead_type_id' => $this->lead_type_id,
-        'contractor_id' => $this->contractor_id,
-        'image' => $imagePath,
-        'amount' => $this->amount,
-        'specification' => $this->specification,
-        'assigned_to' => $this->assigned_to, // Set assigned_to here directly
-    ]);
-
-    // Assign agent after lead update
-    $this->assignAgent();
-}
-
-public function assignAgent()
-{
-    // No need for validation here since we already validate in save()
-    if ($this->assigned_to === null) {
-        toastr()->error('Please assign an agent.');
-        return;
-    }
-
-    $agentName = User::find($this->assigned_to)->name;
-    toastr()->closeButton(true)->success("Successfully assigned to $agentName");
-
-    // You don't need to update 'assigned_to' again if it's already done in the save method.
-    $this->reset(['assigned_to']);
-}
-
 
 
     public function addRemark()

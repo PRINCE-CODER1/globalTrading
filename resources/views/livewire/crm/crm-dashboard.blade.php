@@ -213,7 +213,7 @@
                                     <tr>
                                         <th class="fw-bold">Name</th>
                                         <th class="fw-bold">Email</th>
-                                        <th class="fw-bold">Total Leads</th>
+                                        <th class="fw-bold">Total Teams</th>
                                     </tr>
                                 </thead>
                                 <tbody>

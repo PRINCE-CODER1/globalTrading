@@ -28,7 +28,7 @@
                                     <th>Source</th>
                                     <th>Created Date</th>
                                     <th>Last Updated</th>
-                                    <th>Contact Information</th>
+                                    <th>Customer Information</th>
                 
                                 </tr>
                             </thead>

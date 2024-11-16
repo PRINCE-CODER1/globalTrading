@@ -21,7 +21,7 @@ class Lead extends Model
         'category_id',
         'child_category_id',
         'lead_type_id',
-        'application',
+        'application_id',
         'contractor_id',
         'amount',
         'specification',
@@ -102,4 +102,8 @@ class Lead extends Model
     {
         return $this->belongsTo(Contractor::class);
     }
+    // public function applicaion()
+    // {
+    //     return $this->belongsTo(Applicaion::class);
+    // }
 }

@@ -115,6 +115,16 @@
                 <input type="text" wire:model="amount" id="amount" class="form-control form-control-sm" placeholder="enter amount" />
                 @error('amount') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
+            <div class="col-md-3">
+                <label for="application" class="form-label fw-semibold">Application</label>
+                <select id="application" wire:model="application_id" class="form-select form-select-sm" required>
+                    <option value="">Select application</option>
+                    @foreach($applications as $application)
+                        <option value="{{ $application->id }}">{{ $application->name }}</option>
+                    @endforeach
+                </select>
+                @error('application') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
             @if($showContractOptions)
             <div class="col-md-3">
                 <label for="contract_details" class="form-label fw-semibold">Contract Type</label>
