@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Models\SaleOrder;
 use App\Models\MasterNumbering;
 use App\Models\Stock; // Assuming Stock model is defined
+use App\Models\Application; 
 use Illuminate\Support\Facades\DB;
 
 class SaleOrderForm extends Component
@@ -29,6 +30,9 @@ class SaleOrderForm extends Component
     public $lead_source_id;
     public $order_branch_id;
     public $delivery_branch_id;
+    
+    public $applications;
+    public $application_id;
 
     public $products = [];
     public $netAmount = 0;
@@ -56,6 +60,7 @@ class SaleOrderForm extends Component
         'products.*.quantity' => 'required|numeric|min:1',
         'products.*.price' => 'required|numeric|min:0',
         'products.*.discount' => 'nullable|numeric|min:0|max:100',
+        'application_id' => 'required|exists:applications,id', 
     ];
 
     public function mount()
@@ -66,6 +71,7 @@ class SaleOrderForm extends Component
         $this->leadSources = LeadSource::all();
         $this->branches = Branch::all();
         $this->productsList = Product::all(); 
+        $this->applications = Application::all(); 
         $this->products[] = $this->createEmptyProduct();
         $this->generateSaleOrderNo();
     }
@@ -141,6 +147,7 @@ class SaleOrderForm extends Component
                 'lead_source_id' => $this->lead_source_id,
                 'order_branch_id' => $this->order_branch_id,
                 'delivery_branch_id' => $this->delivery_branch_id,
+                'application_id' => $this->application_id,
                 'net_amount' => $this->netAmount,
                 'user_id' => auth()->id(),
             ]);
@@ -161,7 +168,7 @@ class SaleOrderForm extends Component
             }
         });
 
-        session()->flash('message', 'Sale Order created successfully.');
+        toastr()->closeButton(true)->success('Sale Order created successfully.');
 
         return redirect()->route('sale_orders.index');
     }

@@ -130,6 +130,17 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+            <!-- Application  -->
+            <div class="col-md-3">
+                <label for="application" class="form-label fw-semibold">Application</label>
+                <select id="application" wire:model="application_id" class="form-select form-select-sm" required>
+                    <option value="">Select application</option>
+                    @foreach($applications as $application)
+                        <option value="{{ $application->id }}">{{ $application->name }}</option>
+                    @endforeach
+                </select>
+                @error('application') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
         </div>
 
         <!-- Product Details -->

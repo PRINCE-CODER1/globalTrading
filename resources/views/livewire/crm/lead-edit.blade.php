@@ -459,7 +459,7 @@
                                     @enderror
                                 </div>
                                 <div class="mb-4">
-                                    <label for="date" class="form-label text-muted small">New Follow Up Date</label>
+                                    <label for="date" class="form-label text-muted small">Next Follow Up Date</label>
                                     <input type="date" id="date" class="form-control" wire:model="date">
                                     @error('date') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
@@ -476,7 +476,7 @@
                                                 <th>User</th>
                                                 <th>Remark</th>
                                                 <th>created_at</th>
-                                                <th>New Follow Up Date</th>
+                                                <th>Next Follow Up Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>

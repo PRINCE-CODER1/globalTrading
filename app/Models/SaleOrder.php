@@ -19,6 +19,7 @@ class SaleOrder extends Model
         'lead_source_id',
         'order_branch_id',
         'delivery_branch_id',
+        'application_id',
         'user_id',
     ];
 

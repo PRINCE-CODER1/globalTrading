@@ -62,11 +62,56 @@
                                             <td>{{ $saleOrder->user->name }}</td>
                                             <td>{{ \Carbon\Carbon::parse($saleOrder->created_at)->format('d-m-Y') }}</td>
                                             <td>
-                                                <ul>
-                                                    @foreach($saleOrder->items as $item)
-                                                    <li>{{ $item->product->name }} (Qty: {{ $item->quantity }}, Price: {{ number_format($item->price, 2) }})</li>
-                                                    @endforeach
-                                                </ul>
+                                                <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#saleOrderModal{{ $saleOrder->id }}">
+                                                    View Items
+                                                </button>
+                                                <!-- Modals for Sale Orders -->
+                                                @foreach($saleOrders as $saleOrder)
+                                                <div class="modal fade" id="saleOrderModal{{ $saleOrder->id }}" tabindex="-1" aria-labelledby="saleOrderModalLabel{{ $saleOrder->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="saleOrderModalLabel{{ $saleOrder->id }}">Sale Order #{{ $saleOrder->sale_order_no }}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <h6>Customer: {{ $saleOrder->customer->name }}</h6>     
+                                                                <hr>
+                                                                <h6>Items:</h6>
+                                                                <div class="card">
+                                                                
+                                                                    <div class="card-body">
+                                                                        @foreach($saleOrder->items as $item)
+                                                                        <div class="d-flex align-items-center">
+                                                                            <!-- Product Name -->
+                                                                            <div class="flex-grow-1">
+                                                                                <strong class="mb-0">{{ $item->product->product_name }}</strong>
+                                                                            </div>
+                                                                            <!-- Quantity -->
+                                                                            <span class="badge bg-danger me-2">Qty: {{ $item->quantity }}</span>
+                                                                            <!-- Price -->
+                                                                            <span class="badge bg-success me-2">Price: {{ number_format($item->price, 2) }}</span>
+                                                                            @php
+                                                                                $subtotal = 0; // Initialize subtotal
+                                                                            @endphp
+                                                                            
+                                                                            @php
+                                                                                $itemTotal = $item->quantity * $item->price;
+                                                                                $subtotal += $itemTotal;
+                                                                            @endphp
+                                                                            <span class="badge bg-info">Total: {{ number_format($itemTotal, 2) }}</span>
+                                                                        </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
                                             </td>
                                             <td>
                                                 <a href="{{ route('sale_orders.edit', $saleOrder->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>

@@ -2,10 +2,9 @@
 
 @section('content')
 <div>
-    {{-- @livewire('master') --}}
-    <a href="{{route('application.create')}}" class="btn btn-secondary btn-sm">Create</a>
+    @livewire('master.application-list')
 </div>
-<ul>
+{{-- <ul>
     @foreach ($applications as $application)
         <li>
             {{ $application->name }}
@@ -17,5 +16,5 @@
             </form>
         </li>
     @endforeach
-</ul>
+</ul> --}}
 @endsection
