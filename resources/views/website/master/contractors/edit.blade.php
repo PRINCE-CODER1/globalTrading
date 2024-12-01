@@ -39,6 +39,7 @@
             @endif
             <form action="{{ route('contractor.update', $lead->id) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="mb-3">
                     <label for="branch_name" class="form-label fs-14 text-dark">
                         <i class="bi bi-building me-1"></i> Name
@@ -51,15 +52,39 @@
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
-                <div class="mb-3">
-                    <label for="details" class="form-label fs-14 text-dark">
-                        <i class="bi bi-geo-alt me-1"></i> Details
+                 <!-- Address Field -->
+                 <div class="mb-3">
+                    <label for="address" class="form-label fs-14 text-dark">
+                        <i class="bi bi-geo-alt me-1"></i> Address
                     </label>
-                    <textarea name="details" class="form-control" id="details" rows="3" placeholder="Enter details" required>{{ old('details', $lead->details) }}</textarea>
-                    @error('details')
+                    <textarea id="address" name="address" class="form-control @error('address') is-invalid @enderror"
+                              rows="3">{{ old('address', $lead->address) }}</textarea>
+                    @error('address')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <!-- Contractor Type -->
+                <div class="mb-3">
+                    <label class="form-label fs-14 text-dark">
+                        <i class="bi bi-tools me-1"></i> Contractor Type
+                    </label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="contractor_type" id="hvac" 
+                                   value="HVAC" {{ old('contractor_type', $lead->contractor_type) == 'HVAC' ? 'checked' : '' }} required>
+                            <label class="form-check-label" for="hvac">HVAC</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="contractor_type" id="plumbing" 
+                                   value="Plumbing" {{ old('contractor_type', $lead->contractor_type) == 'Plumbing' ? 'checked' : '' }} required>
+                            <label class="form-check-label" for="plumbing">Plumbing</label>
+                        </div>
+                    </div>
+                    @error('contractor_type')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
+                
                 <input type="hidden" name="user_id" value="{{ auth()->id() }}">
         
                 <button type="submit" class="btn btn-secondary"><i class="ri-add-circle-line me-1"></i> Update Contractor</button>

@@ -22,7 +22,7 @@ class Lead extends Model
         'child_category_id',
         'lead_type_id',
         'application_id',
-        'contractor_id',
+        'contractor_ids',
         'amount',
         'specification',
         'series',
@@ -30,6 +30,9 @@ class Lead extends Model
         'expected_date',
         'assigned_to',
         'user_id', 
+    ];
+    protected $casts = [
+        'contractor_ids' => 'array', 
     ];
 
     // Relationships

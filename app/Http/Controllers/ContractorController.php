@@ -44,7 +44,8 @@ class ContractorController extends Controller implements HasMiddleware
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'details' => 'nullable|string',
+            'address' => 'nullable|string|max:500',
+            'contractor_type' => 'nullable|string|max:100',
             'user_id' => 'required|exists:users,id',
         ]);
 
@@ -58,7 +59,8 @@ class ContractorController extends Controller implements HasMiddleware
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'details' => 'nullable|string',
+            'address' => 'nullable|string|max:500',
+            'contractor_type' => 'nullable|string|max:100',
             'user_id' => 'required|exists:users,id',
         ]);
 

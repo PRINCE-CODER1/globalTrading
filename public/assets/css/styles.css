@@ -9516,8 +9516,9 @@
     overflow: hidden;
 }
 .form-select option:checked {
-    background-color: var(--custom-white);
-    color: var(--default-text-color);
+    background-color: #45D65B;
+    margin-bottom:10px;
+    color: white;
 }
 .form-check-input {
     width: 1.1em;

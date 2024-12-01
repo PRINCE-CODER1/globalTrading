@@ -56,9 +56,6 @@
                                 <div class="d-grid mt-4">
                                         <button type="submit" class="btn btn-lg btn-secondary" wire:navigate>Sign In</button>
                                 </div>
-                                <div class="text-center">
-                                        <p class="text-muted mt-3 mb-0">Dont have an account? <a href="{{ route('register') }}" class="text-danger">Sign Up</a></p>
-                                </div>
                             </div>
                         </div>
                     </div>

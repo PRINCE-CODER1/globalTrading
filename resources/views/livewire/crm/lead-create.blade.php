@@ -126,17 +126,38 @@
                 @error('application') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
             @if($showContractOptions)
-            <div class="col-md-3">
-                <label for="contract_details" class="form-label fw-semibold">Contract Type</label>
-                <select wire:model="contractor_id" id="contract" class="form-select form-select-sm">
-                    <option value="">Select Contract Type</option>
-                    @foreach($contractors as $option)
-                        <option value="{{ $option->id }}">{{ $option->name }}</option>
+            <div>
+                <label for="contractor_ids">Select Contractors</label>
+                <select id="contractor_ids" class="form-control" wire:model="contractor_ids" multiple>
+                    @foreach ($contractors as $contractor)
+                        <option value="{{ $contractor->id }}" 
+                            @if(in_array($contractor->id, $contractor_ids)) selected @endif>
+                            {{ $contractor->name }}
+                        </option>
                     @endforeach
                 </select>
+                @error('contractor_ids') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
             @endif
-        
+
+            @push('scripts')
+            <script>
+                document.addEventListener('livewire:load', function () {
+                    $('#contractor').select2();
+
+                    // Trigger Livewire update when the dropdown value changes
+                    $('#contractor').on('change', function () {
+                        let data = $(this).val(); // Get the selected values
+                        @this.set('contractor_id', data); // Pass the data to Livewire
+                    });
+
+                    // Reinitialize Select2 when Livewire updates the dropdown
+                    Livewire.hook('message.processed', (message, component) => {
+                        $('#contractor').select2();
+                    });
+                });
+            </script>
+            @endpush
             <div class="mb-3">
                 <label for="specification" class="form-label fw-semibold">Specification</label>
                 <div class="form-check">

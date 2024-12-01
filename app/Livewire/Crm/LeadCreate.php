@@ -32,7 +32,7 @@ class LeadCreate extends Component
     public $specification; 
     public $referenceId;
     public $contractors = null; 
-    public $contractor_id; 
+    public $contractor_ids = [];
     public $applications;
     public $application_id;
     public $showContractOptions = false; 
@@ -49,6 +49,7 @@ class LeadCreate extends Component
 
     public function mount()
     {
+        // Initialize dropdown values
         $this->leadStatuses = LeadStatus::all();
         $this->leadSources = LeadSource::all();
         $this->segments = Segment::whereNull('parent_id')->get();
@@ -66,6 +67,7 @@ class LeadCreate extends Component
 
     private function generateReferenceId()
     {
+        // Generate a reference ID based on the latest lead
         $lastLead = Lead::orderBy('created_at', 'desc')->first();
         if ($lastLead && preg_match('/^INT\/(\d+)\/\d{4}$/', $lastLead->reference_id, $matches)) {
             $number = intval($matches[1]) + 1;
@@ -75,6 +77,7 @@ class LeadCreate extends Component
         return sprintf('INT/%03d/%d', $number, date('Y'));
     }
 
+    // Handle updates to category and child category selections
     public function updatedCategoryId($categoryId)
     {
         $this->childCategories = ChildCategory::where('parent_category_id', $categoryId)->get();
@@ -95,12 +98,14 @@ class LeadCreate extends Component
 
     public function updatedLeadTypeId($leadTypeId)
     {
+        // Toggle visibility of contractor selection based on lead type
         $projectTypeId = LeadType::where('name', 'Project')->value('id');
         $this->showContractOptions = $leadTypeId == $projectTypeId;
     }
 
     public function submit()
     {
+        // Validate form data
         $this->validate([
             'customer_id' => 'required|exists:customer_suppliers,id',
             'lead_status_id' => 'required|exists:lead_statuses,id',
@@ -116,11 +121,13 @@ class LeadCreate extends Component
             'amount' => 'nullable|numeric',
             'application_id' => 'required|exists:applications,id', 
             'specification' => 'nullable|in:favourable,non-favourable',
-            'contractor_id' => 'nullable|exists:contractors,id',
+            'contractor_ids' => 'nullable|array',
+            'contractor_ids.*' => 'exists:contractors,id',
         ]);
 
+        // Generate reference ID
         $this->referenceId = $this->generateReferenceId();
-
+        // Create the lead entry
         $lead = Lead::create([
             'customer_id' => $this->customer_id,
             'lead_status_id' => $this->lead_status_id,
@@ -133,7 +140,7 @@ class LeadCreate extends Component
             'series' => $this->series,
             'lead_type_id' => $this->lead_type_id,
             'application_id' => $this->application_id,
-            'contractors' => $this->contractor_id, 
+            'contractor_ids' => $this->contractor_ids,
             'reference_id' => $this->referenceId,
             'amount' => $this->amount, 
             'specification' => $this->specification,

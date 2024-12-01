@@ -250,7 +250,7 @@
                                 @if($showContractOptions)
                                 <div class="mb-3">
                                     <label for="contractor_id" class="form-label text-muted small">Contractor</label>
-                                    <select wire:model="contractor_id" id="contractor_id" class="form-select form-select-sm">
+                                    <select wire:model="contractor_ids" id="contractor_ids"  class="form-select form-select-sm" multiple>
                                         <option value="">Select Contractor</option>
                                         @foreach($contractors as $contractor)
                                             <option value="{{ $contractor->id }}">{{ $contractor->name }}</option>
@@ -293,7 +293,7 @@
                                                 @endforeach
                                             </select>
                                             @error('assigned_to') <span class="text-danger">{{ $message }}</span> @enderror
-                                            <p class="mt-2"><strong>Note :</strong><span class="text-danger"> After assigning lead to agent, i will not appear in you panel.</span></p>
+                                            <p class="mt-2"><strong>Note :</strong><span class="text-danger"> Once you assign this lead to your team mate, lead will be transferred and it will not be visible in your panel.</span></p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-danger" wire:click="$set('assigned_to', '')" data-bs-dismiss="modal">Close</button>

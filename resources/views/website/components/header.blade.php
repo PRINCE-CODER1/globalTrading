@@ -15,6 +15,8 @@
 <!-- Favicon -->
 <link rel="icon" href="{{asset('../assets/images/gtimage/logo_icon.png')}}" type="image/x-icon">
     
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <!-- Choices JS -->
 <script src="{{asset('assets/libs/choices.js/public/assets/scripts/choices.min.js')}}"></script>
 

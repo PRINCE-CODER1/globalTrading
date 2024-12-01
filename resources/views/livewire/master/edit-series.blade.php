@@ -1,5 +1,5 @@
 <div>
-    <form wire:submit.prevent="submit">
+    <form wire:submit.prevent="update">
         <!-- Stock Category Field -->
         <div class="mb-3">
             <label for="stock_category_id" class="form-label fs-14 text-dark">

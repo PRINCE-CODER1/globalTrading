@@ -34,8 +34,8 @@ class LeadEdit extends Component
     public $application_id;
     public $date;
 
-    public $contractors = null; 
-    public $contractor_id; 
+    public $contractor_ids = [];
+    public $contractors = [];
     public $showContractOptions = false; 
 
     public $leadTypes;
@@ -61,7 +61,8 @@ class LeadEdit extends Component
         'amount' => 'nullable|numeric',
         'specification' => 'nullable|in:favourable,non-favourable',
         'assigned_to' => 'nullable|exists:users,id',
-        'contractor_id' => 'nullable|exists:contractors,id',
+        'contractor_ids' => 'nullable|array',
+        'contractor_ids.*' => 'exists:contractors,id',
         'application_id' => 'required|exists:applications,id',
     ];
     
@@ -69,15 +70,13 @@ class LeadEdit extends Component
     {
         $this->lead = Lead::findOrFail($leadId);
 
-        // Bind the lead_type_id and contractor_id (ID)
-        $this->lead_type_id = $this->lead->lead_type_id;
-        $this->contractor_id = $this->lead->contractor_id;
 
         // Bind other fields...
         $this->assigned_to = $this->lead->assigned_to ?? auth()->id();
         $this->customer_id = $this->lead->customer_id;
         $this->lead_status_id = $this->lead->lead_status_id;
         $this->lead_source_id = $this->lead->lead_source_id;
+        $this->lead_type_id = $this->lead->lead_type_id;
         $this->segment_id = $this->lead->segment_id;
         $this->sub_segment_id = $this->lead->sub_segment_id;
         $this->category_id = $this->lead->category_id;
@@ -102,7 +101,10 @@ class LeadEdit extends Component
         $this->categories = StockCategory::all();
         $this->seriesList = Series::all();
         $this->leadTypes = LeadType::all();
-
+        $this->contractors = Contractor::all();
+        $this->contractor_ids = $this->lead->contractor_ids 
+        ? explode(',', $this->lead->contractor_ids) 
+        : [];        
         // Load sub-segments and categories
         $this->loadSubSegments();
         if ($this->category_id) {
@@ -154,16 +156,17 @@ class LeadEdit extends Component
     }
 
     public function save()
-    { 
+    {
         $this->validate();
 
+        // Handle image upload if exists
         $imagePath = $this->lead->image; // Retain the existing image if no new one is uploaded
         if ($this->image) {
             $fileName = uniqid() . '.' . $this->image->getClientOriginalExtension();
             $imagePath = $this->image->storeAs('remarks', $fileName, 'public');
         }
 
-
+        // Update the lead
         $this->lead->update([
             'customer_id' => $this->customer_id,
             'lead_status_id' => $this->lead_status_id,
@@ -175,7 +178,7 @@ class LeadEdit extends Component
             'series' => $this->series,
             'expected_date' => $this->expected_date,
             'lead_type_id' => $this->lead_type_id,
-            'contractor_id' => $this->contractor_id,
+            'contractor_ids' => implode(',', $this->contractor_ids),
             'image' => $imagePath,
             'amount' => $this->amount,
             'application_id' => $this->application_id,
@@ -183,8 +186,13 @@ class LeadEdit extends Component
             'assigned_to' => $this->assigned_to,
         ]);
 
+        // Update the Livewire component values with the saved values
+        $this->contractor_ids = is_array($this->lead->contractor_ids) ? $this->lead->contractor_ids : explode(',', $this->lead->contractor_ids);
+
         $this->assignAgent();
     }
+
+
 
     public function assignAgent()
     {

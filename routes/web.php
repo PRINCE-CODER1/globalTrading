@@ -60,7 +60,7 @@ use Illuminate\Support\Facades\Mail;
 Route::get('/', function () {
     return view('auth.login');
 });
-
+Route::redirect('/register', '/');
 // Group routes for authenticated and verified users
 Route::middleware(['auth', 'verified'])->group(function () {
     

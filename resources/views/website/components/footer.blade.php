@@ -75,9 +75,13 @@
 <!-- Sweet Alert JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- Include Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
 <!-- Custom-Switcher JS -->
 <script src="{{ asset('assets/js/custom-switcher.min.js') }}"></script>
 @stack('scripts')
+
 </body>
 
 
