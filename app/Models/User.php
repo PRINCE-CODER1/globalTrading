@@ -60,4 +60,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Lead::class);
     }
+    public function dars()
+    {
+        return $this->hasMany(Dar::class, 'user_id');
+    }
 }

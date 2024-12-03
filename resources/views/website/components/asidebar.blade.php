@@ -461,7 +461,45 @@
                 
                 
                 <!-- End::slide -->
-               
+
+                <!-- Start::Daily Report Of Employes -->
+               @can('DarSide')
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center ">
+                        <i class="ri-record-mail-fill side-menu__icon d-flex justify-content-center align-items-center"></i>
+                        <span class="side-menu__label">Daily Activity Reports</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul custom-h">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">DAR</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('dar.daily-rep')}}" class="side-menu__item ">DAR</a>
+                        </li>
+                    </ul>
+                </li>
+               @endcan
+               <!-- End::Daily Report Of Employes -->
+               @can('view dar-form')
+                <!-- Start::Daily Report Of Employes -->
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center ">
+                        <i class="ri-record-mail-fill side-menu__icon d-flex justify-content-center align-items-center"></i>
+                        <span class="side-menu__label">DAR</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul custom-h">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">DAR</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('daily-report.index')}}" class="side-menu__item ">DAR</a>
+                        </li>
+                    </ul>
+                </li>
+               <!-- End::Daily Report Of Employes -->
+               @endcan
                 
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24" viewBox="0 0 24 24"> <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"></path> </svg></div>

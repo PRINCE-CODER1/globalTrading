@@ -40,6 +40,7 @@ use App\Http\Controllers\InternalChalaanController;
 use App\Http\Controllers\ReturnChalaanController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\DarFormController;
 
 
 // Agent Controller 
@@ -145,6 +146,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('return-chalaan', ReturnChalaanController::class);
     Route::resource('contractor', ContractorController::class);
     Route::resource('application', ApplicationController::class);
+    Route::resource('daily-report', DarFormController::class);
+    Route::get('dar/employees', [DarFormController::class, 'showDarRep'])->name('dar.daily-rep');
+    Route::get('dar-reports/{userId}', [DarFormController::class, 'userReports'])->name('user-reports');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
