@@ -329,7 +329,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($leads as $lead)
+                                        @forelse ($leads as $lead)
                                             <tr>
                                                 <td><a class="btn btn-sm btn-info"
                                                         href="{{ route('leads.edit', $lead->id) }}"><i
@@ -351,7 +351,13 @@
                                                         style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span>
                                                 </td>
                                             </tr>
-                                        @endforeach
+                                            @empty
+                                            <tr>
+                                                <td colspan="10" class="text-center">
+                                                    <p class="mb-0">No records found</p>
+                                                </td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>

@@ -396,7 +396,7 @@
                 @endcan
                 <!-- Start::Inventory Management -->
                 @can('view inventory')
-                <li class="slide has-sub {{ request()->routeIs(['assemblies.index', 'purchase_orders.index', 'purchase.index', 'sale_orders.index', 'sales.index', 'stock_transfer.index']) ? 'open' : '' }}">
+                <li class="slide has-sub {{ request()->routeIs(['assemblies.index', 'purchase_orders.index', 'purchase.index', 'sale_orders.index', 'sales.index']) ? 'open' : '' }}">
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center {{ request()->routeIs(['assemblies.index', 'purchase_orders.index', 'purchase.index', 'sale_orders.index', 'sales.index', 'stock_transfer.index']) ? 'active' : '' }}">
                         <i class="ri-store-2-line side-menu__icon d-flex justify-content-center align-items-center"></i>
                         <span class="side-menu__label">Inventory Management</span>
@@ -422,9 +422,9 @@
                         <li class="slide">
                             <a href="{{ route('sales.index') }}" class="side-menu__item {{ request()->routeIs('sales.index') ? 'active' : '' }}">Sale</a>
                         </li>
-                        <li class="slide">
+                        {{-- <li class="slide">
                             <a href="{{ route('stock_transfer.index') }}" class="side-menu__item {{ request()->routeIs('stock_transfer.index') ? 'active' : '' }}">Stock Transfer</a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>     
                 @endcan           

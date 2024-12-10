@@ -171,6 +171,7 @@
                             <table class="table table-bordered text-nowrap">
                                 <thead>
                                     <tr>
+                                        <th class="fw-bold">Refrence Id</th>
                                         <th class="fw-bold">Customer</th>
                                         <th class="fw-bold">Assigned Agent</th>
                                         <th class="fw-bold">Status</th>
@@ -180,8 +181,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($leads as $lead)
+                                    @forelse($leads as $lead)
                                         <tr>
+                                            <td>{{ $lead->reference_id }}</td>
                                             <td>{{ $lead->customer->name }}</td>
                                             <td>{{ $lead->assignedAgent->name }}</td>
                                             <td><span class="badge" style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span></td>
@@ -189,7 +191,13 @@
                                             <td>{{ $lead->expected_date ? \Carbon\Carbon::parse($lead->expected_date)->format('Y-m-d') : 'N/A' }}</td>
                                             <td>{{ $lead->updated_at->format('Y-m-d') }}</td>
                                         </tr>
-                                    @endforeach
+                                        @empty
+                                        <tr>
+                                            <td colspan="10" class="text-center">
+                                                <p class="mb-0">No records found</p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         

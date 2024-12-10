@@ -70,6 +70,7 @@
                             <table class="table table-bordered text-nowrap">
                                 <thead>
                                     <tr>
+                                        <th>Refrence Id</th>
                                         <th>Customer Name</th>
                                         <th>Status</th>
                                         <th>Created At</th>
@@ -78,6 +79,7 @@
                                 <tbody>
                                     @forelse($leads as $lead)
                                         <tr>
+                                            <td>{{ $lead->reference_id }}</td>
                                             <td>{{ $lead->customer->name }}</td>
                                             <td><span class="badge" style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span></td>
                                             <td>{{ $lead->created_at->format('Y-m-d') }}</td>

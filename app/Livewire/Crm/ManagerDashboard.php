@@ -42,7 +42,8 @@ class ManagerDashboard extends Component
             ->where(function($query) {
                 $query->whereHas('customer', function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%');
-                });
+                })
+                ->orWhere('reference_id', 'like', '%' . $this->search . '%');
             })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);

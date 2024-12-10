@@ -39,7 +39,7 @@ class AgentDashboard extends Component
             ->where(function ($query) {
                 $query->whereHas('customer', function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%');
-                });
+                })->orWhere('reference_id', 'like', '%' . $this->search . '%');
             })
             ->paginate($this->perPage);
             $statuses = LeadStatus::all();
