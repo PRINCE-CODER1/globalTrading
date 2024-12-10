@@ -5,6 +5,8 @@ namespace App\Livewire\Dar;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Dar;
+use App\Models\User;
+use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
 
 class DarList extends Component
@@ -30,6 +32,13 @@ class DarList extends Component
     public function render()
     {
         $userId = Auth::id();
+        $user = Auth::user(); 
+        $team = null;
+
+        if ($user->hasRole('Manager')) {
+            $team = Team::where('creator_id', $userId)->get();
+        }
+
         $dar = Dar::with('customer')
             ->whereHas('customer', function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%');
@@ -39,8 +48,9 @@ class DarList extends Component
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        return view('livewire.dar.dar-list', compact('dar'));
+        return view('livewire.dar.dar-list', compact('dar', 'team', 'user'));
     }
+
 
     public function updatePerPage($value)
     {

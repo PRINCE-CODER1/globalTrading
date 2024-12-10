@@ -52,11 +52,12 @@ class ProductEdit extends Component
         $this->hsn_code = $product->hsn_code;
         $this->price = $product->price;
         $this->product_code = $product->product_code;
-        $this->opening_stock = $product->opening_stock;
-        $this->reorder_stock = $product->reorder_stock;
-        $this->branch_id = $product->branch_id;
-        $this->godown_id = $product->godown_id;
-        $this->unit_id = $product->unit_id; // Load unit for product
+        $this->opening_stock = optional($product->stock)->opening_stock ?? 0;
+        $this->reorder_stock = optional($product->stock)->reorder_stock ?? 0;
+        $this->branch_id = optional($product->stock)->branch_id ?? null;
+        $this->updateGodowns($this->branch_id); 
+        $this->godown_id = optional($product->stock)->godown_id;
+        $this->unit_id = $product->unit_id; 
 
         // Load other necessary data
         $this->categories = StockCategory::all();
@@ -64,10 +65,8 @@ class ProductEdit extends Component
         $this->series = $this->child_category_id ? Series::where('child_category_id', $this->child_category_id)->get() : [];
         $this->taxes = Tax::all();
         $this->branches = Branch::all();
-        $this->units = UnitOfMeasurement::all(); // Load units of measurement
+        $this->units = UnitOfMeasurement::all(); 
 
-        // Load godowns based on the selected branch
-        $this->updateGodowns($this->branch_id);
     }
 
     public function updatedProductCategoryId($categoryId)
@@ -85,14 +84,13 @@ class ProductEdit extends Component
 
     public function updatedBranchId($branchId)
     {
-        // Update godowns based on the selected branch
         $this->updateGodowns($branchId);
     }
 
     private function updateGodowns($branchId)
     {
         $this->godowns = Godown::where('branch_id', $branchId)->get();
-        $this->godown_id = null; // Reset selected godown
+        $this->godown_id = null; // Reset godown selection
     }
 
     public function submit()

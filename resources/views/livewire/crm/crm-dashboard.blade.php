@@ -319,6 +319,7 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th class="fw-bold">Action</th>
+                                            <th class="fw-bold">Reference Id</th>
                                             <th class="fw-bold">Customer</th>
                                             <th class="fw-bold">Lead Source</th>
                                             <th class="fw-bold">Assigned Agent</th>
@@ -333,6 +334,7 @@
                                                 <td><a class="btn btn-sm btn-info"
                                                         href="{{ route('leads.edit', $lead->id) }}"><i
                                                             class="ri-eye-2-line"></i> View Lead</a></td>
+                                                <td>{{ $lead->reference_id }}</td>
                                                 <td>{{ $lead->customer->name }}</td>
                                                 <td>{{ $lead->leadSource->name }}</td>
                                                 <td>{{ $lead->assignedAgent->name }}</td>

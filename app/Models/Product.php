@@ -15,7 +15,7 @@ class Product extends Model
         'product_description',
         'product_category_id',
         'child_category_id',
-        'tax',
+        // 'tax',
         'hsn_code',
         'price',
         'product_code',
@@ -69,5 +69,13 @@ class Product extends Model
     public function stock()
     {
         return $this->hasOne(Stock::class);
+    }
+    public function purchase()
+    {
+        return $this->hasMany(PurchaseOrderItem::class); 
+    }
+    public function sale()
+    {
+        return $this->hasMany(SaleOrderItem::class); 
     }
 }

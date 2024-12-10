@@ -74,6 +74,7 @@
                                             <th scope="col">
                                                 <input type="checkbox" wire:model.live="selectAll">
                                             </th>
+                                            <th>Reference Id</th>
                                             <th>Customer</th>
                                             <th>Status</th>
                                             <th>Source</th>
@@ -90,6 +91,7 @@
                                                     <input type="checkbox" wire:model.live="selectedLeads"
                                                         value="{{ $lead->id }}">
                                                 </td>
+                                                <td>{{ $lead->reference_id }}</td>
                                                 <td>{{ $lead->customer->name ?? 'N/A' }}</td>
                                                 <td>
                                                     <span class="badge"

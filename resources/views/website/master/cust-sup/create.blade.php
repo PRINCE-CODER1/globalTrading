@@ -49,7 +49,8 @@
                             <label for="mobile_no" class="form-label fs-14 text-dark">Mobile No</label>
                             <div class="input-group">
                                 <div class="input-group-text"><i class="bi bi-telephone"></i></div>
-                                <input type="text" class="form-control @error('mobile_no') is-invalid @enderror" id="mobile_no" name="mobile_no" placeholder="Enter mobile" value="{{ old('mobile_no') }}">
+                                <input type="tel" class="form-control
+                                @error('mobile_no') is-invalid @enderror" id="mobile_no" name="mobile_no" placeholder="Enter mobile" value="{{ old('mobile_no') }}">
                                 
                             </div>
                         </div>

@@ -102,28 +102,16 @@ class LeadEdit extends Component
         $this->seriesList = Series::all();
         $this->leadTypes = LeadType::all();
         $this->contractors = Contractor::all();
-        $this->contractor_ids = $this->lead->contractor_ids 
-        ? explode(',', $this->lead->contractor_ids) 
-        : [];        
+        $this->contractor_ids = is_array($this->lead->contractor_ids) ? $this->lead->contractor_ids : explode(',', $this->lead->contractor_ids);
+      
         // Load sub-segments and categories
         $this->loadSubSegments();
         if ($this->category_id) {
             $this->childCategories = ChildCategory::where('parent_category_id', $this->category_id)->get();
         }
 
-        // Get the user's teams for agent selection
-        if (Auth::user()->hasRole('Admin')) {
-            // Admins see all agents
-            $this->teamAgents = User::where('role', 'Agent')->get();
-        } else {
-            // Managers and agents see agents only in their teams
-            $managerTeams = Auth::user()->teams()->pluck('team_id');
-            $this->teamAgents = User::whereIn('id', function ($query) use ($managerTeams) {
-                $query->select('user_id')
-                    ->from('user_team')
-                    ->whereIn('team_id', $managerTeams);
-            })->where('role', 'Agent')->get(); // Ensure to fetch only agents
-        }
+        
+        $this->teamAgents = User::all();
 
     }
 
@@ -195,20 +183,26 @@ class LeadEdit extends Component
 
 
     public function assignAgent()
-    {
-        if ($this->assigned_to === null) {
-            toastr()->error('Please assign an agent.');
-            return;
-        }
-
-        $this->validate(['assigned_to' => 'required']);
-
-        $this->lead->update(['assigned_to' => $this->assigned_to]);
-
-        $agentName = User::find($this->assigned_to)->name;
-        toastr()->closeButton(true)->success("Successfully assigned to $agentName");
-        $this->reset(['assigned_to']);
+{
+    if ($this->assigned_to === null) {
+        toastr()->error('Please assign an agent.');
+        return;
     }
+
+    $this->validate(['assigned_to' => 'required']);
+
+    // Update the lead with the new assigned agent
+    $this->lead->update(['assigned_to' => $this->assigned_to]);
+
+    // Update the visibility logic
+    $agentName = User::find($this->assigned_to)->name;
+    toastr()->closeButton(true)->success("Successfully assigned to $agentName");
+
+    // Update the Livewire component values with the saved values
+    $this->assigned_to = null;
+    $this->reset(['assigned_to']);
+}
+
 
 
     public function addRemark()

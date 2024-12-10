@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Livewire\Reports;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\Product;
+
+class StockReport extends Component
+{
+    use WithPagination; 
+
+    public $search = '';
+    public $perPage = 10;
+    public $sortBy = 'created_at';
+    public $sortDir = 'asc';
+
+    public function mount()
+    {
+        $this->search = session()->get('search', '');
+        $this->perPage = session()->get('perPage', 10);
+    }
+    public function updatePerPage($value)
+    {
+        $this->perPage = $value;
+        session()->put('perPage', $this->perPage);
+        $this->resetPage();
+    }
+
+    public function updatedSearch($value)
+    {
+        $this->search = $value;
+        session()->put('search', $this->search);
+        $this->resetPage();
+    }
+
+    public function render()
+    {
+        $userId = auth()->id();
+
+        $productreport = Product::withCount([
+            'purchase',  
+            'sale' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }
+        ])
+        ->when($this->search, function ($query) {
+            $query->where('product_name', 'like', '%' . $this->search . '%'); 
+        })
+        ->when($this->search, function ($query) {
+            $query->where('product_name', 'like', '%' . $this->search . '%'); 
+        })
+        ->paginate($this->perPage);
+
+        return view('livewire.reports.stock-report', compact('productreport'));
+    }
+}

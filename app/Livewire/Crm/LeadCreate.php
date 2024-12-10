@@ -10,6 +10,7 @@ use App\Models\LeadType;
 use App\Models\Segment;
 use App\Models\CustomerSupplier;
 use App\Models\Series; 
+use App\Models\Remark; 
 use App\Models\StockCategory; 
 use App\Models\ChildCategory; 
 use App\Models\Contractor; 
@@ -67,15 +68,34 @@ class LeadCreate extends Component
 
     private function generateReferenceId()
     {
-        // Generate a reference ID based on the latest lead
-        $lastLead = Lead::orderBy('created_at', 'desc')->first();
-        if ($lastLead && preg_match('/^INT\/(\d+)\/\d{4}$/', $lastLead->reference_id, $matches)) {
-            $number = intval($matches[1]) + 1;
+        // Get the current year
+        $currentYear = date('Y');
+
+        // Fetch the selected segment name
+        $segment = Segment::find($this->segment_id);
+        $segmentName = $segment ? $segment->name : 'Segment';
+
+        $lastLead = Lead::where('reference_id', 'like', "GTE/$currentYear/%")
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($lastLead) {
+            $pattern = '/^GTE\/\d{4}\/[a-zA-Z0-9-]+\/(\d{3})$/';
+            if (preg_match($pattern, $lastLead->reference_id, $matches)) {
+                $lastNumber = intval($matches[1]); 
+                $number = $lastNumber + 1;        
+            } else {
+                $number = 1;
+            }
         } else {
-            $number = 1;
+            $number = 1; 
         }
-        return sprintf('INT/%03d/%d', $number, date('Y'));
+
+        $formattedNumber = str_pad($number, 3, '0', STR_PAD_LEFT);
+
+        return sprintf('GTE/%d/%s/%03d', $currentYear, $segmentName, $formattedNumber);
     }
+
 
     // Handle updates to category and child category selections
     public function updatedCategoryId($categoryId)
@@ -147,7 +167,14 @@ class LeadCreate extends Component
             'assigned_to' => auth()->id(),
             'user_id' => auth()->id(),
         ]);
-
+        if ($this->remark) {
+            Remark::create([
+                'lead_id' => $lead->id,
+                'user_id' => auth()->id(),
+                'remark' => $this->remark,
+            ]);
+        }
+    
         toastr()->closeButton(true)->success('Lead added successfully.');
         return redirect()->route('leads.index');
     }

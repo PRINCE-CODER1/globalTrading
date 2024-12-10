@@ -11,8 +11,11 @@ use App\Models\Series;
 use App\Models\Tax;
 use App\Models\UnitOfMeasurement;
 use App\Models\Stock; // Add Stock model
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ProductStockExport;
 
 class ProductController extends Controller
 {
@@ -21,8 +24,33 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('series', 'stock')->get(); // Load stock relationship
+        $products = Product::with('series', 'stock')->get();
         return view('website.master.products.list', compact('products'));
+    }
+    public function stockReports(){
+        $userId = auth()->id();
+        $productreport = Product::withCount([
+            'purchase',  // Count total purchases
+            'sale' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);  // Filter sales by user ID
+            }
+        ])->get();
+        return view('website.reports.list',compact('productreport'));
+    }
+    public function export($type)
+    {
+        $validTypes = ['xlsx', 'csv'];
+        if (!in_array($type, $validTypes)) {
+            abort(400, 'Invalid export format.');
+        }
+
+        $fileName = 'ProductStockExport.' . $type;
+
+        return Excel::download(
+            new ProductStockExport,
+            $fileName,
+            $type === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX
+        );
     }
 
     /**
@@ -66,7 +94,7 @@ class ProductController extends Controller
             'product_description' => 'nullable|string',
             'product_category_id' => 'required|exists:stock_categories,id',
             'child_category_id' => 'nullable|exists:child_categories,id',
-            'tax' => 'nullable|numeric',
+            // 'tax' => 'nullable|numeric',
             'hsn_code' => 'required|string|max:255',
             'price' => 'required|numeric',
             'product_code' => 'required|string|max:255|unique:products',
@@ -138,7 +166,7 @@ class ProductController extends Controller
             'product_description' => 'nullable|string',
             'product_category_id' => 'required|exists:stock_categories,id',
             'child_category_id' => 'nullable|exists:child_categories,id',
-            'tax' => 'nullable|numeric',
+            // 'tax' => 'nullable|numeric',
             'hsn_code' => 'required|string|max:255',
             'price' => 'required|numeric',
             'product_code' => 'required|string|max:255|unique:products,product_code,' . $product->id,

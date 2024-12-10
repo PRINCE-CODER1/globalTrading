@@ -146,9 +146,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('return-chalaan', ReturnChalaanController::class);
     Route::resource('contractor', ContractorController::class);
     Route::resource('application', ApplicationController::class);
+
+    // Dar Reports
     Route::resource('daily-report', DarFormController::class);
     Route::get('dar/employees', [DarFormController::class, 'showDarRep'])->name('dar.daily-rep');
     Route::get('dar-reports/{userId}', [DarFormController::class, 'userReports'])->name('user-reports');
+    Route::get('manager/agent/{agent}/dars', [DarFormController::class, 'agentDarReports'])->name('manager.agent.dar');
+
+    // Reports
+    Route::get('stock-reports',[ProductController::class,'stockReports'])->name('stock.reports');
+
+    // Exports
+    Route::get('/stock-reports/export/{type}', [ProductController::class, 'export'])->name('stock-reports.export');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

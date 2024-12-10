@@ -141,4 +141,15 @@ class DarFormController extends Controller implements HasMiddleware
 
         return view('website.dar.user-reports', compact('darReports', 'user'));
     }
+    public function agentDarReports(User $agent)
+    {
+
+        $dar = Dar::with('customer')
+            ->where('user_id', $agent->id) 
+            ->latest('created_at')
+            ->get();
+
+        return view('livewire.dar.agent-dar-reports', compact('dar', 'agent'));
+    }
+
 }

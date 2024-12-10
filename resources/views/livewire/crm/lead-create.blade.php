@@ -126,8 +126,8 @@
                 @error('application') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
             @if($showContractOptions)
-            <div>
-                <label for="contractor_ids">Select Contractors</label>
+            <div class="col-md-6">
+                <label for="contractor_ids" class="fw-semibold">Select Contractors</label>
                 <select id="contractor_ids" class="form-control" wire:model="contractor_ids" multiple>
                     @foreach ($contractors as $contractor)
                         <option value="{{ $contractor->id }}" 
@@ -140,25 +140,7 @@
             </div>
             @endif
 
-            @push('scripts')
-            <script>
-                document.addEventListener('livewire:load', function () {
-                    $('#contractor').select2();
-
-                    // Trigger Livewire update when the dropdown value changes
-                    $('#contractor').on('change', function () {
-                        let data = $(this).val(); // Get the selected values
-                        @this.set('contractor_id', data); // Pass the data to Livewire
-                    });
-
-                    // Reinitialize Select2 when Livewire updates the dropdown
-                    Livewire.hook('message.processed', (message, component) => {
-                        $('#contractor').select2();
-                    });
-                });
-            </script>
-            @endpush
-            <div class="mb-3">
+            <div class="col-md-6 mb-3">
                 <label for="specification" class="form-label fw-semibold">Specification</label>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="specification" id="specificationFavourable" value="favourable"
@@ -179,7 +161,12 @@
                 @enderror
             </div>
         </div>
-
+        <!-- Remarks -->
+        <div class="mb-3">
+            <label for="remark" class="form-label fw-semibold">Remarks</label>
+            <textarea id="remark" wire:model="remark" class="form-control" placeholder="Enter any additional remarks"></textarea>
+            @error('remark') <span class="text-danger">{{ $message }}</span> @enderror
+        </div>
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-secondary btn-sm me-2"><i class="ri-add-circle-line"></i> Create Lead</button>
             <a href="{{ route('leads.index') }}" class="btn btn-danger btn-sm">Cancel</a>

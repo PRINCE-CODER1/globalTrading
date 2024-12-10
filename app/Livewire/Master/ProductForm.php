@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Models\StockCategory;
 use App\Models\ChildCategory;
 use App\Models\Series;
-use App\Models\Tax;
+// use App\Models\Tax;
 use App\Models\Product;
 use App\Models\Branch;
 use App\Models\Godown;
@@ -22,7 +22,7 @@ class ProductForm extends Component
     public $series_id;
     public $product_name;
     public $product_description;
-    public $tax;
+    // public $tax;
     public $hsn_code;
     public $price;
     public $product_code;
@@ -54,9 +54,9 @@ class ProductForm extends Component
     private function initializeData()
     {
         $this->categories = StockCategory::all();
-        $this->taxes = Tax::all();
+        // $this->taxes = Tax::all();
         $this->branches = Branch::all();
-        $this->units = UnitOfMeasurement::all(); // Load units of measurement
+        $this->units = UnitOfMeasurement::all(); 
 
         $this->series = [];
         $this->godowns = [];
@@ -72,23 +72,20 @@ class ProductForm extends Component
         $this->series_id = $product->series_id;
         $this->product_name = $product->product_name;
         $this->product_description = $product->product_description;
-        $this->tax = $product->tax;
+        // $this->tax = $product->tax;
         $this->hsn_code = $product->hsn_code;
         $this->price = $product->price;
         $this->product_code = $product->product_code;
-        $this->unit_id = $product->unit_id; // Load unit for product
+        $this->unit_id = $product->unit_id; 
 
-        // Update child categories and series based on the loaded product's category
         $this->childcategories = ChildCategory::where('parent_category_id', $this->product_category_id)->get();
         $this->series = Series::where('stock_category_id', $this->product_category_id)->get();
 
-        // Load stock information if available
         $this->loadStockData($product_id);
     }
 
     private function loadStockData($product_id)
     {
-        // Assuming Stock is a model representing stock data linked to Product
         $stock = \App\Models\Stock::where('product_id', $product_id)->first();
 
         if ($stock) {
@@ -103,7 +100,7 @@ class ProductForm extends Component
     {
         $this->childcategories = ChildCategory::where('parent_category_id', $categoryId)->get();
         $this->series = Series::where('stock_category_id', $categoryId)->get();
-        $this->series_id = null; // Reset selected series
+        $this->series_id = null; 
     }
 
     public function updatedChildCategoryId($childCategoryId)
@@ -120,7 +117,7 @@ class ProductForm extends Component
     private function updateGodowns($branchId)
     {
         $this->godowns = Godown::where('branch_id', $branchId)->get();
-        $this->godown_id = null; // Reset selected godown
+        $this->godown_id = null; 
     }
 
     public function submit()
@@ -128,13 +125,11 @@ class ProductForm extends Component
         $validatedProductData = $this->validateProductData();
         $validatedStockData = $this->validateStockData();
 
-        // Save or update the product
         $product = Product::updateOrCreate(
             ['id' => $this->product_id],
             array_merge($validatedProductData, ['user_id' => Auth::id()])
         );
 
-        // Save or update stock data
         \App\Models\Stock::updateOrCreate(
             ['product_id' => $product->id],
             $validatedStockData
@@ -154,8 +149,8 @@ class ProductForm extends Component
             'series_id' => 'nullable|exists:series,id',
             'product_name' => 'required|string|max:255',
             'product_description' => 'nullable|string',
-            'tax' => 'required|exists:taxes,value',
-            'hsn_code' => 'required|string|max:255',
+            // 'tax' => 'required|exists:taxes,value',
+            'hsn_code' => 'nullable|string|max:255',
             'price' => 'required|numeric',
             'product_code' => [
                 'required',
@@ -163,7 +158,7 @@ class ProductForm extends Component
                 'max:255',
                 Rule::unique('products', 'product_code')->ignore($this->product_id),
             ],
-            'unit_id' => 'required|exists:unit_of_measurements,id', // Validate unit_id
+            'unit_id' => 'required|exists:unit_of_measurements,id', 
         ]);
     }
 

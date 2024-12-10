@@ -38,4 +38,8 @@ class Purchase extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function products()
+    {
+        return $this->belongsTo(Product::class,'product_id');
+    }
 }

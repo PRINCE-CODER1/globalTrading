@@ -71,7 +71,7 @@
             @enderror
         </div>
 
-        <div class="mb-3">
+        {{-- <div class="mb-3">
             <label for="tax" class="form-label">Tax</label>
             <div class="input-group">
                 <div class="input-group-text"><i class="bi bi-percent"></i></div>
@@ -85,17 +85,17 @@
             @error('tax')
                 <div class="text-danger">{{ $message }}</div>
             @enderror
-        </div>
+        </div> --}}
 
         <div class="mb-3">
-            <label for="hsn_code" class="form-label">HSN Code<sup class="text-danger">*</sup></label>
+            <label for="hsn_code" class="form-label">HSN Code</label>
             <div class="input-group">
                 <div class="input-group-text"><i class="bi bi-bar-chart"></i></div>
-                <input type="text" wire:model="hsn_code" id="hsn_code" class="form-control" required>
+                <input type="text" wire:model="hsn_code" id="hsn_code" class="form-control">
             </div>
-            @error('hsn_code')
+            {{-- @error('hsn_code')
                 <div class="text-danger">{{ $message }}</div>
-            @enderror
+            @enderror --}}
         </div>
 
         <div class="mb-3">

@@ -31,7 +31,6 @@
             </div>
         </div>
     </div>
-
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
@@ -196,4 +195,43 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        @if($user->hasRole('Manager') && $team->isNotEmpty())
+        <div class="team-info mb-5">
+            <h3 class=" mb-1">Manager's Teams</h3>
+            <p class="text-danger">Note: Check Reports of Agents</p>
+            <div class="">
+                <div class="d-flex flex-wrap justify-content-start gap-3">
+                    @foreach($team as $teamItem)
+                        <div class="col-md-5">
+                            <div class="card mb-4">
+                                <div class="p-2 d-flex justify-content-between align-items-center">
+                                    <h4 class="mb-3">Team: {{ $teamItem->name }}</h4>
+                                    <p><strong>Creator:</strong> {{ $teamItem->creator->name }}</p>
+                                </div>
+                                <div class="card-body">
+                                    <h5>Agents in this Team:</h5>
+                                    <ul class="list-group">
+                                        @foreach($teamItem->agents as $agent)
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <p class="mb-0"><b class="text-muted"`>Agent Name :</b> {{ $agent->name }}<br> <b class="text-muted"`>E-mail :</b> {{ $agent->email }}<br> <b class="text-muted">Role :</b> {{ $agent->role }}</p>
+                                                <a href="{{route('manager.agent.dar', ['agent' => $agent->id])}}" class="btn btn-secondary btn-sm">view dar report</a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+                
+        </div>
+        @elseif($user->hasRole('Manager'))
+            <div class="alert alert-warning">
+                <p class="text-center mb-0"><strong>No teams found for this manager.</strong></p>
+            </div>
+        @endif
+    </div>
+    
 </div>

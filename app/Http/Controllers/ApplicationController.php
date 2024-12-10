@@ -5,8 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Application;
 
-class ApplicationController extends Controller
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
+
+class ApplicationController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array{
+        return [
+            new Middleware('permission:view application', only: ['index']),
+            new Middleware('permission:edit application', only: ['edit']),
+            new Middleware('permission:create application', only: ['create']),
+            new Middleware('permission:delete application', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

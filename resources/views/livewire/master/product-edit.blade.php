@@ -77,33 +77,13 @@
             @enderror
         </div>
 
-        <div class="mb-3">
-            <label for="tax" class="form-label">Tax</label>
-            <div class="input-group">
-                <div class="input-group-text"><i class="bi bi-percent"></i></div>
-                <select wire:model="tax" id="tax" class="form-control" required>
-                    <option value="">Select a Tax</option>
-                    @foreach($taxes as $tax)
-                        <option value="{{ $tax->value }}" {{ old('tax', $tax) == $tax->value ? 'selected' : '' }}>
-                            {{ $tax->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            @error('tax')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
 
         <div class="mb-3">
-            <label for="hsn_code" class="form-label">HSN Code<sup class="text-danger">*</sup></label>
+            <label for="hsn_code" class="form-label">HSN Code</label>
             <div class="input-group">
                 <div class="input-group-text"><i class="bi bi-bar-chart"></i></div>
-                <input type="text" wire:model="hsn_code" id="hsn_code" class="form-control" value="{{ old('hsn_code', $hsn_code) }}" required>
+                <input type="text" wire:model="hsn_code" id="hsn_code" class="form-control" value="{{ old('hsn_code', $hsn_code) }}">
             </div>
-            @error('hsn_code')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
         </div>
 
         <div class="mb-3">
