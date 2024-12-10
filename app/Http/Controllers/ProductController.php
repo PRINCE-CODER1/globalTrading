@@ -37,21 +37,33 @@ class ProductController extends Controller
         ])->get();
         return view('website.reports.list',compact('productreport'));
     }
-    public function export($type)
-    {
-        $validTypes = ['xlsx', 'csv'];
-        if (!in_array($type, $validTypes)) {
-            abort(400, 'Invalid export format.');
-        }
+    // public function export($type)
+    // {
+    //     $userId = auth()->id();
 
-        $fileName = 'ProductStockExport.' . $type;
+    //     // Get filtered products
+    //     $products = Product::with(['stock'])
+    //         ->withCount([
+    //             'purchase',
+    //             'sale' => function ($query) use ($userId) {
+    //                 $query->where('user_id', $userId);
+    //             }
+    //         ])
+    //         ->when($this->search, function ($query) {
+    //             $query->where('product_name', 'like', '%' . $this->search . '%');
+    //         })
+    //         ->get();
 
-        return Excel::download(
-            new ProductStockExport,
-            $fileName,
-            $type === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX
-        );
-    }
+    //     // Export the data in the specified format
+    //     if ($type == 'xlsx') {
+    //         return Excel::download(new ProductStockExport($products), 'product_stock_report.xlsx');
+    //     } elseif ($type == 'csv') {
+    //         return Excel::download(new ProductStockExport($products), 'product_stock_report.csv');
+    //     }
+
+    //     return redirect()->route('stock-reports.index'); // Redirect back if no type is specified
+    // }
+
 
     /**
      * Show the form for creating a new resource.

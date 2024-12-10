@@ -37,10 +37,11 @@
                 <div class="card shadow">
                     <div class="card-body">
                         <div class="mb-3">
-                            <a href="{{ route('stock-reports.export', ['type' => 'xlsx']) }}" class="btn btn-secondary">
+                            <a href="javascript:void(0)" wire:click="export('xlsx')" class="btn btn-secondary">
                                 <i class="ri-export-fill"></i> Download Excel
                             </a>
-                            <a href="{{ route('stock-reports.export', ['type' => 'csv']) }}" class="btn btn-dark">
+                            <!-- Export to CSV -->
+                            <a href="javascript:void(0)" wire:click="export('csv')" class="btn btn-dark">
                                 <i class="ri-export-fill"></i> Download CSV
                             </a>
                         </div>

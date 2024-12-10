@@ -41,6 +41,7 @@ use App\Http\Controllers\ReturnChalaanController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\DarFormController;
+use App\Livewire\Reports\StockReport;
 
 
 // Agent Controller 
@@ -157,7 +158,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('stock-reports',[ProductController::class,'stockReports'])->name('stock.reports');
 
     // Exports
-    Route::get('/stock-reports/export/{type}', [ProductController::class, 'export'])->name('stock-reports.export');
+    Route::get('/stock-reports/export/{type}', [StockReport::class, 'export'])->name('stock-reports.export');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
