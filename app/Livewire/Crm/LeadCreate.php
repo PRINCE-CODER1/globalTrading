@@ -18,7 +18,11 @@ use App\Models\Application;
 
 class LeadCreate extends Component
 {
-    public $customer_id;
+    public $search = '';
+    public $customer_id = null;
+    public $showDropdown = false;
+    public $filteredCustomers = [];
+
     public $lead_status_id;
     public $lead_source_id;
     public $segment_id;
@@ -55,7 +59,7 @@ class LeadCreate extends Component
         $this->leadSources = LeadSource::all();
         $this->segments = Segment::whereNull('parent_id')->get();
         $this->subSegments = [];
-        $this->customers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
+        $this->fetchAllCustomers();
         $this->categories = StockCategory::all();
         $this->childCategories = [];
         $this->seriesList = Series::all();
@@ -65,44 +69,74 @@ class LeadCreate extends Component
         $this->applications = Application::all(); 
         $this->referenceId = $this->generateReferenceId();
     }
+    
 
-    private function generateReferenceId()
+    public function fetchAllCustomers()
     {
-        // Get the current year and month
+        $this->filteredCustomers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
+    }
+
+    public function updatedSearch()
+    {
+        $this->filteredCustomers = CustomerSupplier::query()
+            ->where('customer_supplier', 'onlyCustomer')
+            ->where('name', 'like', '%' . $this->search . '%')
+            ->get();
+        $this->showDropdown = true; 
+    }
+
+    public function showDropdown()
+    {
+        if (empty($this->search)) {
+            $this->fetchAllCustomers(); 
+        }
+        $this->showDropdown = true;
+    }
+
+    public function hideDropdown()
+    {
+        $this->showDropdown = false;
+    }
+
+    public function keepDropdownOpen()
+    {
+        $this->showDropdown = true;
+    }
+
+    public function selectCustomer($customerId)
+    {
+        $this->customer_id = $customerId; 
+        $this->search = CustomerSupplier::find($customerId)?->name ?? ''; 
+        $this->showDropdown = false; 
+    }
+    private function generateReferenceId() 
+    {
         $currentYear = date('Y');
-        $currentMonth = date('M'); // e.g., Jan, Feb, etc.
+        $currentMonth = date('M');
 
-        // Fetch the selected sub-segment abbreviation
-        $subSegment = Segment::find($this->sub_segment_id);
-        $subSegmentAbbreviation = $subSegment ? strtoupper(substr($subSegment->name, 0, 3)) : 'SSG'; 
+        // Fetch the selected sub-segment abbreviation (if needed, but not for number calculation)
+        $subSegment = Segment::find($this->sub_segment_id); // Assuming this is the ID of the sub-segment you just saved
+        $subSegmentAbbreviation = $subSegment ? $subSegment->abbreviation : 'SSG';
 
-        // Fetch the last lead with the matching pattern
-        $lastLead = Lead::where('reference_id', 'like', "GTE/$currentYear/$currentMonth/%")
+        // Find the last lead to determine the next reference number (ignore sub-segment for number incrementation)
+        $lastLead = Lead::where('reference_id', 'like', "GTE/$currentYear/%")
             ->orderBy('created_at', 'desc')
             ->first();
 
-        // Determine the next number
+        // Increment the number or start at 1 if no previous leads exist
         if ($lastLead) {
-            $pattern = '/^GTE\/\d{4}\/[A-Za-z]+\/[A-Z0-9]+\/(\d{3})$/';
-            if (preg_match($pattern, $lastLead->reference_id, $matches)) {
-                $lastNumber = intval($matches[1]); 
-                $number = $lastNumber + 1;        
-            } else {
-                $number = 1;
-            }
+            $lastNumber = (int) substr($lastLead->reference_id, -3); // Extract the last 3 digits as the number
+            $number = $lastNumber + 1;
         } else {
-            $number = 1; 
+            $number = 1; // Start from 1 if no leads exist
         }
 
-        // Format the number to three digits
+        // Format the number to be 3 digits
         $formattedNumber = str_pad($number, 3, '0', STR_PAD_LEFT);
 
-        // Return the formatted reference ID
+        // Return the formatted reference ID using the current year, sub-segment abbreviation, and incremented number
         return sprintf('GTE/%d/%s/%s/%03d', $currentYear, $currentMonth, $subSegmentAbbreviation, $formattedNumber);
     }
-
-
-
 
 
     // Handle updates to category and child category selections

@@ -84,6 +84,18 @@
                                         </select>
                                         @error('parentId') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="abbreviation" class="form-label fs-14 text-dark">
+                                            <i class="bi bi-fonts me-1"></i> Abbreviation
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-fonts"></i></span>
+                                            <input type="text" wire:model="abbreviation" id="abbreviation" class="form-control" required>
+                                        </div>
+                                        @error('abbreviation')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
     
                                     <div class="mb-3">
                                         <button class="btn btn-secondary">
@@ -115,6 +127,18 @@
                                                     @endif
                                                 </th>
                                                 <th scope="col">Status</th>
+                                                <th scope="col" wire:click="setSortBy('abbreviation')">
+                                                    Abbreviation
+                                                    @if ($sortBy === 'abbreviation')
+                                                        @if ($sortDir === 'asc')
+                                                            <i class="bi bi-arrow-up"></i>
+                                                        @else
+                                                            <i class="bi bi-arrow-down"></i>
+                                                        @endif
+                                                    @else
+                                                        <i class="bi bi-arrow-up-down"></i>
+                                                    @endif
+                                                </th>
                                                 <th scope="col" wire:click="setSortBy('created_at')">
                                                     Created On
                                                     @if ($sortBy === 'created_at')
@@ -156,6 +180,9 @@
                                                                    {{ $segment->active ? 'checked' : '' }}>
                                                             <span class="slider round"></span>
                                                         </label>
+                                                    </td>
+                                                    <td>
+                                                        {{ $segment->abbreviation }}
                                                     </td>
                                                     <td>{{ \Carbon\Carbon::parse($segment->created_at)->format('d M, Y') }}</td>
                                                     <td>{{ $segment->parent ? $segment->parent->name : 'None' }}</td>

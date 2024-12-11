@@ -13,6 +13,7 @@ class SubSegments extends Component
 
     public $perPage = 5;
     public $name;
+    public $abbreviation;
     public $search = '';
     public $sortBy = 'created_at';
     public $sortDir = 'DESC';
@@ -30,6 +31,7 @@ class SubSegments extends Component
         'name' => 'required|string|max:255',
         'active' => 'required|boolean',
         'parentId' => 'required|exists:segments,id',
+        'abbreviation' => 'required|string|max:10',
     ];
 
     public function mount()
@@ -67,6 +69,7 @@ class SubSegments extends Component
             'active' => $this->active,
             'parent_id' => $this->parentId,
             'user_id' => Auth::id(),
+            'abbreviation' => $this->abbreviation,
         ]);
 
         $message = $this->subSegmentId ? 'Sub-segment updated successfully.' : 'Sub-segment created successfully.';
@@ -84,6 +87,7 @@ class SubSegments extends Component
         $this->name = $subSegment->name;
         $this->active = $subSegment->active;
         $this->parentId = $subSegment->parent_id;
+        $this->abbreviation = $subSegment->abbreviation;
         $this->isEditing = true;
         $this->viewSubSegments = false; 
     }

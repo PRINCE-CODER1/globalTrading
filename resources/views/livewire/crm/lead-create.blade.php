@@ -6,7 +6,7 @@
                 <label for="reference_id" class="form-label fw-semibold">Reference ID</label>
                 <input type="text" id="reference_id" class="form-control" wire:model="referenceId" readonly>
             </div>
-            <div class="col-md-3">
+            {{-- <div class="col-md-3">
                 <label for="customer_id" class="form-label fw-semibold">Customer</label>
                 <div class="dropdown position-relative">
                     <input 
@@ -23,8 +23,67 @@
                     </select>
                 </div>
                 @error('customer_id') <small class="text-danger">{{ $message }}</small> @enderror
+            </div> --}}
+            <div class="col-md-3">
+                <label for="customer_id" class="form-label fw-semibold">Customer</label>
+                <div class="position-relative">
+                    <!-- Search Input -->
+                    <input 
+                        type="text" 
+                        placeholder="Search Customer" 
+                        class="form-control form-control-sm mb-1" 
+                        wire:model.live="search" 
+                        autocomplete="off" 
+                        wire:focus="showDropdown"
+                        wire:blur="hideDropdown"
+                    >
+            
+                    <!-- Dropdown List -->
+                    @if($showDropdown)
+                        <ul 
+                            class="list-group position-absolute w-100" 
+                            style="z-index: 1050; max-height: 200px; overflow-y: auto;"
+                            wire:mouseenter="keepDropdownOpen"
+                            wire:mouseleave="hideDropdown"
+                        >
+                            @forelse($filteredCustomers as $customer)
+                                <li 
+                                    wire:click="selectCustomer({{ $customer->id }})"
+                                    class="list-group-item list-group-item-action {{ $customer_id === $customer->id ? 'active' : '' }}" 
+                                    style="cursor: pointer;"
+                                >
+                                    {{ $customer->name }}
+                                </li>
+                            @empty
+                                <li class="list-group-item text-muted">No customers found</li>
+                            @endforelse
+                        </ul>
+                    @endif
+                </div>
+            
+                <!-- Error Message -->
+                @error('customer_id') 
+                    <small class="text-danger">{{ $message }}</small> 
+                @enderror
             </div>
-            <script>
+            
+            <style>
+                .list-group-item {
+                    padding: 0.5rem 1rem;
+                }
+
+                .list-group-item:hover {
+                    background-color: #f8f9fa;
+                }
+
+                .list-group-item.active {
+                    background-color: #0d6efd;
+                    color: #fff;
+                }
+            </style>
+            
+            
+            {{-- <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     const searchInput = document.getElementById('customer-search');
                     const selectElement = document.getElementById('customer-select');
@@ -65,7 +124,7 @@
                         }
                     });
                 });
-            </script>
+            </script> --}}
              
 
             <div class="col-md-3">

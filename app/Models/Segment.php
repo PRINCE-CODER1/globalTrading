@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Segment extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'active','parent_id','user_id'];
+    protected $fillable = ['name', 'active','parent_id','user_id','abbreviation'];
 
     public function parent()
     {
