@@ -3,19 +3,70 @@
     <form wire:submit.prevent="submit" >
         <div class="row g-2 mb-2">
             <div class="mb-3">
-                <label for="reference_id" class="form-label">Reference ID</label>
+                <label for="reference_id" class="form-label fw-semibold">Reference ID</label>
                 <input type="text" id="reference_id" class="form-control" wire:model="referenceId" readonly>
             </div>
             <div class="col-md-3">
                 <label for="customer_id" class="form-label fw-semibold">Customer</label>
-                <select id="customer_id" wire:model="customer_id" class="form-select form-select-sm" required>
-                    <option value="">Select Customer</option>
-                    @foreach($customers as $customer)
-                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                    @endforeach
-                </select>
+                <div class="dropdown position-relative">
+                    <input 
+                        id="customer-search" 
+                        type="text" 
+                        placeholder="Search Customer" 
+                        class="form-control form-control-sm mb-1 d-none" 
+                    >
+                    <select id="customer-select" wire:model="customer_id" class="form-select form-select-sm" required>
+                        <option value="">Select Customer</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 @error('customer_id') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const searchInput = document.getElementById('customer-search');
+                    const selectElement = document.getElementById('customer-select');
+            
+                    selectElement.addEventListener('focus', function () {
+                        searchInput.classList.remove('d-none'); 
+                        searchInput.focus(); 
+                    });
+            
+                    selectElement.addEventListener('blur', handleBlur);
+                    searchInput.addEventListener('blur', handleBlur);
+            
+                    function handleBlur() {
+                        setTimeout(() => {
+                            if (
+                                document.activeElement !== selectElement &&
+                                document.activeElement !== searchInput
+                            ) {
+                                searchInput.classList.add('d-none'); 
+                            }
+                        }, 100); 
+                    }
+            
+                    // Filter options dynamically
+                    searchInput.addEventListener('input', function () {
+                        const filter = searchInput.value.toLowerCase();
+                        const options = selectElement.options;
+            
+                        for (let i = 0; i < options.length; i++) {
+                            const option = options[i];
+                            const text = option.textContent || option.innerText;
+            
+                            if (text.toLowerCase().indexOf(filter) > -1) {
+                                option.style.display = ''; 
+                            } else {
+                                option.style.display = 'none'; 
+                            }
+                        }
+                    });
+                });
+            </script>
+             
 
             <div class="col-md-3">
                 <label for="lead_status_id" class="form-label fw-semibold">Lead Status</label>
@@ -173,3 +224,4 @@
         </div>
     </form>
 </div>
+

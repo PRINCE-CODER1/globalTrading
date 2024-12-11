@@ -68,19 +68,22 @@ class LeadCreate extends Component
 
     private function generateReferenceId()
     {
-        // Get the current year
+        // Get the current year and month
         $currentYear = date('Y');
+        $currentMonth = date('M'); // e.g., Jan, Feb, etc.
 
-        // Fetch the selected segment name
-        $segment = Segment::find($this->segment_id);
-        $segmentName = $segment ? $segment->name : 'Segment';
+        // Fetch the selected sub-segment abbreviation
+        $subSegment = Segment::find($this->sub_segment_id);
+        $subSegmentAbbreviation = $subSegment ? strtoupper(substr($subSegment->name, 0, 3)) : 'SSG'; 
 
-        $lastLead = Lead::where('reference_id', 'like', "GTE/$currentYear/%")
+        // Fetch the last lead with the matching pattern
+        $lastLead = Lead::where('reference_id', 'like', "GTE/$currentYear/$currentMonth/%")
             ->orderBy('created_at', 'desc')
             ->first();
 
+        // Determine the next number
         if ($lastLead) {
-            $pattern = '/^GTE\/\d{4}\/[a-zA-Z0-9-]+\/(\d{3})$/';
+            $pattern = '/^GTE\/\d{4}\/[A-Za-z]+\/[A-Z0-9]+\/(\d{3})$/';
             if (preg_match($pattern, $lastLead->reference_id, $matches)) {
                 $lastNumber = intval($matches[1]); 
                 $number = $lastNumber + 1;        
@@ -91,10 +94,15 @@ class LeadCreate extends Component
             $number = 1; 
         }
 
+        // Format the number to three digits
         $formattedNumber = str_pad($number, 3, '0', STR_PAD_LEFT);
 
-        return sprintf('GTE/%d/%s/%03d', $currentYear, $segmentName, $formattedNumber);
+        // Return the formatted reference ID
+        return sprintf('GTE/%d/%s/%s/%03d', $currentYear, $currentMonth, $subSegmentAbbreviation, $formattedNumber);
     }
+
+
+
 
 
     // Handle updates to category and child category selections
