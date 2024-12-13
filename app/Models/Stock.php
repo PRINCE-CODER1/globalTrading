@@ -15,4 +15,16 @@ class Stock extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+    public function godown()
+    {
+        return $this->belongsTo(Godown::class);
+    }
+    public function getClosingStock()
+    {
+        return $this->opening_stock; 
+    }
 }

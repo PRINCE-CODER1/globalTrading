@@ -503,7 +503,7 @@
 
                 <!-- Start::Reports -->
                 @can('stock reports')
-                <li class="slide has-sub {{ request()->routeIs(['stock.reports']) ? 'open' : '' }}">
+                <li class="slide has-sub {{ request()->routeIs(['stock.reports','saleorder.reports','purchaseorder.reports','sale.reports','purchase.reports']) ? 'open' : '' }}">
                     <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center ">
                         <i class="ri-line-chart-fill side-menu__icon d-flex justify-content-center align-items-center"></i>
                         <span class="side-menu__label">Reports</span>
@@ -515,6 +515,18 @@
                         </li>
                         <li class="slide">
                             <a href="{{route('stock.reports')}}" class="side-menu__item {{ request()->routeIs('stock.reports') ? 'active' : '' }}">Stock Reports</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('saleorder.reports')}}" class="side-menu__item {{ request()->routeIs('saleorder.reports') ? 'active' : '' }}">Sale Order Reports</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('purchaseorder.reports')}}" class="side-menu__item {{ request()->routeIs('purchaseorder.reports') ? 'active' : '' }}">Purchase Order </a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('sale.reports')}}" class="side-menu__item {{ request()->routeIs('sale.reports') ? 'active' : '' }}">Sale Reports </a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{route('purchase.reports')}}" class="side-menu__item {{ request()->routeIs('purchase.reports') ? 'active' : '' }}">Purchase Reports </a>
                         </li>
                     </ul>
                 </li>

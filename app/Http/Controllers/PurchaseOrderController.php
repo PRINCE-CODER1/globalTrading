@@ -50,6 +50,10 @@ class PurchaseOrderController extends Controller
         return view('website.inventory-management.purchase-orders.create', compact('products', 'suppliers', 'customers', 'agents', 'segments', 'branches', 'purchaseOrderNo'));
     }
 
+    public function purchseOrderReports(){
+        return view('website.reports.purchase-order-report');
+    }
+
     /**
      * Store a newly created resource in storage.
      */

@@ -29,7 +29,9 @@ class PurchaseController extends Controller
 
         return view('website.inventory-management.purchase.list', compact('purchaseOrders', 'suppliers', 'supplierId'));
     }
-
+    public function purchaseReports(){
+        return view('website.reports.purchase-report');
+    }
     public function create(Request $request)
     {
         $supplierId = $request->query('supplier_id'); // Get supplier ID from the request if available

@@ -104,47 +104,69 @@ class SaleForm extends Component
 
     public function initializeSaleOrderNo()
     {
+        // Fetch the first MasterNumbering record
         $masterNumbering = MasterNumbering::first();
+        
         if ($masterNumbering) {
+            // Get the current sale format from MasterNumbering
             $currentFormat = $masterNumbering->sale_format;
 
-            // Extract the prefix, numeric part, and suffix
-            preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches);
-            $prefix = $matches[1] ?? 'SA';
-            $number = isset($matches[2]) ? (int)$matches[2] : 0; // This gets the last number
-            $suffix = $matches[3] ?? 'GTE';
-
-            // Start from 1 instead of incrementing from 0
-            if ($number == 0) {
-                $number = 1; // Start from 1 if the number is 0
+            // Try to extract the prefix, number, and suffix using regex
+            if (preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches)) {
+                $prefix = $matches[1] ?? 'SA';
+                $number = (int)($matches[2] ?? 0);  // Ensure the number is an integer
+                $suffix = $matches[3] ?? 'GTE';
+            } else {
+                // If the format doesn't match, set default values
+                $prefix = 'SA';
+                $number = 0;  // Default to 0 if no match
+                $suffix = 'GTE';
             }
 
-            // Ensure the number is zero-padded
-            $newNumberFormatted = str_pad($number, 3, '0', STR_PAD_LEFT); // Always 3 digits
+            // Ensure the number starts from 1 if it's 0
+            if ($number == 0) {
+                $number = 1;
+            }
 
-            // Create the new format
+            // Zero-pad the number to 3 digits
+            $newNumberFormatted = str_pad($number, 3, '0', STR_PAD_LEFT);
+
+            // Generate the new sale order number format
             $this->saleOrderNo = sprintf("%s/%s/%s", $prefix, $newNumberFormatted, $suffix);
         }
     }
+
     protected function updateMasterNumbering()
     {
+        // Fetch the first MasterNumbering record
         $masterNumbering = MasterNumbering::first();
-        if ($masterNumbering) {
-            $currentFormat = $masterNumbering->sale_format;
-            preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches);
-            $prefix = $matches[1] ?? 'SA';
-            $number = isset($matches[2]) ? (int)$matches[2] : 0; // Use current number
-            $suffix = $matches[3] ?? 'GTE';
 
-            // Increment the number and ensure it's zero-padded
+        if ($masterNumbering) {
+            // Get the current sale format from MasterNumbering
+            $currentFormat = $masterNumbering->sale_format;
+
+            // Try to extract the prefix, number, and suffix using regex
+            if (preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches)) {
+                $prefix = $matches[1] ?? 'SA';
+                $number = (int)($matches[2] ?? 0);  // Ensure the number is an integer
+                $suffix = $matches[3] ?? 'GTE';
+            } else {
+                // If the format doesn't match, set default values
+                $prefix = 'SA';
+                $number = 0;  // Default to 0 if no match
+                $suffix = 'GTE';
+            }
+
+            // Increment the number and zero-pad it to 3 digits
             $newNumberFormatted = str_pad($number + 1, 3, '0', STR_PAD_LEFT);
 
-            // Update MasterNumbering
+            // Update the MasterNumbering record with the new format
             $masterNumbering->update([
                 'sale_format' => sprintf("%s/%s/%s", $prefix, $newNumberFormatted, $suffix)
             ]);
         }
     }
+
     public function save()
     {
         // Validate inputs

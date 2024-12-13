@@ -41,7 +41,11 @@ use App\Http\Controllers\ReturnChalaanController;
 use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\DarFormController;
+
+// Reports
 use App\Livewire\Reports\StockReport;
+use App\Livewire\Reports\SaleOrderReport;
+use App\Livewire\Reports\PurchaseOrderReport;
 
 
 // Agent Controller 
@@ -156,9 +160,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Reports
     Route::get('stock-reports',[ProductController::class,'stockReports'])->name('stock.reports');
+    Route::get('stock-order-reports',[SaleOrderController::class,'saleOrderReports'])->name('saleorder.reports');
+    Route::get('purchase-order-reports',[PurchaseOrderController::class,'purchseOrderReports'])->name('purchaseorder.reports');
+    Route::get('sale-reports',[SaleController::class,'saleReports'])->name('sale.reports');
+    Route::get('purchase-reports',[PurchaseController::class,'purchaseReports'])->name('purchase.reports');
 
     // Exports
     Route::get('/stock-reports/export/{type}', [StockReport::class, 'export'])->name('stock-reports.export');
+    Route::get('/sale-order-reports/export/{type}', [SaleOrderReport::class, 'export'])->name('saleorder-reports.export');
+    Route::get('/purchase-order-reports/export/{type}', [PurchaseOrderReport::class, 'export'])->name('purchseorder-reports.export');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

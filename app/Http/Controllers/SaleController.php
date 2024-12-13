@@ -35,6 +35,9 @@ class SaleController extends Controller
         return view('website.inventory-management.sales.create', compact('godown','products','customers', 'branches', 'saleOrders'));
     }
 
+    public function saleReports(){
+        return view('website.reports.sale-report');
+    }
     /**
      * Store a newly created resource in storage.
      */

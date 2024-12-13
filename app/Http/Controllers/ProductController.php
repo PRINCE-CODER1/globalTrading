@@ -35,7 +35,7 @@ class ProductController extends Controller
                 $query->where('user_id', $userId);  // Filter sales by user ID
             }
         ])->get();
-        return view('website.reports.list',compact('productreport'));
+        return view('website.reports.stock-report',compact('productreport'));
     }
     // public function export($type)
     // {
@@ -132,7 +132,7 @@ class ProductController extends Controller
 
         // Create stock entry for the product
         $validatedStock['product_id'] = $product->id;
-        Stock::create($validatedStock); // Use Stock model to create stock
+        Stock::create($validatedStock); 
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }

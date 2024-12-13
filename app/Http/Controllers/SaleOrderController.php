@@ -48,6 +48,10 @@ class SaleOrderController extends Controller
         return view('website.inventory-management.sale-orders.create', compact('products', 'suppliers', 'customers', 'agents', 'segments', 'branches', 'leadSources', 'saleOrderNo'));
     }
 
+    public function saleOrderReports(){
+        return view('website.reports.sale-order-report');
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([

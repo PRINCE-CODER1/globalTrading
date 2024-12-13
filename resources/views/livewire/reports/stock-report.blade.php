@@ -61,128 +61,184 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($productreport as $report)
-                                            <tr>
-                                                <td>{{ $report->product_name }}</td>
-                                                <td>{{ $report->stock->opening_stock }}</td>
-                                                <td>
-                                                    <button type="button" class="badge btn-secondary " data-bs-toggle="modal" data-bs-target="#purchaseModal{{ $report->id }}">
-                                                        {{ $report->purchase_count ?? 'N/A' }}
-                                                    </button>
-                                                    <!-- Purchase Modal -->
-                                                    <div wire:ignore.self class="modal fade" id="purchaseModal{{ $report->id }}" tabindex="-1" aria-labelledby="purchaseModalLabel{{ $report->id }}" aria-hidden="true">
-                                                        <div class="modal-dialog modal-lg">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header bg-secondary ">
-                                                                    <h5 class="text-white modal-title" id="purchaseModalLabel{{ $report->id }}">Purchase Details for {{ $report->product_name }}</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    @if($report->purchase->isEmpty())
-                                                                        <p class="text-center mb-0 text-muted">No purchases found for this product.</p>
-                                                                    @else
-                                                                        <div class="table-responsive">
-                                                                            <table class="table table-bordered table-striped table-hover">
-                                                                                <thead>
+                                        <tr>
+                                            <td>{{ $report->product_name }}</td>
+                                            <td>{{ $report->stock->opening_stock }}</td>
+                                            <td>
+                                                <button type="button" class="badge btn-secondary" data-bs-toggle="modal" data-bs-target="#purchaseModal{{ $report->id }}">
+                                                    {{ $report->purchase_count ?? 'N/A' }}
+                                                </button>
+                                                <!-- Purchase Modal -->
+                                                <div wire:ignore.self class="modal fade" id="purchaseModal{{ $report->id }}" tabindex="-1" aria-labelledby="purchaseModalLabel{{ $report->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-secondary">
+                                                                <h5 class="text-white modal-title" id="purchaseModalLabel{{ $report->id }}">Purchase Details for {{ $report->product_name }}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                @if($report->purchase->isEmpty())
+                                                                    <p class="text-center mb-0 text-muted">No purchases found for this product.</p>
+                                                                @else
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-bordered table-striped table-hover">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Purchase ID</th>
+                                                                                    <th>Quantity</th>
+                                                                                    <th>Price</th>
+                                                                                    <th>Date</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach($report->purchase as $purchase)
                                                                                     <tr>
-                                                                                        <th>Purchase ID</th>
-                                                                                        <th>Quantity</th>
-                                                                                        <th>Price</th>
-                                                                                        <th>Date</th>
+                                                                                        <td>{{ $purchase->purchaseOrder->purchase_order_no }}</td>
+                                                                                        <td>{{ $purchase->quantity }}</td>
+                                                                                        <td>{{ $purchase->price }}</td>
+                                                                                        <td>{{ $purchase->created_at->format('d-m-Y') }}</td>
                                                                                     </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    @foreach($report->purchase as $purchase)
-                                                                                        <tr>
-                                                                                            <td>{{ $purchase->purchaseOrder->purchase_order_no }}</td>
-                                                                                            <td>{{ $purchase->quantity }}</td>
-                                                                                            <td>{{ $purchase->price }}</td>
-                                                                                            <td>{{ $purchase->created_at->format('d-m-Y') }}</td>
-                                                                                        </tr>
-                                                                                    @endforeach
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                </div>
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
-                                                </td>
-                                                <td>
-                                                    <!-- Sales Button -->
-                                                    <button type="button" class="badge btn-secondary" data-bs-toggle="modal" data-bs-target="#saleModal{{ $report->id }}">
-                                                        {{ $report->sale_count ?? 'N/A' }}
-                                                    </button>
-                                                
-                                                    <!-- Sales Modal -->
-                                                    <div wire:ignore.self class="modal fade" id="saleModal{{ $report->id }}" tabindex="-1" aria-labelledby="saleModalLabel{{ $report->id }}" aria-hidden="true">
-                                                        <div class="modal-dialog modal-lg">
-                                                            <div class="modal-content">
-                                                                <!-- Modal Header -->
-                                                                <div class="modal-header bg-secondary ">
-                                                                    <h5 class="modal-title text-white" id="saleModalLabel{{ $report->id }}">Sales Details for {{ $report->product_name }}</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                
-                                                                <!-- Modal Body -->
-                                                                <div class="modal-body">
-                                                                    @if($report->sale->isEmpty())
-                                                                        <p class="text-center mb-0 text-muted">No sales found for this product.</p>
-                                                                    @else
-                                                                        <div class="table-responsive">
-                                                                            <table class="table table-bordered table-striped table-hover">
-                                                                                <thead>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="badge btn-secondary" data-bs-toggle="modal" data-bs-target="#saleModal{{ $report->id }}">
+                                                    {{ $report->sale_count ?? 'N/A' }}
+                                                </button>
+                                                <!-- Sales Modal -->
+                                                <div wire:ignore.self class="modal fade" id="saleModal{{ $report->id }}" tabindex="-1" aria-labelledby="saleModalLabel{{ $report->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-secondary">
+                                                                <h5 class="modal-title text-white" id="saleModalLabel{{ $report->id }}">Sales Details for {{ $report->product_name }}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                @if($report->sale->isEmpty())
+                                                                    <p class="text-center mb-0 text-muted">No sales found for this product.</p>
+                                                                @else
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-bordered table-striped table-hover">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Sale ID</th>
+                                                                                    <th>Quantity</th>
+                                                                                    <th>Price</th>
+                                                                                    <th>Date</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach($report->sale as $sale)
                                                                                     <tr>
-                                                                                        <th>Sale ID</th>
-                                                                                        <th>Quantity</th>
-                                                                                        <th>Price</th>
-                                                                                        <th>Date</th>
+                                                                                        <td>{{ $sale->id }}</td>
+                                                                                        <td>{{ $sale->quantity }}</td>
+                                                                                        <td>{{ $sale->price }}</td>
+                                                                                        <td>{{ $sale->created_at->format('d-m-Y') }}</td>
                                                                                     </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    @foreach($report->sale as $sale)
-                                                                                        <tr>
-                                                                                            <td>{{ $sale->id }}</td>
-                                                                                            <td>{{ $sale->quantity }}</td>
-                                                                                            <td>{{ $sale->price }}</td>
-                                                                                            <td>{{ $sale->created_at->format('d-m-Y') }}</td>
-                                                                                        </tr>
-                                                                                    @endforeach
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    @endif
-                                                                </div>
-                                                
-                                                                <!-- Modal Footer -->
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                </div>
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </td>
-    
+                                                </div>
+                                            </td>
+                                            <!-- Table Row with Trigger for Modal -->
+                                            <td>
+                                                @php
+                                                    $stocks = $report->stock()->get();
+
+                                                    $stocks = $stocks->filter(function($stock) {
+                                                        return $stock->opening_stock > 0;
+                                                    });
+
+                                                    $totalOpeningStock = $stocks->sum('opening_stock');
+                                                    $closingStock = $totalOpeningStock + $report->purchase_count - $report->sale_count;
+
+                                                    $productName = $report->product_name ?? 'N/A';
+                                                @endphp
+
+                                                <div>
+                                                    <strong>Closing Stock:</strong> {{ $closingStock ?? 'N/A' }}
+                                                </div>
+
+                                                <button type="button" class="btn btn-info btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#stockModal{{ $report->id }}">
+                                                    <i class="ri-eye-fill"></i> View Product Details
+                                                </button>
+
+                                                <div class="modal fade" id="stockModal{{ $report->id }}" tabindex="-1" aria-labelledby="stockModalLabel{{ $report->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-secondary">
+                                                                <h5 class="modal-title text-white" id="stockModalLabel{{ $report->id }}">Stock Details for {{ $productName }}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p><strong>Product Name:</strong> <span id="productName{{ $report->id }}">{{ $productName }}</span></p>
+                                                                <p><strong>Closing Stock:</strong> <span id="closingStock{{ $report->id }}">{{ $closingStock }}</span></p>
                                                 
-                                                <td>
-                                                    @php
-                                                        $closingStock = $report->stock->opening_stock + $report->purchase_count - $report->sale_count;
-                                                    @endphp
-                                                    {{ $closingStock ?? 'N/A' }}
-                                                </td>      
-                                                <td>{{ $report->stock->reorder_stock }}</td>
-                                                <td>{{ $report->price }}</td>
-                                                
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="9" class="text-center">No Records Found</td>
-                                            </tr>
+                                                                @if($stocks->isEmpty())
+                                                                    <p>No stock available in any location for this product.</p>
+                                                                @else
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead class="table-dark">
+                                                                                <tr>
+                                                                                    <th>Branch</th>
+                                                                                    <th>Godown</th>
+                                                                                    <th>Quantity</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach($stocks as $stock)
+                                                                                    <tr>
+                                                                                        <td>{{ $stock->branch->name ?? 'N/A' }}</td>
+                                                                                        <td>{{ $stock->godown->godown_name ?? 'N/A' }}</td>
+                                                                                        <td>{{ $stock->opening_stock ?? 'N/A' }}</td>
+                                                                                    </tr>
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+
+                                            </td>
+
+
+
+                                            <td>{{ $report->stock->reorder_stock }}</td>
+                                            <td>{{ $report->price }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="9" class="text-center">No Records Found</td>
+                                        </tr>
                                     @endforelse
+
+
                                 </tbody>
                             </table>
                             <div class="mb-3">
