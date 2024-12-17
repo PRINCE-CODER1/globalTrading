@@ -81,6 +81,13 @@
                             </style>
                             <div class="row g-2 mb-4">
                                 <div class="col-md-4">
+                                    <label for="cust" class="form-label fw-semibold">Customer</label>
+                                    <input type="text" name="customer_id" class="form-control form-control-sm @error('customer_id') is-invalid @enderror" id="name" placeholder="cusomter name" value="{{ $lead->customerUser->name }}" required disabled>
+                                        @error('customer_id')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                </div>    
+                                <div class="col-md-4">
                                     <div class="form-group mb-3">
                                         <label for="cust_sup_user" class="form-label fw-semibold">Select Customer User</label>
                                         <select wire:model="customer_supplier_user_id" class="form-select form-select-sm">
