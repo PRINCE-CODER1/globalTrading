@@ -9,6 +9,7 @@ use App\Models\LeadSource;
 use App\Models\LeadType;
 use App\Models\Segment;
 use App\Models\CustomerSupplier;
+use App\Models\CustomerSupplierUser;
 use App\Models\Series; 
 use App\Models\Remark; 
 use App\Models\StockCategory; 
@@ -21,7 +22,11 @@ class LeadCreate extends Component
     public $search = '';
     public $customer_id = null;
     public $showDropdown = false;
-    public $filteredCustomers = [];
+    public $allCustomer = [];
+
+    public $customerUsers = [];
+    public $selectedCustomerUsers = [];
+    public $customer_supplier_user_id;
 
     public $lead_status_id;
     public $lead_source_id;
@@ -52,6 +57,10 @@ class LeadCreate extends Component
     public $childCategories; // Child categories
     public $seriesList; // List of series
 
+    public $testVar;
+    public $filteredCustomers;
+    public $selectedCustomer = null; 
+
     public function mount()
     {
         // Initialize dropdown values
@@ -73,16 +82,38 @@ class LeadCreate extends Component
 
     public function fetchAllCustomers()
     {
-        $this->filteredCustomers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
+        $this->allCustomer = CustomerSupplier::all();
+        $this->filteredCustomers = $this->allCustomer;
     }
+
 
     public function updatedSearch()
     {
-        $this->filteredCustomers = CustomerSupplier::query()
-            ->where('customer_supplier', 'onlyCustomer')
-            ->where('name', 'like', '%' . $this->search . '%')
-            ->get();
-        $this->showDropdown = true; 
+        $this->filteredCustomers = collect($this->allCustomer)->filter(function ($customer) {
+            return str_contains(strtolower($customer['name']), strtolower($this->search));
+        })->toArray();
+    }
+
+    // public function selectCustomer($customerId)
+    // {
+    //     $this->selectedCustomer = collect($this->allCustomer)->firstWhere('id', $customerId);
+    //     $this->customer_id = $customerId; 
+
+    //     $this->search = $this->selectedCustomer['name'];
+
+    //     $this->filteredCustomers = [];
+    // }
+    public function selectCustomer($customerId)
+    {
+        $this->selectedCustomer = collect($this->allCustomer)->firstWhere('id', $customerId);
+        $this->customer_id = $customerId;
+        $this->search = $this->selectedCustomer['name'];
+
+        // Fetch customer users
+        $this->selectedCustomerUsers = CustomerSupplierUser::where('customer_supplier_id', $customerId)->get();
+
+        $this->customer_supplier_user_id = null; // Reset selected user
+        $this->filteredCustomers = [];
     }
 
     public function showDropdown()
@@ -103,11 +134,11 @@ class LeadCreate extends Component
         $this->showDropdown = true;
     }
 
-    public function selectCustomer($customerId)
+    public function selectCustomer1($customerId)
     {
-        $this->customer_id = $customerId; 
-        $this->search = CustomerSupplier::find($customerId)?->name ?? ''; 
-        $this->showDropdown = false; 
+        $this->search = CustomerSupplier::find($customerId)?->name ?? '';
+         
+        $this->testVar = $customerId; 
     }
     private function generateReferenceId() 
     {
@@ -170,33 +201,40 @@ class LeadCreate extends Component
         // Validate form data
         $this->validate([
             'customer_id' => 'required|exists:customer_suppliers,id',
+            'customer_supplier_user_id' => 'required',
             'lead_status_id' => 'required|exists:lead_statuses,id',
             'lead_source_id' => 'required|exists:lead_sources,id',
             'segment_id' => 'required|exists:segments,id',
             'sub_segment_id' => 'nullable|exists:segments,id',
-            'expected_date' => 'required|date',
+            'expected_date' => 'required|date', 
             'category_id' => 'nullable|exists:stock_categories,id',
             'child_category_id' => 'nullable|exists:child_categories,id',
             'series' => 'required|exists:series,id',
             'remark' => 'nullable|string',
             'lead_type_id' => 'required|exists:lead_types,id',
             'amount' => 'nullable|numeric',
-            'application_id' => 'required|exists:applications,id', 
+            'application_id' => 'required|exists:applications,id',
             'specification' => 'nullable|in:favourable,non-favourable',
             'contractor_ids' => 'nullable|array',
             'contractor_ids.*' => 'exists:contractors,id',
         ]);
 
+        if ($this->expected_date) {
+            $this->expected_date = $this->expected_date . '-01';
+        }
+
         // Generate reference ID
         $this->referenceId = $this->generateReferenceId();
+
         // Create the lead entry
         $lead = Lead::create([
             'customer_id' => $this->customer_id,
+            'customer_supplier_user_id' => $this->customer_supplier_user_id,
             'lead_status_id' => $this->lead_status_id,
             'lead_source_id' => $this->lead_source_id,
             'segment_id' => $this->segment_id,
             'sub_segment_id' => $this->sub_segment_id,
-            'expected_date' => $this->expected_date,
+            'expected_date' => $this->expected_date, // Store the corrected expected date
             'category_id' => $this->category_id,
             'child_category_id' => $this->child_category_id,
             'series' => $this->series,
@@ -204,11 +242,12 @@ class LeadCreate extends Component
             'application_id' => $this->application_id,
             'contractor_ids' => $this->contractor_ids,
             'reference_id' => $this->referenceId,
-            'amount' => $this->amount, 
+            'amount' => $this->amount,
             'specification' => $this->specification,
             'assigned_to' => auth()->id(),
             'user_id' => auth()->id(),
         ]);
+
         if ($this->remark) {
             Remark::create([
                 'lead_id' => $lead->id,
@@ -216,10 +255,11 @@ class LeadCreate extends Component
                 'remark' => $this->remark,
             ]);
         }
-    
+
         toastr()->closeButton(true)->success('Lead added successfully.');
         return redirect()->route('leads.index');
     }
+
 
     public function render()
     {
@@ -234,6 +274,7 @@ class LeadCreate extends Component
             'seriesList' => $this->seriesList, 
             'leadTypes' => $this->leadTypes,
             'contractors' => $this->contractors,
+            'selectedCustomerUsers' => $this->selectedCustomerUsers,
         ]);
     }
 }

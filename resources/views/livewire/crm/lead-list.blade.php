@@ -76,6 +76,7 @@
                                             </th>
                                             <th>Reference Id</th>
                                             <th>Customer</th>
+                                            <th>Customer Users</th>
                                             <th>Status</th>
                                             <th>Source</th>
                                             <th>Segment</th>
@@ -93,6 +94,7 @@
                                                 </td>
                                                 <td>{{ $lead->reference_id }}</td>
                                                 <td>{{ $lead->customer->name ?? 'N/A' }}</td>
+                                                <td>{{ $lead->customerUser->name ?? 'N/A' }}</td>
                                                 <td>
                                                     <span class="badge"
                                                         style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">

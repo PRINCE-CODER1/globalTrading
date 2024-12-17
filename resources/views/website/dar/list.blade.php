@@ -25,7 +25,7 @@
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->dars_count }}</td>
                                             <td>
-                                                <a href="{{ route('user-reports', ['userId' => $user->id]) }}" class="btn btn-secondary"><i class="ri-eye-fill"></i> View Reports</a>
+                                                <a href="{{ route('user-reports',  ['userId' => $user->id]) }}" class="btn btn-secondary"><i class="ri-eye-fill"></i> View Reports</a>
                                             </td>
                                         </tr>
                                     @endforeach

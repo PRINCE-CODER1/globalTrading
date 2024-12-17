@@ -28,7 +28,7 @@
 </div>
 <div class="container my-3">
     <div class="bg-white p-4 shadow-sm rounded"> 
-        <form action="{{ route('daily-report.store') }}" method="POST">
+        {{-- <form action="{{ route('daily-report.store') }}" method="POST">
             @csrf
             <div class="mb-3">
                 <label for="customer_id" class="form-label fs-14 text-dark">Customer</label>
@@ -67,13 +67,11 @@
 
             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
 
-            {{-- <div class="mb-3">
-                <label for="rating" class="form-label fs-14 text-dark">Rating (1-5)</label>
-                <input type="number" name="rating" id="rating" class="form-control" min="1" max="5">
-            </div> --}}
+            
 
             <button type="submit" class="btn btn-secondary"><i class="ri-save-3-line"></i> Submit</button>
-        </form>
+        </form> --}}
+        @livewire('dar.create-dar-report')
     </div>
 </div>
 @endsection

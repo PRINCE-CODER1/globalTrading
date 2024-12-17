@@ -114,7 +114,6 @@ class DarFormController extends Controller implements HasMiddleware
             'pov_id' => $request->pov_id,
             'remarks' => $request->remarks,
             'status' => $request->status,
-            // 'rating' => $request->rating,
             'user_id' => Auth::id(),
         ]);
 
@@ -129,17 +128,10 @@ class DarFormController extends Controller implements HasMiddleware
         return view('website.dar.list', compact('users'));
     }
 
+
     public function userReports($userId)
     {
-        $darReports = Dar::with(['customer', 'purposeOfVisit'])
-        ->where('user_id', $userId)
-        ->orderBy('date', 'desc')
-        ->latest('created_at')
-        ->get();
-
-        $user = User::findOrFail($userId);
-
-        return view('website.dar.user-reports', compact('darReports', 'user'));
+        return view('website.dar.user-reports', compact('userId'));
     }
     public function agentDarReports(User $agent)
     {

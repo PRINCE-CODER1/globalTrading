@@ -70,7 +70,7 @@
                         <select class="form-control @error('customer_supplier') is-invalid @enderror" id="customer_supplier" name="customer_supplier" required>
                             <option value="">Select</option>
                             <option value="onlySupplier" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'onlySupplier' ? 'selected' : '' }}>Only Supplier</option>
-                            <option value="OnlyCustomer" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'OnlyCustomer' ? 'selected' : '' }}>Only Customer</option>
+                            <option value="onlyCustomer" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'onlyCustomer' ? 'selected' : '' }}>Only Customer</option>
                             <option value="bothCustomerSupplier" {{ old('customer_supplier', $customerSupplier->customer_supplier ?? '') == 'bothCustomerSupplier' ? 'selected' : '' }}>Both Supplier & Customer</option>
                         </select>
                         @error('customer_supplier')
@@ -79,6 +79,8 @@
                             </span>
                         @enderror
                     </div>
+                    
+                    
     
                     <div class="row">
                         <div class="col-md-6 mb-3 p-2">

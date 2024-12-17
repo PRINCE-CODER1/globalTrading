@@ -15,6 +15,7 @@ class Dar extends Model
     ];
     protected $fillable = [
         'customer_id',
+        'customer_supplier_user_id',
         'pov_id',
         'date',
         'remarks',
@@ -25,6 +26,10 @@ class Dar extends Model
     public function customer()
     {
         return $this->belongsTo(CustomerSupplier::class, 'customer_id');
+    }
+    public function customerUser()
+    {
+        return $this->belongsTo(CustomerSupplierUser::class, 'customer_supplier_user_id');
     }
 
     // A DarForm belongs to a purpose of visit (POV)

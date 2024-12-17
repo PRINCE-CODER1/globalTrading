@@ -14,6 +14,7 @@ class Lead extends Model
         'reference_id', 
         'customer_name', 
         'customer_id',
+        'customer_supplier_user_id',
         'lead_status_id',
         'lead_source_id',
         'segment_id',
@@ -39,6 +40,10 @@ class Lead extends Model
     public function customer()
     {
         return $this->belongsTo(CustomerSupplier::class, 'customer_id');
+    }
+    public function customerUser()
+    {
+        return $this->belongsTo(CustomerSupplierUser::class, 'customer_supplier_user_id');
     }
 
     public function segment()

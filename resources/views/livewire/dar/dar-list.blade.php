@@ -54,6 +54,17 @@
                                                 <i class="ri-expand-up-down-fill"></i>
                                             @endif
                                         </th>
+                                        <th scope="col" wire:click="setSortBy('customer_supplier_user_id')">Contact Person
+                                            @if ($sortBy === 'customer_supplier_user_id')
+                                                @if ($sortDir === 'asc')
+                                                    <i class="ri-arrow-up-s-line"></i>
+                                                @else
+                                                    <i class="ri-arrow-down-s-line"></i>
+                                                @endif
+                                            @else
+                                                <i class="ri-expand-up-down-fill"></i>
+                                            @endif
+                                        </th>
                                         <th scope="col" wire:click="setSortBy('pov_id')">Purpose
                                             @if ($sortBy === 'pov_id')
                                                 @if ($sortDir === 'asc')
@@ -119,6 +130,7 @@
                                                 <input type="checkbox" wire:model.live="selectedDar" value="{{ $report->dar_id }}">
                                             </td>
                                             <td>{{ $report->customer->name }}</td>
+                                            <td>{{ $report->customerUser->name ??'N/A' }}</td>
                                             <td>{{ $report->purposeOfVisit->visitor_name }}</td>
                                             <td>{{ $report->remarks }}</td>
                                             <td>{{ $report->status == 1 ? 'Open' : 'Close' }}</td>

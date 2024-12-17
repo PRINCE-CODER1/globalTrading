@@ -58,10 +58,35 @@
                                             <td>{{ $purchase->purchaseOrder->supplier_sale_order_no ?? 'N/A' }}</td>
                                             <td>{{ $purchase->created_at ? \Carbon\Carbon::parse($purchase->created_at)->format('Y-m-d H:i:s') : 'N/A' }}</td>
                                             <td>
-                                                @foreach($purchase->items as $item)
-                                                    {{ $item->product->product_name }} ({{ $item->quantity }} * {{ $item->price }})
-                                                    @if (!$loop->last), @endif
-                                                @endforeach
+                                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#purchaseItemsModal{{ $purchase->id }}">
+                                                    <i class="ri-eye-line"></i> View Items
+                                                </button>
+                                                <div class="modal fade" id="purchaseItemsModal{{ $purchase->id }}" tabindex="-1" aria-labelledby="purchaseItemsModalLabel{{ $purchase->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="purchaseItemsModalLabel{{ $purchase->id }}">Purchase Items</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <ul class="list-group">
+                                                                    @foreach($purchase->items as $item)
+                                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                            <span>{{ $item->product->product_name }}</span>
+                                                                            <span class="badge bg-danger rounded-pill">
+                                                                                quantity : {{ $item->quantity }} x price : {{ $item->price }}
+                                                                            </span>
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </td>
                                             <td>
                                                 <a href="{{ route('purchase.edit', ['purchase' => $purchase->id]) }}" class="btn btn-link text-info">

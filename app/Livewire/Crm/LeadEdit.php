@@ -7,6 +7,7 @@ use Livewire\WithFileUploads;
 use App\Models\Lead;
 use App\Models\LeadType;
 use App\Models\CustomerSupplier;
+use App\Models\CustomerSupplierUser;
 use App\Models\Segment;
 use App\Models\LeadStatus;
 use App\Models\LeadSource;
@@ -34,6 +35,9 @@ class LeadEdit extends Component
     public $application_id;
     public $date;
 
+    public $customer_supplier_user_id = null;
+    public $selectedCustomerUsers = [];
+
     public $contractor_ids = [];
     public $contractors = [];
     public $showContractOptions = false; 
@@ -47,6 +51,7 @@ class LeadEdit extends Component
 
     protected $rules = [
         'customer_id' => 'required|exists:customer_suppliers,id',
+        'customer_supplier_user_id' => 'nullable|exists:customer_supplier_users,id',
         'lead_status_id' => 'required|exists:lead_statuses,id',
         'lead_source_id' => 'required|exists:lead_sources,id',
         'segment_id' => 'required|exists:segments,id',
@@ -74,6 +79,8 @@ class LeadEdit extends Component
         // Bind other fields...
         $this->assigned_to = $this->lead->assigned_to ?? auth()->id();
         $this->customer_id = $this->lead->customer_id;
+        $this->customer_supplier_user_id = $this->lead->customer_supplier_user_id;
+        $this->selectedCustomerUsers = CustomerSupplierUser::where('customer_supplier_id', $this->customer_id)->get();
         $this->lead_status_id = $this->lead->lead_status_id;
         $this->lead_source_id = $this->lead->lead_source_id;
         $this->lead_type_id = $this->lead->lead_type_id;
@@ -115,6 +122,11 @@ class LeadEdit extends Component
 
     }
 
+    public function updatedCustomerId($customerId)
+    {
+        $this->selectedCustomerUsers = CustomerSupplierUser::where('customer_supplier_id', $customerId)->get();
+        $this->customer_supplier_user_id = null;  
+    }
 
     public function updatedLeadTypeId($leadTypeId)
     {
@@ -157,6 +169,7 @@ class LeadEdit extends Component
         // Update the lead
         $this->lead->update([
             'customer_id' => $this->customer_id,
+            'customer_supplier_user_id' => $this->customer_supplier_user_id,
             'lead_status_id' => $this->lead_status_id,
             'lead_source_id' => $this->lead_source_id,
             'segment_id' => $this->segment_id,

@@ -80,6 +80,18 @@
                                 }
                             </style>
                             <div class="row g-2 mb-4">
+                                <div class="col-md-4">
+                                    <div class="form-group mb-3">
+                                        <label for="cust_sup_user" class="form-label fw-semibold">Select Customer User</label>
+                                        <select wire:model="customer_supplier_user_id" class="form-select form-select-sm">
+                                            <option value="">Select User</option>
+                                            @foreach($selectedCustomerUsers as $user)
+                                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('customer_supplier_user_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
                                 <!-- Lead Status Dropdown -->
                                 <div class="col-md-4 ">
                                     <label for="lead_status_id" class="form-label text-muted small">Lead Status</label>

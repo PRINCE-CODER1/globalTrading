@@ -28,7 +28,7 @@
 </div>
 <div class="container my-3">
     <div class="bg-white p-4 shadow-sm rounded">
-        <form action="{{ route('daily-report.update', $dar->dar_id) }}" method="POST">
+        {{-- <form action="{{ route('daily-report.update', $dar->dar_id) }}" method="POST">
             @csrf
             @method('PUT') <!-- Use PUT method for updating -->
             
@@ -75,7 +75,8 @@
             
 
             <button type="submit" class="btn btn-secondary"><i class="ri-save-3-line"></i> Update</button>
-        </form>
+        </form> --}}
+        @livewire('dar.edit-dar-report', ['darId' => $dar->dar_id] )
     </div>
 </div>
 @endsection
