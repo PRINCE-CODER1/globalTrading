@@ -45,6 +45,7 @@
                     <thead>
                         <tr>
                             <th>Customer</th>
+                            <th>Contact Person</th>
                             <th>Purpose of Visit</th>
                             <th>Remarks</th>
                             <th>Status</th>
@@ -57,6 +58,7 @@
                         @forelse($darReports as $darReport)
                             <tr>
                                 <td>{{ $darReport->customer->name }}</td>
+                                <td>{{ $darReport->customerUser->name ?? "N/A" }}</td>
                                 <td>{{ $darReport->purposeOfVisit->visitor_name }}</td>
                                 <td>{{ $darReport->remarks }}</td>
                                 <td>
