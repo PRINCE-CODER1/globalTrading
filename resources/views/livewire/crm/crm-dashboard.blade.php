@@ -174,7 +174,7 @@
                                                 </td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>
-                                                    {{ $user->leads->count() }}
+                                                    {{ $user->leads()->where('assigned_to', $user->id)->count() }}
                                                 </td>
                                                 <td>
                                                     @php
@@ -325,6 +325,7 @@
                                             <th class="fw-bold">Assigned Agent</th>
                                             <th class="fw-bold">Team</th>
                                             <th class="fw-bold">Capture Date</th>
+                                            <th class="fw-bold">Next Follow Up Date</th>
                                             <th class="fw-bold">Status</th>
                                         </tr>
                                     </thead>
@@ -347,6 +348,7 @@
                                                     @endforeach
                                                 </td>
                                                 <td>{{ $lead->created_at->format('Y-m-d') }}</td>
+                                                <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>
                                                 <td><span class="badge"
                                                         style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span>
                                                 </td>

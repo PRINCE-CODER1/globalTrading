@@ -82,7 +82,7 @@
                             <div class="row g-2 mb-4">
                                 <div class="col-md-4">
                                     <label for="cust" class="form-label fw-semibold">Customer</label>
-                                    <input type="text" name="customer_id" class="form-control form-control-sm @error('customer_id') is-invalid @enderror" id="name" placeholder="cusomter name" value="{{ $lead->customerUser->name }}" required disabled>
+                                    <input type="text" name="customer_id" class="form-control form-control-sm @error('customer_id') is-invalid @enderror" id="name" placeholder="cusomter name" value="{{ $lead->customer->name }}" required disabled>
                                         @error('customer_id')
                                             <p class="text-danger">{{ $message }}</p>
                                         @enderror

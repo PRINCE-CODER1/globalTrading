@@ -82,6 +82,7 @@
                                             <th>Segment</th>
                                             <th>Sub-Segment</th>
                                             <th>Expected Date</th>
+                                            <th>Next Follow Up Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -105,6 +106,7 @@
                                                 <td>{{ $lead->segment->name ?? 'N/A' }}</td>
                                                 <td>{{ $lead->subSegment->name ?? 'N/A' }}</td>
                                                 <td>{{ $lead->expected_date }}</td>
+                                                <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>
                                                 <td>
                                                     <a href="{{ route('leads.edit', $lead->id) }}"
                                                         class="btn btn-info btn-sm text-white"><i

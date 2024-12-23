@@ -73,6 +73,7 @@
                                         <th>Refrence Id</th>
                                         <th>Customer Name</th>
                                         <th>Status</th>
+                                        <th>Next Follow Up Date</th>
                                         <th>Created At</th>
                                     </tr>
                                 </thead>
@@ -82,11 +83,12 @@
                                             <td>{{ $lead->reference_id }}</td>
                                             <td>{{ $lead->customer->name }}</td>
                                             <td><span class="badge" style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span></td>
+                                            <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>
                                             <td>{{ $lead->created_at->format('Y-m-d') }}</td>
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td class="text-center fw-bold" colspan="4">No records found</td>
+                                            <td class="text-center fw-bold" colspan="10">No records found</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

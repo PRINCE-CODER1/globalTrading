@@ -177,6 +177,7 @@
                                         <th class="fw-bold">Status</th>
                                         <th class="fw-bold">Source</th>
                                         <th class="fw-bold">Expected Date</th>
+                                        <th class="fw-bold">Next Follow Up Date</th>
                                         <th class="fw-bold">Last Updated</th>
                                     </tr>
                                 </thead>
@@ -189,6 +190,7 @@
                                             <td><span class="badge" style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span></td>
                                             <td>{{ $lead->leadSource->name }}</td>
                                             <td>{{ $lead->expected_date ? \Carbon\Carbon::parse($lead->expected_date)->format('Y-m-d') : 'N/A' }}</td>
+                                            <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>
                                             <td>{{ $lead->updated_at->format('Y-m-d') }}</td>
                                         </tr>
                                         @empty
