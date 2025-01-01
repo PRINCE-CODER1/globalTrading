@@ -2,8 +2,8 @@
     <div class="container">
         <div class="row">
             <div class="col-12 d-flex justify-content-between mt-5 mb-2">
-                <h2 class="mb-0 d-flex justify-content-between align-items-center">Create Purchase Order</h2>
-                <a href="{{ route('purchase_orders.index') }}" type="button" class="btn btn-outline-secondary">
+                <h2 class="mb-0">Create Purchase Order</h2>
+                <a href="{{ route('purchase_orders.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-chevron-left me-1"></i> Back
                 </a>
             </div>
@@ -16,140 +16,34 @@
                 <!-- Form Fields -->
                 <div class="row mb-4">
                     <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="purchase_order_no" class="form-label fs-14 text-dark">Purchase Order No</label>
-                            <input type="text" class="form-control" wire:model="purchase_order_no" readonly>
-                        </div>
+                        <label for="purchase_order_no" class="form-label">Purchase Order No</label>
+                        <input type="text" class="form-control" wire:model="purchase_order_no" readonly>
                     </div>
-                    
-                    <!-- Date Field -->
                     <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="date" class="form-label fs-14 text-dark">Date</label>
-                            <input type="date" class="form-control" wire:model="date" required>
-                        </div>
+                        <label for="GTE_PO_NO" class="form-label">GTE_PO_NO</label>
+                        <input type="text" class="form-control" id="GTE_PO_NO" wire:model="GTE_PO_NO" placeholder="Enter Number : GTE-PO-001" required>
                     </div>
 
-                    <!-- Supplier Field -->
                     <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="supplier_id" class="form-label fs-14 text-dark">Supplier</label>
-                            <select class="form-select" wire:model="supplier_id" required>
-                                <option value="">Select Supplier</option>
-                                @foreach($suppliers as $supplier)
-                                    <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <label for="date" class="form-label">Date</label>
+                        <input type="datetime-local" class="form-control" wire:model="date" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="supplier_id" class="form-label">Supplier</label>
+                        <select class="form-select" wire:model="supplier_id" required>
+                            <option value="">Select Supplier</option>
+                            @foreach($suppliers as $supplier)
+                                <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
                 <div class="row mb-4">
-                    <!-- Supplier Sale Order No -->
                     <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="supplier_sale_order_no" class="form-label fs-14 text-dark">Supplier Sale Order No</label>
-                            <input type="text" class="form-control" wire:model="supplier_sale_order_no" placeholder="enter supplier number">
-                        </div>
-                    </div>
-
-                    <!-- Agent Field -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="agent_id" class="form-label fs-14 text-dark">Agent</label>
-                            <select class="form-select" wire:model="agent_id" required>
-                                <option value="">Select Agent</option>
-                                @foreach($agents as $agent)
-                                    <option value="{{ $agent->id }}">{{ $agent->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Segment Field -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="segment_id" class="form-label fs-14 text-dark">Segment</label>
-                            <select class="form-select" wire:model.live="segment_id" required>
-                                <option value="">Select Segment</option>
-                                @foreach($segments as $segment)
-                                    <option value="{{ $segment->id }}">{{ $segment->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <!-- Sub Segment Field -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="sub_segment_id" class="form-label fs-14 text-dark">Sub Segment</label>
-                            <select class="form-select" wire:model="sub_segment_id" required>
-                                <option value="">Select Sub Segment</option>
-                                @foreach($sub_segments as $sub_segment)
-                                    <option value="{{ $sub_segment->id }}">{{ $sub_segment->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <!-- Order Branch Field -->
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="order_branch_id" class="form-label fs-14 text-dark">Order Branch</label>
-                            <select class="form-select" wire:model.live="order_branch_id" required>
-                                <option value="">Select Branch</option>
-                                @foreach($branches as $branch)
-                                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Delivery Branch Field -->
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="delivery_branch_id" class="form-label fs-14 text-dark">Delivery Godown</label>
-                            <select class="form-select" wire:model.live="delivery_branch_id" required>
-                                <option value="">Select Godown</option>
-                                @foreach($godowns as $godown)
-                                    <option value="{{ $godown->id }}">{{ $godown->godown_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <!-- Customer Field -->
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="customer_id" class="form-label fs-14 text-dark">Customer</label>
-                            <select class="form-select" wire:model="customer_id">
-                                <option value="">Select Customer</option>
-                                @foreach($customers as $customer)
-                                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Customer Sale Order No -->
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="customer_sale_order_no" class="form-label fs-14 text-dark">Customer Sale Order No</label>
-                            <input type="text" class="form-control" wire:model="customer_sale_order_no" placeholder="enter customer number">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <!-- Customer Sale Order Date -->
-                    <div class="col-md-12">
-                        <div class="mb-3">
-                            <label for="customer_sale_order_date" class="form-label fs-14 text-dark">Customer Sale Order Date</label>
-                            <input type="date" class="form-control" wire:model="customer_sale_order_date">
-                        </div>
+                        <label for="supplier_sale_order_no" class="form-label">Supplier Sale Order No</label>
+                        <input type="text" class="form-control" wire:model="supplier_sale_order_no" placeholder="Enter supplier number">
                     </div>
                 </div>
 
@@ -170,34 +64,73 @@
                         <tbody>
                             @foreach($items as $index => $item)
                                 <tr>
+                                    <!-- Product Selection with Modal -->
                                     <td>
-                                        <select class="form-select" wire:model="items.{{ $index }}.product_id" required>
-                                            <option value="">Select Product</option>
-                                            @foreach($products as $product)
-                                                <option value="{{ $product->id }}">{{ $product->product_name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal-{{ $index }}">
+                                            {{ $items[$index]['product_name'] ?? 'Select Product' }}
+                                        </button>
+
+                                        <!-- Product Modal -->
+                                        <div wire:ignore.self class="modal fade" id="productModal-{{ $index }}" tabindex="-1" aria-labelledby="productModalLabel-{{ $index }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="productModalLabel-{{ $index }}">Select Product</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!-- Search Products -->
+                                                        <input type="text" class="form-control mb-3" placeholder="Search Products" wire:model.debounce.500ms="productSearch">
+                                                        
+                                                        <!-- Product List -->
+                                                        <ul class="list-group">
+                                                            @foreach($products as $product)
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    {{ $product->product_name }}
+                                                                    <button type="button" class="btn btn-sm btn-danger" wire:click="selectProduct({{ $index }}, {{ $product->id }})" data-bs-dismiss="modal">
+                                                                        Select
+                                                                    </button>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
+
+                                    <!-- Quantity -->
                                     <td>
-                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.quantity" wire:change="calculateAmount({{ $index }})" placeholder="quantity" required>
+                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.quantity" wire:change="calculateAmount({{ $index }})" placeholder="Quantity" required>
                                     </td>
+
+                                    <!-- Price -->
                                     <td>
-                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.price" wire:change="calculateAmount({{ $index }})" placeholder="price" required>
+                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.price" wire:change="calculateAmount({{ $index }})" placeholder="Price" required>
                                     </td>
+
+                                    <!-- Discount -->
                                     <td>
-                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.discount" wire:change="calculateAmount({{ $index }})" placeholder="discount">
+                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.discount" wire:change="calculateAmount({{ $index }})" placeholder="Discount">
                                     </td>
+
+                                    <!-- Amount -->
                                     <td>
-                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.amount"  placeholder="amount" readonly>
+                                        <input type="number" class="form-control" wire:model.live="items.{{ $index }}.amount" readonly>
                                     </td>
+
+                                    <!-- Action -->
                                     <td>
-                                        <button type="button" class="btn btn-danger" wire:click="removeItem({{ $index }})"><i class="ri-delete-bin-line"></i></button>
+                                        <button type="button" class="btn btn-danger btn-sm" wire:click="removeItem({{ $index }})"><i class="ri-delete-bin-line"></i></button>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-sm btn-secondary mt-1" wire:click="addItem"><i class="ri-add-circle-line"></i> Add Product</button>
+                    <button type="button" class="btn btn-secondary btn-sm" wire:click="addItem"><i class="ri-add-circle-line"></i> Add Product</button>
                 </div>
 
                 <!-- Submit Button -->

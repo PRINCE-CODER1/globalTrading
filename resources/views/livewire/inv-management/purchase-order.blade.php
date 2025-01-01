@@ -73,61 +73,7 @@
                                             @endif
                                             
                                         </th>
-                                        <th scope="col" wire:click="setSortBy('agent_id')">Agent/User
-                                            @if ($sortBy === 'agent_id')
-                                                @if ($sortDir === 'asc')
-                                                    <i class="ri-arrow-up-s-line"></i>
-                                                @else
-                                                    <i class="ri-arrow-down-s-line"></i>
-                                                @endif
-                                            @else
-                                                <i class="ri-expand-up-down-fill"></i>
-                                            @endif
-                                        </th>
-                                        <th scope="col" wire:click="setSortBy('segment_id')">Segment
-                                            @if ($sortBy === 'segment_id')
-                                                @if ($sortDir === 'asc')
-                                                    <i class="ri-arrow-up-s-line"></i>
-                                                @else
-                                                    <i class="ri-arrow-down-s-line"></i>
-                                                @endif
-                                            @else
-                                                <i class="ri-expand-up-down-fill"></i>
-                                            @endif
-                                        </th>
-                                        <th scope="col" wire:click="setSortBy('order_branch_id')">Order Branch
-                                            @if ($sortBy === 'order_branch_id')
-                                                @if ($sortDir === 'asc')
-                                                    <i class="ri-arrow-up-s-line"></i>
-                                                @else
-                                                    <i class="ri-arrow-down-s-line"></i>
-                                                @endif
-                                            @else
-                                                <i class="ri-expand-up-down-fill"></i>
-                                            @endif
-                                        </th>
-                                        <th scope="col" wire:click="setSortBy('delivery_branch_id')">Delivery Branch
-                                            @if ($sortBy === 'delivery_branch_id')
-                                                @if ($sortDir === 'asc')
-                                                    <i class="ri-arrow-up-s-line"></i>
-                                                @else
-                                                    <i class="ri-arrow-down-s-line"></i>
-                                                @endif
-                                            @else
-                                                <i class="ri-expand-up-down-fill"></i>
-                                            @endif
-                                        </th>
-                                        <th scope="col" wire:click="setSortBy('customer_id')">Customer
-                                            @if ($sortBy === 'customer_id')
-                                                @if ($sortDir === 'asc')
-                                                    <i class="ri-arrow-up-s-line"></i>
-                                                @else
-                                                    <i class="ri-arrow-down-s-line"></i>
-                                                @endif
-                                            @else
-                                                <i class="ri-expand-up-down-fill"></i>
-                                            @endif
-                                        </th>
+                                        
                                         <th>Product Details</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -139,11 +85,6 @@
                                             <td>{{ $order->purchase_order_no }}</td>
                                             <td>{{ $order->date }}</td>
                                             <td>{{ $order->supplier->name ?? 'N/A' }}</td>
-                                            <td>{{ $order->agent->name ?? 'N/A' }}</td>
-                                            <td>{{ $order->segment->name ?? 'N/A' }}</td>
-                                            <td>{{ $order->orderBranch->name ?? 'N/A' }}</td>
-                                            <td>{{ $order->deliveryBranch->godown_name ?? 'N/A' }}</td>
-                                            <td>{{ $order->customer->name ?? 'N/A' }}</td>
                                             <td class="text-center">
                                                 <!-- View Button -->
                                                 <div class="d-flex justify-content-center">

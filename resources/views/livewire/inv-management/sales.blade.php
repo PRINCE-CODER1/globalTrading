@@ -41,10 +41,11 @@
                                     <thead>
                                         <tr>
                                             <th><input type="checkbox" wire:model.live="selectAll"></th>
-                                            <th>Order No</th>
+                                            
                                             <th>Sale Order No</th>
                                             <th>Sale Order Date</th>
                                             <th>Customer Name</th>
+                                            <th>Branch</th>
                                             <th>Created By</th>
                                             <th>Created On</th>
                                             <th>Product Detail</th>
@@ -55,10 +56,11 @@
                                         @forelse($sales as $sale)
                                         <tr>
                                             <td><input type="checkbox" wire:model.live="selectedSales" value="{{ $sale->id }}"></td>
-                                            <td>{{ $sale->sale_no }}</td>
+                                            
                                             <td>{{ $sale->saleOrder->sale_order_no }}</td>
                                             <td>{{ \Carbon\Carbon::parse($sale->sale_date)->format('Y-m-d') }}</td>
                                             <td>{{ $sale->customer->name }}</td>
+                                            <td>{{ $sale->branch->name }}</td>
                                             <td>{{ $sale->user->name }}</td>
                                             <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('Y-m-d H:i:s') }}</td>
                                             <td>

@@ -54,8 +54,7 @@
                                         <th>Invoice No</th>
                                         <th>Invoice Date</th>
                                         <th>Amount</th>
-                                        <th>Segment</th>
-                                        <th>Order Branch</th>
+                                        {{-- <th>Order Branch</th> --}}
                                     </tr>
                                 </thead>
                                 @php $serialNumber = $purchaseOrder->firstItem(); @endphp
@@ -67,8 +66,7 @@
                                             <td>{{$purchase->purchase_order_no}}</td>
                                             <td>{{$purchase->date}}</td>
                                             <td>{{ $purchase->items->sum('price') }}</td>
-                                            <td>{{$purchase->segment->name}}</td>
-                                            <td>{{$purchase->orderBranch->name}}</td>
+                                            {{-- <td>{{$purchase->orderBranch->name}}</td> --}}
                                         </tr>
                                     @empty
                                         <tr>

@@ -43,14 +43,16 @@ class SaleReport extends Component
          $userId = auth()->id();
          $sale = Sale::query()
          ->when($this->search, function ($query) {
-             $query->where('sale_no', 'like', '%' . $this->search . '%')
-                 ->orWhereHas('customer', function ($subQuery) {
-                     $subQuery->where('name', 'like', '%' . $this->search . '%');
-                 })
-                 ->orWhereHas('branch', function ($subQuery) {
-                     $subQuery->where('name', 'like', '%' . $this->search . '%');
-                 });
-             })->get();
+                $query->whereHas('saleOrder', function ($subQuery) {
+                    $subQuery->where('sale_order_no', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('customer', function ($subQuery) {
+                    $subQuery->where('name', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('branch', function ($subQuery) {
+                    $subQuery->where('name', 'like', '%' . $this->search . '%');
+                });
+            })->get();
          $date = Carbon::now()->format('Y_m_d');
          if ($type == 'xlsx') {
              return Excel::download(new SaleExport($sale), "sale_report_{$date}.xlsx");
@@ -60,11 +62,13 @@ class SaleReport extends Component
  
          return redirect()->route('sale-order-reports.index'); 
      }
-    public function render()
-    {
-        $sale = Sale::query()
-         ->when($this->search, function ($query) {
-             $query->where('sale_no', 'like', '%' . $this->search . '%')
+     public function render()
+     {
+         $sale = Sale::query()
+             ->when($this->search, function ($query) {
+                 $query->whereHas('saleOrder', function ($subQuery) {
+                     $subQuery->where('sale_order_no', 'like', '%' . $this->search . '%');
+                 })
                  ->orWhereHas('customer', function ($subQuery) {
                      $subQuery->where('name', 'like', '%' . $this->search . '%');
                  })
@@ -74,6 +78,8 @@ class SaleReport extends Component
              })
              ->orderBy($this->sortBy, $this->sortDir)
              ->paginate($this->perPage);
-        return view('livewire.reports.sale-report', compact('sale'));
-    }
+     
+         return view('livewire.reports.sale-report', compact('sale'));
+     }
+     
 }

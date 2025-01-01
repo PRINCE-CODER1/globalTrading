@@ -81,7 +81,7 @@
                                         </a>
                                     </td>
                                     <td>{{ $agent->email }}</td>
-                                    <td>{{ $agent->leads->count() }}</td>
+                                    <td>{{ $agent->leads()->where('assigned_to', $agent->id)->count() }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

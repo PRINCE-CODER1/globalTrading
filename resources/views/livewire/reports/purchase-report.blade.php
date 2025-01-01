@@ -62,7 +62,7 @@
                                         <tr>
                                             <td>{{ $serialNumber++ }}.</td>
                                             <td>{{$sale->supplier->name}}</td>
-                                            <td>{{$sale->purchase_no}}</td>
+                                            <td>{{$sale->purchaseOrder->purchase_order_no}}</td>
                                             <td>{{ \Carbon\Carbon::parse($sale->purchase_date)->format('Y-M-D') }}</td>
                                             <td>{{ $sale->items->sum('sub_total') }}</td>
                                         </tr>

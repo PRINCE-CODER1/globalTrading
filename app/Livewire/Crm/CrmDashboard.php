@@ -20,6 +20,7 @@ class CrmDashboard extends Component
     public $statusFilter = '';
     public $teamFilter = '';
     public $sortBy = 'created_at';
+    public $leadIdToDelete;
     public $sortDir = 'desc';
     public $perPage = 10;
 
@@ -127,5 +128,31 @@ class CrmDashboard extends Component
     public function updatePerPage($perPage)
     {
         $this->perPage = $perPage;
+    }
+    public function confirmDelete($id)
+    {
+        $this->leadIdToDelete = $id;
+    }
+
+    public function deleteConfirmed()
+    {
+        if ($this->leadIdToDelete) {
+            Lead::find($this->leadIdToDelete)->delete();
+            toastr()->closeButton(true)->success('Lead Deleted Successfully');
+            $this->leadIdToDelete = null;
+        }
+
+        $this->resetPage();
+    }
+
+    public function bulkDelete()
+    {
+        if (!empty($this->selectedLeads)) {
+            Lead::whereIn('id', $this->selectedLeads)->delete();
+            $this->selectedLeads = [];
+            toastr()->closeButton(true)->success('Leads Deleted Successfully');
+        }
+
+        $this->resetPage();
     }
 }

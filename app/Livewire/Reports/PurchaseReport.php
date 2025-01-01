@@ -40,43 +40,50 @@ class PurchaseReport extends Component
     // Export method that handles download
     public function export($type)
     {
-        $purchase = Purchase::query()
+        $purchases = Purchase::query()
+            ->with(['purchaseOrder', 'supplier', 'branch', 'items'])
             ->when($this->search, function ($query) {
-                $query->where('purchase_no', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('supplier', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('branch', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->search . '%');
-                    });
-            })->get();
+                $query->whereHas('purchaseOrder', function ($subQuery) {
+                    $subQuery->where('purchase_order_no', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('supplier', function ($subQuery) {
+                    $subQuery->where('name', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->get();
 
-        $date = Carbon::now()->format('Y_m_d');
+        if ($purchases->isEmpty()) {
+            toastr()->closeButton(true)->error('No data found!');
+        }
 
-        if ($type == 'xlsx') {
-            return Excel::download(new PurchaseExport($purchase), "purchase_report_{$date}.xlsx");
-        } elseif ($type == 'csv') {
-            return Excel::download(new PurchaseExport($purchase), "purchase_report_{$date}.csv");
+        $date = now()->format('Y_m_d');
+
+        if ($type === 'xlsx') {
+            return Excel::download(new PurchaseExport($purchases), "purchase_report_{$date}.xlsx");
+        } elseif ($type === 'csv') {
+            return Excel::download(new PurchaseExport($purchases), "purchase_report_{$date}.csv");
         }
 
         return redirect()->route('purchase-reports.index');
     }
 
+
+
     public function render()
     {
         $purchase = Purchase::query()
             ->when($this->search, function ($query) {
-                $query->where('purchase_no', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('supplier', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('branch', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->search . '%');
-                    });
+                $query->whereHas('purchaseOrder', function ($subQuery) {
+                    $subQuery->where('purchase_order_no', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('supplier', function ($subQuery) {
+                    $subQuery->where('name', 'like', '%' . $this->search . '%');
+                });
             })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
-
+    
         return view('livewire.reports.purchase-report', compact('purchase'));
     }
+    
 }

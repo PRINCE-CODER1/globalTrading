@@ -11,164 +11,183 @@ use App\Models\Branch;
 use App\Models\Godown;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
-use App\Models\MasterNumbering;
 
 class PurchaseForm extends Component
 {
     use WithFileUploads;
 
-    public $supplier_id;
-    public $purchase_date;
-    public $branch_id;
-    public $purchase_order_id;
-    public $ref_no;
-    public $destination;
-    public $received_through;
-    public $gr_no;
-    public $gr_date;
-    public $weight;
-    public $no_of_boxes;
-    public $vehicle_no;
+    public $supplier_id, $purchase_date, $branch_id, $purchase_order_id, $ref_no;
     public $items = [];
-    public $purchaseOrderNo;
-
-    public $suppliers;
-    public $branches;
-    public $products;
-    public $godowns;
-    public $purchaseOrders;
+    public $supplier_sale_order_no;  // Keep the supplier_sale_order_no field
+    public $supplierSaleOrderNos = [];
+    public $purchaseOrders, $suppliers, $branches, $products, $godowns;
 
     public function mount()
     {
+        // Initialize properties
         $this->suppliers = CustomerSupplier::where('customer_supplier', 'onlySupplier')->get();
         $this->branches = Branch::all();
         $this->products = Product::all();
-        $this->godowns = Godown::all();
-        $this->purchaseOrders = [];
-        
-        // Initialize items array with a default item
+        $this->godowns = [];  // Initially empty godowns, will be populated later
+        $this->purchaseOrders = []; // Initially no purchase orders
+        $this->purchase_date = now()->format('Y-m-d\TH:i');
+        // Initialize items with a default item
         $this->items[] = $this->initializeItem();
-
-        // Generate the Purchase Order No
-        $this->generatePurchaseOrderNo();
     }
 
     private function initializeItem()
     {
         return [
             'product_id' => null,
-            'quantity' => null,
-            'price' => null,
-            'discount' => null,
+            'quantity' => 0,
+            'price' => 0,
+            'discount' => 0,
             'godown_id' => null,
             'sub_total' => 0,
         ];
     }
 
-    public function generatePurchaseOrderNo()
+    // Fetch items based on Purchase Order ID
+    public function updatedPurchaseOrderId($purchaseOrderId)
     {
-        $masterNumbering = MasterNumbering::first();
-        if (!$masterNumbering) {
-            return redirect()->back()->withErrors(['error' => 'Master numbering not found.']);
-        }
-
-        $format = $masterNumbering->purchase_format;
-        $latestOrder = Purchase::latest('created_at')->first();
-        $currentNumber = 0;
-
-        if ($latestOrder) {
-            preg_match('/(\d{3})/', $latestOrder->purchase_no, $matches);
-            $currentNumber = isset($matches[0]) ? intval($matches[0]) : 0;
-        }
-
-        $newNumber = $currentNumber > 0 ? str_pad($currentNumber + 1, 3, '0', STR_PAD_LEFT) : '001';
-        $this->purchaseOrderNo = preg_replace('/\d{3}/', $newNumber, $format);
+        $this->fetchItems($purchaseOrderId, 'purchase_order_id');
     }
 
+    // Fetch items based on Supplier Sale Order No
+    public function updatedSupplierSaleOrderNo($supplierSaleOrderNo)
+    {
+        $this->fetchItems($supplierSaleOrderNo, 'supplier_sale_order_no');
+    }
+
+    // Fetch items based on order ID
+    private function fetchItems($orderId, $type)
+    {
+        $purchaseOrder = PurchaseOrder::with('items.product')->find($orderId);
+
+        if ($purchaseOrder) {
+            $this->items = $purchaseOrder->items->map(function ($item) {
+                $subTotal = $item->quantity * $item->price;
+                $discountAmount = ($item->discount / 100) * $subTotal;
+                return [
+                    'product_id' => $item->product_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'discount' => $item->discount,
+                    'godown_id' => $item->godown_id,
+                    'sub_total' => $subTotal - $discountAmount,
+                ];
+            })->toArray();
+        } else {
+            $this->items = [];
+        }
+    }
+
+    // Update purchase orders based on selected supplier
     public function updatedSupplierId($supplierId)
     {
         $this->purchaseOrders = PurchaseOrder::where('supplier_id', $supplierId)->get();
-        if ($this->purchase_order_id && !$this->purchaseOrders->contains('id', $this->purchase_order_id)) {
-            $this->purchase_order_id = null;
+        $this->supplierSaleOrderNos = PurchaseOrder::where('supplier_id', $supplierId)
+                                                   ->pluck('supplier_sale_order_no', 'id')
+                                                   ->toArray();
+        
+        // Reset order number fields
+        $this->purchase_order_id = null;
+        $this->supplier_sale_order_no = null;
+        $this->items = [];
+    }
+
+    // Update godowns based on the selected branch
+    public function updatedBranchId($branchId)
+    {
+        // Fetch the godowns related to the selected branch
+        $this->godowns = Godown::where('branch_id', $branchId)->get();
+        
+        // Reset godown selection in items to ensure consistency
+        foreach ($this->items as &$item) {
+            $item['godown_id'] = null;
         }
     }
 
+    // Update item subtotals dynamically
     public function updated($attribute)
     {
-        if (str_starts_with($attribute, 'items.')) {
-            $index = explode('.', $attribute)[1];
-            $this->updateSubTotal($index);
+        if (preg_match('/^items\.(\d+)\.(.+)$/', $attribute, $matches)) {
+            $index = $matches[1] ?? null;
+            if (isset($this->items[$index])) {
+                $this->updateSubTotal($index);
+            }
         }
     }
 
+    // Function to update the subtotal of an item
     public function updateSubTotal($index)
     {
         $item = &$this->items[$index];
         $quantity = floatval($item['quantity'] ?? 0);
         $price = floatval($item['price'] ?? 0);
-        $discountPercentage = floatval($item['discount'] ?? 0);
+        $discount = floatval($item['discount'] ?? 0);
 
-        $subTotalBeforeDiscount = $quantity * $price;
-        $discountAmount = ($discountPercentage / 100) * $subTotalBeforeDiscount;
-        $item['sub_total'] = $subTotalBeforeDiscount - $discountAmount;
+        // Calculate subtotal and apply discount
+        $subTotal = $quantity * $price;
+        $discountAmount = ($discount / 100) * $subTotal;
+
+        $item['sub_total'] = $subTotal - $discountAmount;
     }
 
+    // Add a new item to the list
     public function addItem()
     {
         $this->items[] = $this->initializeItem();
     }
 
+    // Remove an item from the list
     public function removeItem($index)
     {
-        unset($this->items[$index]);
-        $this->items = array_values($this->items); // Re-index the array
+        if (isset($this->items[$index])) {
+            unset($this->items[$index]);
+            $this->items = array_values($this->items); // Re-index the array
+        }
     }
 
+    // Save the purchase and its items
     public function save()
     {
         $this->validate([
             'supplier_id' => 'required|exists:customer_suppliers,id',
             'purchase_date' => 'required|date',
             'branch_id' => 'required|exists:branches,id',
-            'purchase_order_id' => 'required|exists:purchase_orders,id',
-            'ref_no' => 'nullable|string',
-            'destination' => 'nullable|string',
-            'received_through' => 'nullable|string',
-            'gr_no' => 'nullable|string',
-            'gr_date' => 'nullable|date',
-            'weight' => 'nullable|numeric',
-            'no_of_boxes' => 'nullable|integer',
-            'vehicle_no' => 'nullable|string',
-            'items' => 'required|array',
+            'purchase_order_id' => 'nullable|exists:purchase_orders,id',
+            'supplier_sale_order_no' => 'nullable|exists:purchase_orders,supplier_sale_order_no',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|numeric|min:1',
             'items.*.price' => 'required|numeric|min:0',
-            'items.*.discount' => 'nullable|numeric|min:0',
+            'items.*.discount' => 'nullable|numeric|min:0|max:100',
             'items.*.godown_id' => 'required|exists:godowns,id',
-            'items.*.sub_total' => 'nullable|numeric|min:0',
         ]);
 
+        if (!$this->supplier_sale_order_no && !$this->purchase_order_id) {
+            toastr()->closeButton(true)->success('Either Supplier Sale Order Number or Purchase Order ID must be filled.');
+            return;
+        }
+
+        // Create the purchase record
         $purchase = Purchase::create([
-            'purchase_no' => $this->purchaseOrderNo,
             'supplier_id' => $this->supplier_id,
             'purchase_date' => $this->purchase_date,
             'branch_id' => $this->branch_id,
             'purchase_order_id' => $this->purchase_order_id,
+            'supplier_sale_order_no' => $this->supplier_sale_order_no, 
             'ref_no' => $this->ref_no,
-            'destination' => $this->destination,
-            'received_through' => $this->received_through,
-            'gr_no' => $this->gr_no,
-            'gr_date' => $this->gr_date,
-            'weight' => $this->weight,
-            'no_of_boxes' => $this->no_of_boxes,
-            'vehicle_no' => $this->vehicle_no,
-            'user_id' => Auth::id(),
+            'user_id' => auth()->id(),
         ]);
 
-        // Create purchase items
+        // Create or update purchase items
         foreach ($this->items as $item) {
+            // Add user_id to item data
             $item['user_id'] = Auth::id();
-            $purchase->items()->create($item);
+
+            // Create purchase item
+            $purchaseItem = $purchase->items()->create($item);
 
             // Update the product's stock in the specific godown
             $product = Product::find($item['product_id']);
@@ -178,30 +197,12 @@ class PurchaseForm extends Component
             }
         }
 
-        // Update MasterNumbering with new number
-        $this->updateMasterNumbering();
-
-        toastr()->closeButton(true)->success('Created successfully.');
-        return redirect()->route('purchase.index');
+        toastr()->closeButton(true)->success('Purchase saved successfully!');
+        return redirect()->route('purchase.index'); // Ensure the route is correct
     }
 
-    private function updateMasterNumbering()
-    {
-        $masterNumbering = MasterNumbering::first();
-        if ($masterNumbering) {
-            $currentFormat = $masterNumbering->purchase_format;
 
-            preg_match('/^(.*?)\/(\d+)\/(.*?)$/', $currentFormat, $matches);
-            $prefix = $matches[1];
-            $number = isset($matches[2]) ? (int)$matches[2] : 0;
-            $suffix = $matches[3] ?? '';
-
-            $newNumber = $number + 1;
-            $newFormat = sprintf("%s/%03d/%s", $prefix, $newNumber, $suffix);
-            $masterNumbering->update(['purchase_format' => $newFormat]);
-        }
-    }
-
+    // Render the component view
     public function render()
     {
         return view('livewire.inv-management.purchase-form');

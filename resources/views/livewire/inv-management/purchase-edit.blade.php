@@ -11,17 +11,6 @@
         @endif
 
         <div class="row g-3">
-            <!-- Purchase No -->
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <label for="purchase_no" class="form-label fs-14 text-dark">Purchase No</label>
-                    <div class="input-group">
-                        <div class="input-group-text"><i class="ri-file-list-3-line"></i></div>
-                        <input type="text" class="form-control  " id="purchase_no" wire:model="purchaseOrderNo" readonly>
-                    </div>
-                </div>
-            </div>
-
             <!-- Supplier -->
             <div class="col-md-6">
                 <div class="mb-3">
@@ -47,7 +36,7 @@
                     <label for="purchase_date" class="form-label">Purchase Date *</label>
                     <div class="input-group">
                         <div class="input-group-text"><i class="ri-calendar-line"></i></div>
-                        <input type="date" wire:model="purchase_date" id="purchase_date" class="form-control  " required>
+                        <input type="date" wire:model="purchase_date" id="purchase_date" class="form-control">
                     </div>
                     @error('purchase_date')
                         <div class="text-danger">{{ $message }}</div>
@@ -80,7 +69,7 @@
                     <label for="purchase_order_id" class="form-label">Purchase Order *</label>
                     <div class="input-group">
                         <div class="input-group-text"><i class="ri-file-paper-line"></i></div>
-                        <select wire:model="purchase_order_id" id="purchase_order_id" class="form-select  " required>
+                        <select wire:model.live="purchase_order_id" id="purchase_order_id" class="form-select  " required>
                             <option value="">Choose a purchase order</option>
                             @foreach ($purchaseOrders as $order)
                                 <option value="{{ $order->id }}">{{ $order->purchase_order_no }}</option>
@@ -102,48 +91,6 @@
                         <input type="text" wire:model="ref_no" id="ref_no" class="form-control  ">
                     </div>
                     @error('ref_no')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Destination -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="destination" class="form-label">Destination</label>
-                    <div class="input-group">
-                        <div class="input-group-text"><i class="ri-map-pin-line"></i></div>
-                        <input type="text" wire:model="destination" id="destination" class="form-control  ">
-                    </div>
-                    @error('destination')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Received Through -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="received_through" class="form-label">Received Through</label>
-                    <div class="input-group">
-                        <div class="input-group-text"><i class="ri-truck-line"></i></div>
-                        <input type="text" wire:model="received_through" id="received_through" class="form-control  ">
-                    </div>
-                    @error('received_through')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- GR No -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="gr_no" class="form-label">GR No</label>
-                    <div class="input-group">
-                        <div class="input-group-text"><i class="ri-file-list-line"></i></div>
-                        <input type="text" wire:model="gr_no" id="gr_no" class="form-control  ">
-                    </div>
-                    @error('gr_no')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
@@ -215,9 +162,9 @@
                                         <input type="number" wire:model="items.{{ $index }}.sub_total" class="form-control  " placeholder="Sub Total" readonly>
                                     </td>
                                     <td>
-                                        <select wire:model="items.{{ $index }}.godown_id" class="form-select  ">
+                                        <select wire:model="items.{{ $index }}.godown_id" class="form-control">
                                             <option value="">Select Godown</option>
-                                            @foreach ($godowns as $godown)
+                                            @foreach($godowns as $godown)
                                                 <option value="{{ $godown->id }}">{{ $godown->godown_name }}</option>
                                             @endforeach
                                         </select>

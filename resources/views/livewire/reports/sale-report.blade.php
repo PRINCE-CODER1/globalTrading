@@ -64,7 +64,7 @@
                                         <tr>
                                             <td>{{ $serialNumber++ }}.</td>
                                             <td>{{$salereport->customer->name}}</td>
-                                            <td>{{$salereport->sale_no}}</td>
+                                            <td>{{$salereport->saleOrder->sale_order_no}}</td>
                                             <td>{{$salereport->sale_date}}</td>
                                             <td>{{ $salereport->items->sum('price') }}</td>
                                             <td>{{$salereport->branch->name}}</td>

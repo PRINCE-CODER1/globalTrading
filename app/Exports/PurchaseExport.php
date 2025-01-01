@@ -19,9 +19,8 @@ class PurchaseExport implements FromCollection, WithHeadings
         return $this->purchases->map(function ($purchase, $index) {
             return [
                 'sr_no'        => $index + 1,
-                'purchase_no'  => $purchase->purchase_no,
+                'purchase_no'  => $purchase->purchaseOrder->purchase_order_no ?? 'N/A',
                 'supplier'     => $purchase->supplier->name ?? 'N/A',
-                'branch'       => $purchase->branch->name ?? 'N/A',
                 'sub_total' => $purchase->items->sum('sub_total'),
                 'purchase_date'=> $purchase->purchase_date,
             ];
@@ -34,7 +33,6 @@ class PurchaseExport implements FromCollection, WithHeadings
             'SR. No',
             'Purchase No',
             'Supplier',
-            'Branch',
             'Sub Amount',
             'Purchase Date',
         ];

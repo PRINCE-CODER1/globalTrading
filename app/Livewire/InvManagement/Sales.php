@@ -34,7 +34,11 @@ class Sales extends Component
         $sales = Sale::query()
             ->with('user') 
             ->where('user_id', $userId)
-            ->where('sale_no', 'like', '%' . $this->search . '%')
+            ->where(function ($query) {
+                $query->whereHas('saleOrder', function ($query) {
+                    $query->where('sale_order_no', 'like', '%' . $this->search . '%');
+                });
+            })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 

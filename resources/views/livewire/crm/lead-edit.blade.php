@@ -22,7 +22,7 @@
                                         Dashboard</a>
                                 </li>
                                 <li class="breadcrumb-item">
-                                    <a href="{{ route('teams.index') }}" class="text-muted"><i
+                                    <a href="{{ route('leads.index') }}" class="text-muted"><i
                                             class="bi bi-clipboard me-1 fs-15"></i> Leads</a>
                                 </li>
                                 <li class="breadcrumb-item active text-muted" aria-current="page">Edit Lead</li>

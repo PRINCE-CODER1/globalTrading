@@ -5,10 +5,6 @@ namespace App\Livewire\Invmanagement;
 use Livewire\Component;
 use App\Models\PurchaseOrder;
 use App\Models\CustomerSupplier;
-use App\Models\User;
-use App\Models\Segment;
-use App\Models\Branch;
-use App\Models\Godown;
 use App\Models\Product;
 use App\Models\MasterNumbering;
 
@@ -18,37 +14,21 @@ class EditPurchaseOrder extends Component
     public $date;
     public $supplier_id;
     public $supplier_sale_order_no;
-    public $agent_id;
-    public $segment_id;
-    
-    public $sub_segment_id;
-    public $sub_segments = [];
-
-    public $order_branch_id;
-    public $delivery_branch_id;
-    public $customer_id;
     public $customer_sale_order_no;
     public $customer_sale_order_date;
     public $subtotal = 0;
-
     public $items = [];
 
     public $suppliers;
-    public $customers;
-    public $agents;
-    public $segments;
-    public $branches;
-    public $godowns;
-    public $products;
+    public $productSearch = '';
+    public $products = [];
+    public $currentIndex;
+
+    public $GTE_PO_NO;  // Declare the GTE_PO_NO property
 
     public function mount($purchaseOrder = null)
     {
         $this->suppliers = CustomerSupplier::where('customer_supplier', 'onlySupplier')->get();
-        $this->customers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
-        $this->agents = User::all();
-        $this->segments = Segment::whereNull('parent_id')->get();
-        $this->branches = Branch::all();
-        $this->loadGodowns();
         $this->loadProducts();
         $this->addItem();
 
@@ -59,23 +39,29 @@ class EditPurchaseOrder extends Component
         }
     }
 
+    public function setCurrentIndex($index)
+    {
+        $this->currentIndex = $index;
+    }
+
+    public function selectProduct($index, $productId)
+    {
+        $product = Product::find($productId);
+        $this->items[$index]['product_name'] = $product->product_name;
+        $this->items[$index]['product_id'] = $product->id;
+    }
+
     public function populateData(PurchaseOrder $purchaseOrder)
     {
         $this->purchase_order_no = $purchaseOrder->purchase_order_no;
+        $this->GTE_PO_NO = $purchaseOrder->GTE_PO_NO;
         $this->date = $purchaseOrder->date;
         $this->supplier_id = $purchaseOrder->supplier_id;
         $this->supplier_sale_order_no = $purchaseOrder->supplier_sale_order_no;
-        $this->agent_id = $purchaseOrder->agent_id;
-        $this->segment_id = $purchaseOrder->segment_id;
-        $this->sub_segments = Segment::where('parent_id', $this->segment_id)->get();
-        $this->sub_segment_id = $purchaseOrder->sub_segment_id;
-        $this->order_branch_id = $purchaseOrder->order_branch_id;
-        $this->delivery_branch_id = $purchaseOrder->delivery_branch_id;
-        $this->customer_id = $purchaseOrder->customer_id;
         $this->customer_sale_order_no = $purchaseOrder->customer_sale_order_no;
         $this->customer_sale_order_date = $purchaseOrder->customer_sale_order_date;
-        $this->user_id = $purchaseOrder->user_id;
         $this->subtotal = $purchaseOrder->subtotal;
+
         $this->items = $purchaseOrder->items->map(function ($item) {
             return [
                 'product_id' => $item->product_id,
@@ -101,39 +87,13 @@ class EditPurchaseOrder extends Component
         $this->purchase_order_no = sprintf("PE/%03d/WV", $number);
     }
 
-    public function updatedOrderBranchId($value)
-    {
-        $this->loadGodowns();
-        // Reset delivery branch and products when order branch changes
-        $this->delivery_branch_id = null;
-        $this->loadProducts();
-    }
-    public function updatedSegmentId($value)
-    {
-        $this->sub_segments = Segment::where('parent_id', $value)->get(); 
-        $this->sub_segment_id = null; 
-    }
-    public function updatedDeliveryBranchId()
-    {
-        $this->loadProducts();
-    }
-
-    public function loadGodowns()
-    {
-        if ($this->order_branch_id) {
-            $this->godowns = Godown::where('branch_id', $this->order_branch_id)->get();
-        } else {
-            $this->godowns = [];
-        }
-    }
-
     public function loadProducts()
     {
-        if ($this->delivery_branch_id) {
-            $this->products = Product::where('godown_id', $this->delivery_branch_id)->get();
-        } else {
-            $this->products = [];
-        }
+        $this->products = Product::query()
+            ->when($this->productSearch, function ($query) {
+                $query->where('product_name', 'like', '%' . $this->productSearch . '%');
+            })
+            ->get();
     }
 
     public function addItem()
@@ -174,15 +134,12 @@ class EditPurchaseOrder extends Component
 
     public function update()
     {
+        // Updated validation with correct GTE_PO_NO validation
         $this->validate([
             'purchase_order_no' => 'required|string|unique:purchase_orders,purchase_order_no,' . ($this->purchase_order_no ?? 'NULL') . ',purchase_order_no',
+            'GTE_PO_NO' => 'required|string',
             'date' => 'required|date',
             'supplier_id' => 'required|exists:customer_suppliers,id',
-            'agent_id' => 'required|exists:users,id',
-            'segment_id' => 'required|exists:segments,id',
-            'sub_segment_id' => 'nullable|exists:segments,id',
-            'order_branch_id' => 'required|exists:branches,id',
-            'delivery_branch_id' => 'required|exists:godowns,id',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -190,19 +147,13 @@ class EditPurchaseOrder extends Component
             'items.*.discount' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        // Create or update the Purchase Order
         $purchaseOrder = PurchaseOrder::updateOrCreate(
             ['purchase_order_no' => $this->purchase_order_no],
             [
+                'GTE_PO_NO' => $this->GTE_PO_NO,  // Ensure GTE_PO_NO is passed
                 'date' => $this->date,
                 'supplier_id' => $this->supplier_id,
                 'supplier_sale_order_no' => $this->supplier_sale_order_no,
-                'agent_id' => $this->agent_id,
-                'segment_id' => $this->segment_id,
-                'sub_segment_id' => $this->sub_segment_id,
-                'order_branch_id' => $this->order_branch_id,
-                'delivery_branch_id' => $this->delivery_branch_id,
-                'customer_id' => $this->customer_id,
                 'customer_sale_order_no' => $this->customer_sale_order_no,
                 'customer_sale_order_date' => $this->customer_sale_order_date,
                 'user_id' => auth()->id(),
@@ -210,20 +161,24 @@ class EditPurchaseOrder extends Component
             ]
         );
 
-        // Debugging output
         if (!$purchaseOrder) {
             session()->flash('error', 'Failed to save the purchase order.');
             return;
         }
 
-        // Clear existing items and create new ones
+        // Delete existing items and add new ones
         $purchaseOrder->items()->delete();
-
         foreach ($this->items as $item) {
-            $purchaseOrder->items()->create($item);
+            $existingItem = $purchaseOrder->items()->where('product_id', $item['product_id'])->first();
+            if ($existingItem) {
+                // Update existing item
+                $existingItem->update($item);
+            } else {
+                // Create new item
+                $purchaseOrder->items()->create($item);
+            }
         }
 
-        // Update MasterNumbering with the new format
         $masterNumbering = MasterNumbering::first();
         if ($masterNumbering) {
             $number = (int)preg_replace('/\D/', '', $masterNumbering->purchase_order_format);
@@ -232,11 +187,10 @@ class EditPurchaseOrder extends Component
             session()->flash('error', 'Master numbering not found.');
             return;
         }
-        
+
         toastr()->closeButton(true)->success('Purchase Order updated successfully.');
         return redirect()->route('purchase_orders.index');
     }
-
 
     public function render()
     {

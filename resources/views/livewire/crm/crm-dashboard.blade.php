@@ -334,7 +334,42 @@
                                             <tr>
                                                 <td><a class="btn btn-sm btn-info"
                                                         href="{{ route('leads.edit', $lead->id) }}"><i
-                                                            class="ri-eye-2-line"></i> View Lead</a></td>
+                                                            class="ri-eye-2-line"></i> View Lead</a>
+                                                    <button class="btn btn-link text-danger fs-14 lh-1 p-0"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteSegmentModal"
+                                                        wire:click="confirmDelete({{ $lead->id }})">
+                                                        <i class="ri-delete-bin-5-line"></i>
+                                                    </button>
+                                                    <!-- Delete Modal -->
+                                                    <div wire:ignore.self class="modal fade" data-bs-dismiss="modal"
+                                                        id="deleteSegmentModal" tabindex="-1"
+                                                        aria-labelledby="deleteSegmentModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title"
+                                                                        id="deleteSegmentModalLabel">Delete</h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <form wire:submit.prevent="deleteConfirmed">
+                                                                    <div class="modal-body">
+                                                                        <h6>Are you sure you want to delete this Lead?
+                                                                        </h6>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Close</button>
+                                                                        <button type="submit"
+                                                                            class="btn btn-danger">Delete</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                        
+                                                </td>
                                                 <td>{{ $lead->reference_id }}</td>
                                                 <td>{{ $lead->customer->name }}</td>
                                                 <td>{{ $lead->leadSource->name }}</td>

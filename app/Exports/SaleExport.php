@@ -19,7 +19,7 @@ class SaleExport implements FromCollection, WithHeadings
         return $this->sales->map(function ($sale, $index) {
             return [
                 'sr_no'        => $index + 1,
-                'sale_no'      => $sale->sale_no,
+                'sale_no'      => $sale->saleOrder->sale_order_no,
                 'customer'     => $sale->customer->name ?? 'N/A',
                 'branch'       => $sale->branch->name ?? 'N/A',
                 'amount'       => $sale->items->sum('price'),

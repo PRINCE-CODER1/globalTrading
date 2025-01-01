@@ -10,20 +10,12 @@ class Sale extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sale_no',
+        // 'sale_no',
         'customer_id',
         'sale_date',
         'branch_id',
         'sale_order_id',
         'godown_id',
-        'ref_no',
-        'destination',
-        'dispatch_through',
-        'gr_no',
-        'gr_date',
-        'weight',
-        'no_of_boxes',
-        'vehicle_no',
         'user_id',
     ];
 
@@ -32,7 +24,10 @@ class Sale extends Model
     {
         return $this->belongsTo(CustomerSupplier::class, 'customer_id');
     }
-
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
     // A sale belongs to a branch
     public function branch()
     {

@@ -72,6 +72,7 @@ class SaleOrderForm extends Component
         $this->branches = Branch::all();
         $this->productsList = Product::all(); 
         $this->applications = Application::all(); 
+        $this->date = now()->format('Y-m-d'); 
         $this->products[] = $this->createEmptyProduct();
         $this->generateSaleOrderNo();
     }
