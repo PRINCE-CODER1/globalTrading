@@ -37,7 +37,18 @@ class SaleForm extends Component
         $this->sale_date = now()->format('Y-m-d');
         $this->items[] = $this->createEmptyItem();
     }
-
+    public function selectProduct($index, $productId)
+    {
+        // Find the selected product
+        $product = $this->products->firstWhere('id', $productId);
+    
+        // If the product exists, update the selected item with the product's details
+        if ($product) {
+            $this->items[$index]['price'] = $product->price;  // Set the price
+            $this->items[$index]['product_name'] = $product->product_name;  // Set the product name (if needed)
+        }
+    }
+    
     public function updatedSaleOrderId($saleOrderId)
     {
         if ($saleOrderId) {
@@ -84,7 +95,7 @@ class SaleForm extends Component
         $this->items = array_values($this->items);
         $this->calculateTotals();
     }
-
+    
     protected function createEmptyItem()
     {
         return [

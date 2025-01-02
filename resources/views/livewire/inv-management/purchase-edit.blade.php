@@ -36,7 +36,7 @@
                     <label for="purchase_date" class="form-label">Purchase Date *</label>
                     <div class="input-group">
                         <div class="input-group-text"><i class="ri-calendar-line"></i></div>
-                        <input type="date" wire:model="purchase_date" id="purchase_date" class="form-control">
+                        <input type="datetime-local" wire:model="purchase_date" id="purchase_date" class="form-control">
                     </div>
                     @error('purchase_date')
                         <div class="text-danger">{{ $message }}</div>
@@ -69,18 +69,30 @@
                     <label for="purchase_order_id" class="form-label">Purchase Order *</label>
                     <div class="input-group">
                         <div class="input-group-text"><i class="ri-file-paper-line"></i></div>
-                        <select wire:model.live="purchase_order_id" id="purchase_order_id" class="form-select  " required>
+                        <select wire:model.live="purchase_order_id" id="purchase_order_id" class="form-select  ">
                             <option value="">Choose a purchase order</option>
                             @foreach ($purchaseOrders as $order)
                                 <option value="{{ $order->id }}">{{ $order->purchase_order_no }}</option>
                             @endforeach
                         </select>
                     </div>
-                    @error('purchase_order_id')
+                    {{-- @error('purchase_order_id')
                         <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                    @enderror --}}
                 </div>
             </div>
+            <!-- Supplier Sale Order Number -->
+            {{-- <div class="mb-3">
+                <label for="supplier_sale_order_no" class="form-label">Supplier Sale Order No</label>
+                <select wire:model.live="supplier_sale_order_no" class="form-select" id="supplier_sale_order_no">
+                    <option value="">Select Supplier Sale Order</option>
+                    @foreach($purchaseOrders as $order)
+                        <option value="{{ $order->supplier_sale_order_no }}">{{ $order->supplier_sale_order_no }}</option>
+                    @endforeach
+                </select>
+                @error('supplier_sale_order_no') <span class="text-danger">{{ $message }}</span> @enderror
+            </div> --}}
+            
 
             <!-- Reference No -->
             <div class="col-md-6">

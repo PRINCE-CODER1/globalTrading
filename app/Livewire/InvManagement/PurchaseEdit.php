@@ -164,7 +164,7 @@ class PurchaseEdit extends Component
             'purchase_date' => 'required|date',
             'branch_id' => 'required|exists:branches,id',
             'purchase_order_id' => 'nullable|exists:purchase_orders,id',
-            'supplier_sale_order_no' => 'nullable|exists:purchase_orders,supplier_sale_order_no',
+            // 'supplier_sale_order_no' => 'nullable|exists:purchase_orders,supplier_sale_order_no',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|numeric|min:1',
             'items.*.price' => 'required|numeric|min:0',

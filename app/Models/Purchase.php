@@ -9,7 +9,7 @@ class Purchase extends Model
 {
     use HasFactory;
     protected $fillable = [
-         'supplier_id', 'purchase_date', 'ref_no', 'branch_id', 'purchase_order_id', 'user_id',
+         'supplier_id', 'purchase_date', 'ref_no', 'branch_id', 'purchase_order_id','supplier_sale_order_no', 'user_id',
     ];
 
     public function items()

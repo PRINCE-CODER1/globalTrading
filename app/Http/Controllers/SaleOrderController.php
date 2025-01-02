@@ -174,7 +174,8 @@ class SaleOrderController extends Controller
             ]);
         }
 
-        return redirect()->route('sale_orders.index')->with('success', 'Sale Order updated successfully.');
+        toastr()->closeButton(true)->success('Sale Order updated successfully.');
+        return redirect()->route('sale_orders.index');
     }
 
     public function destroy($id)

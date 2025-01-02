@@ -162,16 +162,42 @@
                     @foreach ($products as $index => $product)
                         <tr>
                             <td>
-                                <select class="form-select @error('products.' . $index . '.product_id') is-invalid @enderror" wire:model="products.{{ $index }}.product_id">
-                                    <option value="">Select Product</option>
-                                    @foreach ($productsList as $prod)
-                                        <option value="{{ $prod->id }}">{{ $prod->product_name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('products.' . $index . '.product_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal-{{ $index }}">
+                                    {{ $products[$index]['product_name'] ?? 'Select Product' }}
+                                </button>
+                            
+                                <!-- Product Modal -->
+                                <div wire:ignore.self class="modal fade" id="productModal-{{ $index }}" tabindex="-1" aria-labelledby="productModalLabel-{{ $index }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="productModalLabel-{{ $index }}">Select Product</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Search Products -->
+                                                <input type="text" class="form-control mb-3" placeholder="Search Products" wire:model.debounce.500ms="productSearch">
+                                                
+                                                <!-- Product List -->
+                                                <ul class="list-group">
+                                                    @foreach($productsList as $product)
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                            {{ $product->product_name }}
+                                                            <button type="button" class="btn btn-sm btn-danger" wire:click="selectProduct({{ $index }}, {{ $product->id }})" data-bs-dismiss="modal">
+                                                                Select
+                                                            </button>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
+                            
                             <td>
                                 <input type="date" class="form-control @error('products.' . $index . '.expected_date') is-invalid @enderror" wire:model="products.{{ $index }}.expected_date">
                                 @error('products.' . $index . '.expected_date')

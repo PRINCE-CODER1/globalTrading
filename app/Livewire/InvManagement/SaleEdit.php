@@ -40,7 +40,7 @@ class SaleEdit extends Component
         $this->customers = CustomerSupplier::where('customer_supplier', 'onlyCustomer')->get();
         $this->branches = Branch::all();
         $this->products = Product::all();
-        $this->godowns = Godown::all();
+        $this->godowns = Godown::where('branch_id', $this->branch_id)->get();
         $this->saleOrders = SaleOrder::where('customer_id', $this->customer_id)->get();
 
         $this->items = $sale->items->map(function ($item) {
@@ -54,7 +54,18 @@ class SaleEdit extends Component
             ];
         })->toArray();
     }
-
+    
+    public function selectProduct($index, $productId)
+    {
+        // Find the selected product
+        $product = $this->products->firstWhere('id', $productId);
+    
+        // If the product exists, update the selected item with the product's details
+        if ($product) {
+            $this->items[$index]['price'] = $product->price;  // Set the price
+            $this->items[$index]['product_name'] = $product->product_name;  // Set the product name (if needed)
+        }
+    }
     public function addItem()
     {
         $this->items[] = $this->createEmptyItem();

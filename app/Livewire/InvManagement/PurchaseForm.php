@@ -34,7 +34,19 @@ class PurchaseForm extends Component
         // Initialize items with a default item
         $this->items[] = $this->initializeItem();
     }
+    public function selectProduct($index, $productId)
+    {
+        $product = Product::find($productId);
 
+        if ($product) {
+            // Set the product ID and product name
+            $this->items[$index]['product_id'] = $product->id;
+            $this->items[$index]['product_name'] = $product->product_name;
+            
+            // Set the price of the selected product
+            $this->items[$index]['price'] = $product->price;
+        }
+    }
     private function initializeItem()
     {
         return [
@@ -151,55 +163,58 @@ class PurchaseForm extends Component
 
     // Save the purchase and its items
     public function save()
-    {
-        $this->validate([
-            'supplier_id' => 'required|exists:customer_suppliers,id',
-            'purchase_date' => 'required|date',
-            'branch_id' => 'required|exists:branches,id',
-            'purchase_order_id' => 'nullable|exists:purchase_orders,id',
-            'supplier_sale_order_no' => 'nullable|exists:purchase_orders,supplier_sale_order_no',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:1',
-            'items.*.price' => 'required|numeric|min:0',
-            'items.*.discount' => 'nullable|numeric|min:0|max:100',
-            'items.*.godown_id' => 'required|exists:godowns,id',
-        ]);
+{
+    $this->validate([
+        'supplier_id' => 'required|exists:customer_suppliers,id',
+        'purchase_date' => 'required|date',
+        'branch_id' => 'required|exists:branches,id',
+        'purchase_order_id' => 'nullable|exists:purchase_orders,id', // Allow null for purchase_order_id
+        'supplier_sale_order_no' => 'nullable', // Allow null for supplier_sale_order_no
+        'items.*.product_id' => 'required|exists:products,id',
+        'items.*.quantity' => 'required|numeric|min:1',
+        'items.*.price' => 'required|numeric|min:0',
+        'items.*.discount' => 'nullable|numeric|min:0|max:100',
+        'items.*.godown_id' => 'required|exists:godowns,id',
+    ]);
 
-        if (!$this->supplier_sale_order_no && !$this->purchase_order_id) {
-            toastr()->closeButton(true)->success('Either Supplier Sale Order Number or Purchase Order ID must be filled.');
-            return;
-        }
-
-        // Create the purchase record
-        $purchase = Purchase::create([
-            'supplier_id' => $this->supplier_id,
-            'purchase_date' => $this->purchase_date,
-            'branch_id' => $this->branch_id,
-            'purchase_order_id' => $this->purchase_order_id,
-            'supplier_sale_order_no' => $this->supplier_sale_order_no, 
-            'ref_no' => $this->ref_no,
-            'user_id' => auth()->id(),
-        ]);
-
-        // Create or update purchase items
-        foreach ($this->items as $item) {
-            // Add user_id to item data
-            $item['user_id'] = Auth::id();
-
-            // Create purchase item
-            $purchaseItem = $purchase->items()->create($item);
-
-            // Update the product's stock in the specific godown
-            $product = Product::find($item['product_id']);
-            if ($product) {
-                // Update the stock based on godown_id
-                $product->stock()->where('godown_id', $item['godown_id'])->increment('opening_stock', $item['quantity']);
-            }
-        }
-
-        toastr()->closeButton(true)->success('Purchase saved successfully!');
-        return redirect()->route('purchase.index'); // Ensure the route is correct
+    // Ensure that at least one of the order fields (purchase_order_id or supplier_sale_order_no) is filled
+    if (!$this->supplier_sale_order_no && !$this->purchase_order_id) {
+        toastr()->closeButton(true)->error('Either Supplier Sale Order Number or Purchase Order ID must be filled.');
+        return;
     }
+
+    // Create the purchase record
+    $purchase = Purchase::create([
+        'supplier_id' => $this->supplier_id,
+        'purchase_date' => $this->purchase_date,
+        'branch_id' => $this->branch_id,
+        'purchase_order_id' => $this->purchase_order_id ?? null,  // Only set purchase_order_id if it's available
+        'supplier_sale_order_no' => $this->supplier_sale_order_no ?? null,  // Only set supplier_sale_order_no if it's available
+        'ref_no' => $this->ref_no,
+        'user_id' => auth()->id(),
+    ]);
+
+    // Create or update purchase items
+    foreach ($this->items as $item) {
+        // Add user_id to item data
+        $item['user_id'] = Auth::id();
+
+        // Create purchase item
+        $purchaseItem = $purchase->items()->create($item);
+
+        // Update the product's stock in the specific godown
+        $product = Product::find($item['product_id']);
+        if ($product) {
+            // Update the stock based on godown_id
+            $product->stock()->where('godown_id', $item['godown_id'])->increment('opening_stock', $item['quantity']);
+        }
+    }
+
+    toastr()->closeButton(true)->success('Purchase saved successfully!');
+    return redirect()->route('purchase.index'); // Ensure the route is correct
+}
+
+
 
 
     // Render the component view

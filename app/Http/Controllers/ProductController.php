@@ -212,4 +212,8 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }
+    public function show($id)
+    {
+        return view('website.import.product', compact('id'));
+    }
 }

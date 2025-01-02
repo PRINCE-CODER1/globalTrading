@@ -47,6 +47,10 @@ use App\Livewire\Reports\StockReport;
 use App\Livewire\Reports\SaleOrderReport;
 use App\Livewire\Reports\PurchaseOrderReport;
 
+// Imports
+use App\Livewire\Import\ProductImport;
+
+
 
 // Agent Controller 
 use App\Http\Controllers\AgentController;
@@ -170,6 +174,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/sale-order-reports/export/{type}', [SaleOrderReport::class, 'export'])->name('saleorder-reports.export');
     Route::get('/purchase-order-reports/export/{type}', [PurchaseOrderReport::class, 'export'])->name('purchseorder-reports.export');
 
+    // Import Route
+    Route::get('/products/import', ProductImport::class)->name('product-reports.import');
+    
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -79,6 +79,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="mb-3">
+                            {{ $purchaseOrder->links('custom-pagination-links') }}
+                        </div>
                     </div>
                 </div>
             </div>

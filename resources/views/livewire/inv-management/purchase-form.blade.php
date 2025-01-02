@@ -70,20 +70,17 @@
                     <label for="purchase_order_id" class="form-label"><i class="ri-clipboard-line"></i> Purchase Order <sup class="text-danger">*</sup></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="ri-clipboard-line"></i></span>
-                        <select wire:model.live="purchase_order_id" id="purchase_order_id" class="form-select" required>
+                        <select wire:model.live="purchase_order_id" id="purchase_order_id" class="form-select">
                             <option value="">Choose a purchase order</option>
                             @foreach ($purchaseOrders as $order)
-                                <option value="{{ $order->id }}">{{ $order->purchase_order_no }}</option>
+                                <option value="{{ $order->id }}">{{ $order->GTE_PO_NO }}</option>
                             @endforeach
                         </select>
                     </div>
-                    @error('purchase_order_id')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
                 </div>
             </div>
 
-            <!-- Sale Order Number -->
+            <!-- Supplier Sale Order Number -->
             <div class="form-group">
                 <label for="supplier_sale_order_no">Supplier Sale Order No</label>
                 <select id="supplier_sale_order_no" class="form-select" wire:model.live="supplier_sale_order_no" >
@@ -133,15 +130,13 @@
                             @foreach ($items as $index => $item)
                                 <tr>
                                     <td>
-                                        <select wire:model="items.{{ $index }}.product_id" class="form-select" required>
+                                        <select wire:model="items.{{ $index }}.product_id" class="form-control" wire:change="selectProduct({{ $index }}, $event.target.value)">
                                             <option value="">Select Product</option>
-                                            @foreach ($products as $product)
+                                            @foreach($products as $product)
                                                 <option value="{{ $product->id }}">{{ $product->product_name }}</option>
                                             @endforeach
                                         </select>
-                                        @error("items.$index.product_id")
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
+                                        @error("items.$index.product_id") <span class="text-danger">{{ $message }}</span> @enderror
                                     </td>
                                     <td>
                                         <input type="number" wire:model="items.{{ $index }}.quantity" class="form-control" placeholder="Quantity" required>

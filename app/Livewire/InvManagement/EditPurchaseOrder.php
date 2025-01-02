@@ -47,9 +47,18 @@ class EditPurchaseOrder extends Component
     public function selectProduct($index, $productId)
     {
         $product = Product::find($productId);
-        $this->items[$index]['product_name'] = $product->product_name;
-        $this->items[$index]['product_id'] = $product->id;
+        if ($product) {
+            // Set the product data
+            $this->items[$index]['product_name'] = $product->product_name;
+            $this->items[$index]['product_id'] = $product->id;
+            $this->items[$index]['price'] = $product->price;
+            // Calculate the amount for the item
+            $this->calculateAmount($index);
+        }
     }
+
+
+
 
     public function populateData(PurchaseOrder $purchaseOrder)
     {
@@ -65,12 +74,14 @@ class EditPurchaseOrder extends Component
         $this->items = $purchaseOrder->items->map(function ($item) {
             return [
                 'product_id' => $item->product_id,
+                'product_name' => $item->product->product_name ?? 'N/A',
                 'quantity' => $item->quantity,
                 'price' => $item->price,
                 'discount' => $item->discount,
                 'amount' => $item->amount,
             ];
         })->toArray();
+        
     }
 
     public function generatePurchaseOrderNo()

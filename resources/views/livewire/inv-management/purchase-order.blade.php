@@ -56,6 +56,9 @@
                                                 <i class="ri-expand-up-down-fill"></i>
                                             @endif
                                         </th>
+                                        <th>
+                                            GTE PO NO
+                                        </th>
                                         <th scope="col" wire:click="setSortBy('date')">Date
                                             @if ($sortBy === 'date')
                                                 @if ($sortDir === 'asc')
@@ -83,6 +86,7 @@
                                         <tr wire:key="{{ $order->id }}">
                                             <td><input type="checkbox" wire:model.live="selectedOrders" value="{{ $order->id }}"></td>
                                             <td>{{ $order->purchase_order_no }}</td>
+                                            <td>{{ $order->GTE_PO_NO }}</td>
                                             <td>{{ $order->date }}</td>
                                             <td>{{ $order->supplier->name ?? 'N/A' }}</td>
                                             <td class="text-center">

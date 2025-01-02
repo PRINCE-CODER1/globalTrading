@@ -42,10 +42,9 @@
                                         <tr>
                                             <th><input type="checkbox" wire:model.live="selectAll"></th>
                                             
-                                            <th>Sale Order No</th>
+                                            <th>Sale No</th>
                                             <th>Sale Order Date</th>
                                             <th>Customer Name</th>
-                                            <th>Branch</th>
                                             <th>Created By</th>
                                             <th>Created On</th>
                                             <th>Product Detail</th>
@@ -60,14 +59,49 @@
                                             <td>{{ $sale->saleOrder->sale_order_no }}</td>
                                             <td>{{ \Carbon\Carbon::parse($sale->sale_date)->format('Y-m-d') }}</td>
                                             <td>{{ $sale->customer->name }}</td>
-                                            <td>{{ $sale->branch->name }}</td>
                                             <td>{{ $sale->user->name }}</td>
                                             <td>{{ \Carbon\Carbon::parse($sale->created_at)->format('Y-m-d H:i:s') }}</td>
                                             <td>
-                                                @foreach($sale->items as $item)
-                                                {{ $item->product->product_name }}: {{ $item->quantity }} pcs, {{ $item->price }}<br>
-                                                @endforeach
+                                                <!-- Trigger button for modal -->
+                                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#itemsModal-{{ $sale->id }}">
+                                                    View Items
+                                                </button>
+                                            
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="itemsModal-{{ $sale->id }}" tabindex="-1" aria-labelledby="itemsModalLabel-{{ $sale->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="itemsModalLabel-{{ $sale->id }}">Sale Items for Order #{{ $sale->saleOrder->sale_order_no }}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <!-- Items List -->
+                                                                <div class="row">
+                                                                    @foreach($sale->items as $item)
+                                                                        <div class="col-md-12">
+                                                                            <div class="card mb-3">
+                                                                                <div class="card-body">
+                                                                                    <h5 class="card-title">{{ $item->product->product_name }}</h5>
+                                                                                    <p class="card-text">
+                                                                                        <strong>Quantity:</strong> {{ $item->quantity }} pcs<br>
+                                                                                        <strong>Price:</strong> {{ $item->price }}<br>
+                                                                                        <strong>Subtotal:</strong> {{ $item->quantity * $item->price }}<br>
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
+                                            
                                             <td>
                                                 <a href="{{ route('sales.edit', $sale->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>
                                                 <button wire:click="confirmDelete({{ $sale->id }})" class="btn btn-link text-danger fs-14 lh-1 p-0" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="ri-delete-bin-5-line"></i></button>

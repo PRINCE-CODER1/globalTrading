@@ -39,25 +39,28 @@
                     @csrf
                     @method('PUT')
 
-                    <!-- Sale Order No. -->
-                    <div class="form-group">
-                        <label for="sale_order_no">Sale Order No.</label>
-                        <input type="text" name="sale_order_no" id="sale_order_no" class="form-control" value="{{ $saleOrder->sale_order_no }}" readonly>
+                    <div class="row">
+                        <!-- Sale Order No. -->
+                        <div class="col-md-6">
+                            <label for="sale_order_no">Sale Order No.</label>
+                            <input type="text" name="sale_order_no" id="sale_order_no" class="form-control" value="{{ $saleOrder->sale_order_no }}" readonly>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="col-md-6">
+                            <label for="date">Date *</label>
+                            <input type="date" name="date" id="date" class="form-control @error('date') is-invalid @enderror" value="{{ old('date', $saleOrder->date) }}" required>
+                            @error('date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
-                    <!-- Date -->
-                    <div class="form-group">
-                        <label for="date">Date *</label>
-                        <input type="date" name="date" id="date" class="form-control @error('date') is-invalid @enderror" value="{{ old('date', $saleOrder->date) }}" required>
-                        @error('date')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Customer -->
-                    <div class="form-group">
+                   <div class="row">
+                     <!-- Customer -->
+                     <div class="col-md-6">
                         <label for="customer_id">Select Customer *</label>
-                        <select name="customer_id" id="customer_id" class="form-control @error('customer_id') is-invalid @enderror" required>
+                        <select name="customer_id" id="customer_id" class="form-select @error('customer_id') is-invalid @enderror" required>
                             <option value="">Select Customer</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}" {{ old('customer_id', $saleOrder->customer_id) == $customer->id ? 'selected' : '' }}>{{ $customer->name }}</option>
@@ -69,9 +72,9 @@
                     </div>
 
                     <!-- Agent/User -->
-                    <div class="form-group">
+                    <div class="col-md-6">
                         <label for="agent_id">Select Agent/User *</label>
-                        <select name="agent_id" id="agent_id" class="form-control @error('agent_id') is-invalid @enderror" required>
+                        <select name="agent_id" id="agent_id" class="form-select @error('agent_id') is-invalid @enderror" required>
                             <option value="">Select Agent/User</option>
                             @foreach($agents as $agent)
                                 <option value="{{ $agent->id }}" {{ old('agent_id', $saleOrder->agent_id) == $agent->id ? 'selected' : '' }}>{{ $agent->name }}</option>
@@ -81,61 +84,66 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                   </div>
 
-                    <!-- Segment -->
-                    <div class="form-group">
-                        <label for="segment_id">Select Segment *</label>
-                        <select name="segment_id" id="segment_id" class="form-control @error('segment_id') is-invalid @enderror" required>
-                            <option value="">Select Segment</option>
-                            @foreach($segments as $segment)
-                                <option value="{{ $segment->id }}" {{ old('segment_id', $saleOrder->segment_id) == $segment->id ? 'selected' : '' }}>{{ $segment->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('segment_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="row">
+                        <!-- Segment -->
+                        <div class="col-md-6">
+                            <label for="segment_id">Select Segment *</label>
+                            <select name="segment_id" id="segment_id" class="form-select @error('segment_id') is-invalid @enderror" required>
+                                <option value="">Select Segment</option>
+                                @foreach($segments as $segment)
+                                    <option value="{{ $segment->id }}" {{ old('segment_id', $saleOrder->segment_id) == $segment->id ? 'selected' : '' }}>{{ $segment->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('segment_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Lead Source -->
+                        <div class="col-md-6">
+                            <label for="lead_source_id">Select Lead Source *</label>
+                            <select name="lead_source_id" id="lead_source_id" class="form-select @error('lead_source_id') is-invalid @enderror" required>
+                                <option value="">Select Lead Source</option>
+                                @foreach($leadSources as $leadSource)
+                                    <option value="{{ $leadSource->id }}" {{ old('lead_source_id', $saleOrder->lead_source_id) == $leadSource->id ? 'selected' : '' }}>{{ $leadSource->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('lead_source_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
-                    <!-- Lead Source -->
-                    <div class="form-group">
-                        <label for="lead_source_id">Select Lead Source *</label>
-                        <select name="lead_source_id" id="lead_source_id" class="form-control @error('lead_source_id') is-invalid @enderror" required>
-                            <option value="">Select Lead Source</option>
-                            @foreach($leadSources as $leadSource)
-                                <option value="{{ $leadSource->id }}" {{ old('lead_source_id', $saleOrder->lead_source_id) == $leadSource->id ? 'selected' : '' }}>{{ $leadSource->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('lead_source_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <div class="row">
+                        <!-- Order Branch -->
+                        <div class="col-md-6">
+                            <label for="order_branch_id">Order Branch *</label>
+                            <select name="order_branch_id" id="order_branch_id" class="form-select @error('order_branch_id') is-invalid @enderror" required>
+                                <option value="">Select Order Branch</option>
+                                @foreach($branches as $branch)
+                                    <option value="{{ $branch->id }}" {{ old('order_branch_id', $saleOrder->order_branch_id) == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('order_branch_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    <!-- Order Branch -->
-                    <div class="form-group">
-                        <label for="order_branch_id">Order Branch *</label>
-                        <select name="order_branch_id" id="order_branch_id" class="form-control @error('order_branch_id') is-invalid @enderror" required>
-                            <option value="">Select Order Branch</option>
-                            @foreach($branches as $branch)
-                                <option value="{{ $branch->id }}" {{ old('order_branch_id', $saleOrder->order_branch_id) == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('order_branch_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Delivery Branch -->
-                    <div class="form-group">
-                        <label for="delivery_branch_id">Delivery Branch *</label>
-                        <select name="delivery_branch_id" id="delivery_branch_id" class="form-control @error('delivery_branch_id') is-invalid @enderror" required>
-                            <option value="">Select Delivery Branch</option>
-                            @foreach($branches as $branch)
-                                <option value="{{ $branch->id }}" {{ old('delivery_branch_id', $saleOrder->delivery_branch_id) == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('delivery_branch_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <!-- Delivery Branch -->
+                        <div class="col-md-6">
+                            <label for="delivery_branch_id">Delivery Branch *</label>
+                            <select name="delivery_branch_id" id="delivery_branch_id" class="form-select @error('delivery_branch_id') is-invalid @enderror" required>
+                                <option value="">Select Delivery Branch</option>
+                                @foreach($branches as $branch)
+                                    <option value="{{ $branch->id }}" {{ old('delivery_branch_id', $saleOrder->delivery_branch_id) == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('delivery_branch_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                     <div class="row mt-5">
                         <div class="col-md-12">

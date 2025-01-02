@@ -532,6 +532,26 @@
                 </li>
                 @endcan
                 <!-- End::Reports -->
+                @can('view import')
+                <li class="slide has-sub {{ request()->routeIs(['product-reports.import']) ? 'open' : '' }}">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center ">
+                        <i class="ri-import-line side-menu__icon d-flex justify-content-center align-items-center"></i>
+                        <span class="side-menu__label">Import</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul custom-h">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Import</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('product-reports.import') }}" 
+                               class="side-menu__item {{ request()->routeIs('product-reports.import') ? 'active' : '' }}">
+                               Import
+                            </a>
+                        </li>
+                    </ul>
+                </li>                
+                @endcan
 
                 
             </ul>

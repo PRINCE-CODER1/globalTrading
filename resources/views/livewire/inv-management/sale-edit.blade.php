@@ -37,7 +37,7 @@
                     <label for="branch_id" class="form-label"><i class="ri-building-line"></i> Select Branch <sup class="text-danger">*</sup></label>
                     <div class="input-group">
                         <div class="input-group-text"><i class="ri-building-line"></i></div>
-                        <select wire:model="branch_id" id="branch_id" class="form-select" aria-label="Select Branch" required>
+                        <select wire:model.live="branch_id" id="branch_id" class="form-select" aria-label="Select Branch" required>
                             <option value="">Choose a Branch</option>
                             @foreach ($branches as $branch)
                                 <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -86,13 +86,13 @@
                             @forelse($items as $index => $item)
                                 <tr>
                                     <td>
-                                        <select wire:model="items.{{ $index }}.product_id" class="form-select">
+                                        <select wire:model="items.{{ $index }}.product_id" class="form-control" wire:change="selectProduct({{ $index }}, $event.target.value)">
                                             <option value="">Select Product</option>
                                             @foreach($products as $product)
                                                 <option value="{{ $product->id }}">{{ $product->product_name }}</option>
                                             @endforeach
                                         </select>
-                                        @error("items.$index.product_id") <div class="text-danger">{{ $message }}</div> @enderror
+                                        @error("items.$index.product_id") <span class="text-danger">{{ $message }}</span> @enderror
                                     </td>
                                     <td>
                                         <input type="number" wire:model="items.{{ $index }}.quantity" class="form-control" placeholder="Quantity">
@@ -106,15 +106,18 @@
                                         <input type="number" wire:model="items.{{ $index }}.discount" class="form-control" placeholder="Discount">
                                         @error("items.$index.discount") <div class="text-danger">{{ $message }}</div> @enderror
                                     </td>
+                                    <!-- Godown Selection -->
                                     <td>
-                                        <select wire:model="items.{{ $index }}.godown_id" class="form-select">
+                                        <select wire:model="items.{{ $index }}.godown_id" class="form-control" required>
                                             <option value="">Select Godown</option>
-                                            @foreach($godowns as $godown)
-                                                <option value="{{ $godown->id }}">{{ $godown->godown_name }}</option>
+                                            @foreach($filteredGodowns as $godown)
+                                                <option value="{{ $godown->id }}" {{ $godown->id == $item['godown_id'] ? 'selected' : '' }}>
+                                                    {{ $godown->godown_name }}
+                                                </option>
                                             @endforeach
                                         </select>
-                                        @error("items.$index.godown_id") <div class="text-danger">{{ $message }}</div> @enderror
-                                    </td>
+                                        @error('items.' . $index . '.godown_id') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
                                     <td>
                                         <button type="button" class="btn btn-sm btn-danger" wire:click="removeItem({{ $index }})">
                                             <i class="ri-delete-bin-6-line"></i>

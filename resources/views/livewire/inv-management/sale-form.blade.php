@@ -121,13 +121,15 @@
                                     @forelse($items as $index => $item)
                                         <tr>
                                             <td>
-                                                <select wire:model="items.{{ $index }}.product_id" class="form-control">
+                                                <select wire:model="items.{{ $index }}.product_id" class="form-control" wire:change="selectProduct({{ $index }}, $event.target.value)">
                                                     <option value="">Select Product</option>
                                                     @foreach($products as $product)
                                                         <option value="{{ $product->id }}">{{ $product->product_name }}</option>
                                                     @endforeach
                                                 </select>
                                                 @error("items.$index.product_id") <span class="text-danger">{{ $message }}</span> @enderror
+                                            </td>
+                                            
                                             <td>
                                                 <input type="number" wire:model.live="items.{{ $index }}.quantity" class="form-control" placeholder="enter quantity" required>
                                                 @error("items.$index.quantity") <span class="text-danger">{{ $message }}</span> @enderror

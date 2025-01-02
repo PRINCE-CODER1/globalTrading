@@ -48,12 +48,20 @@ class CreatePurchaseOrder extends Component
     public function selectProduct($index, $productId)
     {
         $product = Product::find($productId);
-    
+
         if ($product) {
+            // Set the product ID and product name
             $this->items[$index]['product_id'] = $product->id;
-            $this->items[$index]['product_name'] = $product->product_name; 
+            $this->items[$index]['product_name'] = $product->product_name;
+            
+            // Set the price of the selected product
+            $this->items[$index]['price'] = $product->price;
+
+            // Optionally, calculate the amount based on the price and quantity
+            $this->calculateAmount($index);
         }
     }
+
     /**
      * Generate a unique purchase order number based on the master numbering format.
      */
@@ -217,7 +225,7 @@ class CreatePurchaseOrder extends Component
     {
         return [
             'purchase_order_no' => 'required|string|unique:purchase_orders,purchase_order_no',
-            'GTE_PO_NO' => 'required|string',
+            'GTE_PO_NO' => 'required|string|unique:purchase_orders,GTE_PO_NO',
             'date' => 'required|date',
             'supplier_id' => 'required|exists:customer_suppliers,id',
             'items' => 'required|array|min:1',

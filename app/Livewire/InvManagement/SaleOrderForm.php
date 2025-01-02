@@ -46,6 +46,8 @@ class SaleOrderForm extends Component
     public $godowns = [];
     public $productsList = [];
 
+    public $productSearch = '';
+
     protected $rules = [
         'date' => 'required|date',
         'customer_id' => 'required|exists:customer_suppliers,id',
@@ -76,7 +78,27 @@ class SaleOrderForm extends Component
         $this->products[] = $this->createEmptyProduct();
         $this->generateSaleOrderNo();
     }
+    public function selectProduct($index, $productId)
+{
+    // Fetch the product from the products list by its ID
+    $product = $this->productsList->firstWhere('id', $productId);
+    
+    // If the product exists, update the properties
+    if ($product) {
+        // Set the product ID and name
+        $this->products[$index]['product_id'] = $productId;
+        $this->products[$index]['product_name'] = $product->product_name;
 
+        // Set the price of the selected product
+        $this->products[$index]['price'] = $product->price;
+    }
+}
+
+    
+    public function updatedProductSearch()
+    {
+        $this->productsList = Product::where('product_name', 'like', '%' . $this->productSearch . '%')->get();
+    }
     public function render()
     {
         return view('livewire.inv-management.sale-order-form');
@@ -162,7 +184,7 @@ class SaleOrderForm extends Component
                         'quantity' => $product['quantity'],
                         'price' => $product['price'],
                         'discount' => $product['discount'],
-                        'sub_total' => $product['subtotal'], // Use subtotal key
+                        'sub_total' => $product['subtotal'], 
                         'user_id' => auth()->id(),
                     ]
                 );
