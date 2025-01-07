@@ -23,6 +23,8 @@ class CrmDashboard extends Component
     public $leadIdToDelete;
     public $sortDir = 'desc';
     public $perPage = 10;
+    public $startDate;
+    public $endDate;
 
     // Listen for filter changes and reset the pagination
     protected $updatesQueryString = ['search', 'statusFilter', 'teamFilter', 'sortBy', 'sortDir', 'perPage'];
@@ -46,6 +48,9 @@ class CrmDashboard extends Component
     {
 
         $teams = Team::all();
+        $teamsCountByUser = Team::select('creator_id', DB::raw('count(*) as count'))
+            ->groupBy('creator_id')
+            ->get();
         // Total teams for admin view
         $totalTeams = Team::count();
 
@@ -63,24 +68,26 @@ class CrmDashboard extends Component
 
         // Fetch leads with filters and search
         $leads = Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
-            ->when($this->teamFilter, function ($query) {
-                $query->whereHas('assignedAgent.teams', function ($q) {
-                    $q->where('name', 'like', '%' . $this->teamFilter . '%');
-                });
-            })
-            ->when($this->statusFilter, function ($query) {
-                $query->whereHas('leadStatus', function ($q) {
-                    $q->where('name', $this->statusFilter);
-                });
-            })
-            ->when($this->search, function ($query) {
-                $query->whereHas('customer', function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%');
-                })->orWhere('reference_id', 'like', '%' . $this->search . '%');
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
-
+                ->when($this->teamFilter, function ($query) {
+                    $query->whereHas('assignedAgent.teams', function ($q) {
+                        $q->where('name', 'like', '%' . $this->teamFilter . '%');
+                    });
+                })
+                ->when($this->statusFilter, function ($query) {
+                    $query->whereHas('leadStatus', function ($q) {
+                        $q->where('name', $this->statusFilter);
+                    });
+                })
+                ->when($this->search, function ($query) {
+                    $query->whereHas('customer', function ($q) {
+                        $q->where('name', 'like', '%' . $this->search . '%');
+                    })->orWhere('reference_id', 'like', '%' . $this->search . '%');
+                })
+                ->when($this->startDate && $this->endDate, function ($query) {
+                    $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
+                })
+                ->orderBy($this->sortBy, $this->sortDir)
+                ->paginate($this->perPage);
 
         // Recent lead logs
         $leadLogs = LeadLog::with(['lead', 'fromUser', 'toUser'])
@@ -118,13 +125,21 @@ class CrmDashboard extends Component
             ->limit(10)
             ->get();
 
-        return view('livewire.crm.crm-dashboard', compact('teams','totalTeams',
+        return view('livewire.crm.crm-dashboard', compact('teams','totalTeams','teamsCountByUser',
             'leadsPerDay', 'openLeads', 'closedLeads', 'leads', 'users', 
             'leadLogs', 'statuses', 'totalLeads', 'currentLeads', 
             'percentageChange', 'remarks', 'leadStatusCounts'
         ));
     }
-
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->teamFilter = null;
+        $this->statusFilter = null;
+        $this->startDate = null;
+        $this->endDate = null;
+    }
+    
     public function updatePerPage($perPage)
     {
         $this->perPage = $perPage;

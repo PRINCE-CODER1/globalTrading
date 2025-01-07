@@ -111,47 +111,8 @@
                 </li>  --}}
 
                 
-                {{-- @endrole
-                @role('Agent') --}}
-                @can('view agent')
-                <li class="slide has-sub {{ request()->routeIs('agent.dashboard') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center {{ request()->routeIs('agent.dashboard') ? 'active' : '' }}">
-                        <i class="bi bi-house side-menu__icon mb-0"></i>
-                        <span class="side-menu__label">Agent Dashboard</span>
-                        <i class="fe fe-chevron-right side-menu__angle"></i>
-                    </a>
-                    <ul class="slide-menu child1 pages-ul">
-                        <li class="slide side-menu__label1">
-                            <a href="javascript:void(0)">Agent Dashboard</a>
-                        </li>
-                        <li class="slide">
-                            <a href="{{ route('agent.dashboard') }}" class="side-menu__item {{ request()->routeIs('agent.dashboard') ? 'active' : '' }}">Agent Dashboard</a>
-                        </li>
-                    </ul>
-                </li>
-                @endcan
-
-                @can('view leadside')
-                <li class="slide has-sub {{ request()->routeIs('agent.lead') || request()->routeIs('agent.leads.create') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center {{ request()->routeIs('agent.lead') || request()->routeIs('agent.leads.create') ? 'active' : '' }}">
-                        <i class="ri-group-line side-menu__icon d-flex justify-content-center align-items-center"></i>
-                        <span class="side-menu__label">Leads</span>
-                        <i class="fe fe-chevron-right side-menu__angle"></i>
-                    </a>
-                    <ul class="slide-menu child1 pages-ul">
-                        <li class="slide side-menu__label1">
-                            <a href="javascript:void(0)">Leads</a>
-                        </li>
-                        @can('view lead')
-                        <li class="slide">
-                            <a href="{{ route('leads.index') }}" class="side-menu__item {{ request()->routeIs('leads.index') ? 'active' : '' }}">Leads</a>
-                        </li>
-                        @endcan
-                    </ul>
-                </li>  
-                @endcan           
-                
                 {{-- @endrole --}}
+                
                 <!-- Start::slide -->
                 {{-- @role('Super Admin') --}}
                 @can('view admin')
@@ -552,6 +513,47 @@
                     </ul>
                 </li>                
                 @endcan
+
+                {{-- @role('Agent') --}}
+                @can('view agent')
+                <li class="slide has-sub {{ request()->routeIs('agent.dashboard') ? 'open' : '' }}">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center {{ request()->routeIs('agent.dashboard') ? 'active' : '' }}">
+                        <i class="bi bi-house side-menu__icon mb-0"></i>
+                        <span class="side-menu__label">Agent Dashboard</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Agent Dashboard</a>
+                        </li>
+                        <li class="slide">
+                            <a href="{{ route('agent.dashboard') }}" class="side-menu__item {{ request()->routeIs('agent.dashboard') ? 'active' : '' }}">Agent Dashboard</a>
+                        </li>
+                    </ul>
+                </li>
+                @endcan
+
+                @can('view leadside')
+                <li class="slide has-sub {{ request()->routeIs('agent.lead') || request()->routeIs('agent.leads.create') ? 'open' : '' }}">
+                    <a href="javascript:void(0);" class="side-menu__item d-flex align-items-center {{ request()->routeIs('agent.lead') || request()->routeIs('agent.leads.create') ? 'active' : '' }}">
+                        <i class="ri-group-line side-menu__icon d-flex justify-content-center align-items-center"></i>
+                        <span class="side-menu__label">Leads</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1 pages-ul">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0)">Leads</a>
+                        </li>
+                        @can('view lead')
+                        <li class="slide">
+                            <a href="{{ route('leads.index') }}" class="side-menu__item {{ request()->routeIs('leads.index') ? 'active' : '' }}">Leads</a>
+                        </li>
+                        @endcan
+                    </ul>
+                </li>  
+                @endcan           
+                
+                {{-- @endrole --}}
 
                 
             </ul>

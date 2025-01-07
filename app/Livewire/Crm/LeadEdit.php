@@ -121,6 +121,20 @@ class LeadEdit extends Component
         $this->teamAgents = User::all();
 
     }
+    public function addContractor()
+    {
+        $this->contractor_ids[] = null; 
+    }
+
+    public function removeContractor($index)
+    {
+        unset($this->contractor_ids[$index]);
+        $this->contractor_ids = array_values($this->contractor_ids); 
+    }
+    public function selectContractor($contractorId, $index)
+    {
+        $this->contractor_ids[$index] = $contractorId;
+    }
 
     public function updatedCustomerId($customerId)
     {
@@ -196,25 +210,25 @@ class LeadEdit extends Component
 
 
     public function assignAgent()
-{
-    if ($this->assigned_to === null) {
-        toastr()->error('Please assign an agent.');
-        return;
+    {
+        if ($this->assigned_to === null) {
+            toastr()->error('Please assign an agent.');
+            return;
+        }
+
+        $this->validate(['assigned_to' => 'required']);
+
+        // Update the lead with the new assigned agent
+        $this->lead->update(['assigned_to' => $this->assigned_to]);
+
+        // Update the visibility logic
+        $agentName = User::find($this->assigned_to)->name;
+        toastr()->closeButton(true)->success("Successfully assigned to $agentName");
+
+        // Update the Livewire component values with the saved values
+        // $this->assigned_to = null;
+        // $this->reset(['assigned_to']);
     }
-
-    $this->validate(['assigned_to' => 'required']);
-
-    // Update the lead with the new assigned agent
-    $this->lead->update(['assigned_to' => $this->assigned_to]);
-
-    // Update the visibility logic
-    $agentName = User::find($this->assigned_to)->name;
-    toastr()->closeButton(true)->success("Successfully assigned to $agentName");
-
-    // Update the Livewire component values with the saved values
-    $this->assigned_to = null;
-    $this->reset(['assigned_to']);
-}
 
 
 

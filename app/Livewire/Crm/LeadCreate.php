@@ -3,6 +3,7 @@
 namespace App\Livewire\Crm;
 
 use Livewire\Component;
+use App\Models\User;
 use App\Models\Lead;
 use App\Models\LeadStatus;
 use App\Models\LeadSource;
@@ -41,7 +42,7 @@ class LeadCreate extends Component
     public $amount; // Amount field
     public $specification; 
     public $referenceId;
-    public $contractors = null; 
+    public $contractors = []; 
     public $contractor_ids = [];
     public $applications;
     public $application_id;
@@ -61,6 +62,11 @@ class LeadCreate extends Component
     public $filteredCustomers;
     public $selectedCustomer = null; 
 
+    public $teamAgents = [];
+    public $assigned_to;
+    public $allContractors = [];
+    public $availableContractors = [];
+
     public function mount()
     {
         // Initialize dropdown values
@@ -77,8 +83,25 @@ class LeadCreate extends Component
         $this->specification = null;
         $this->applications = Application::all(); 
         $this->referenceId = $this->generateReferenceId();
+        $this->expected_date = now()->format('Y-m');
+
+        $this->teamAgents = User::all();
     }
     
+    public function addContractor()
+    {
+        $this->contractor_ids[] = null; 
+    }
+
+    public function removeContractor($index)
+    {
+        unset($this->contractor_ids[$index]);
+        $this->contractor_ids = array_values($this->contractor_ids); 
+    }
+    public function selectContractor($contractorId, $index)
+    {
+        $this->contractor_ids[$index] = $contractorId;
+    }
 
     public function fetchAllCustomers()
     {
@@ -94,15 +117,6 @@ class LeadCreate extends Component
         })->toArray();
     }
 
-    // public function selectCustomer($customerId)
-    // {
-    //     $this->selectedCustomer = collect($this->allCustomer)->firstWhere('id', $customerId);
-    //     $this->customer_id = $customerId; 
-
-    //     $this->search = $this->selectedCustomer['name'];
-
-    //     $this->filteredCustomers = [];
-    // }
     public function selectCustomer($customerId)
     {
         $this->selectedCustomer = collect($this->allCustomer)->firstWhere('id', $customerId);
@@ -217,6 +231,7 @@ class LeadCreate extends Component
             'specification' => 'nullable|in:favourable,non-favourable',
             'contractor_ids' => 'nullable|array',
             'contractor_ids.*' => 'exists:contractors,id',
+            'assigned_to' => 'required|exists:users,id', 
         ]);
 
         if ($this->expected_date) {
@@ -234,7 +249,7 @@ class LeadCreate extends Component
             'lead_source_id' => $this->lead_source_id,
             'segment_id' => $this->segment_id,
             'sub_segment_id' => $this->sub_segment_id,
-            'expected_date' => $this->expected_date, // Store the corrected expected date
+            'expected_date' => $this->expected_date,
             'category_id' => $this->category_id,
             'child_category_id' => $this->child_category_id,
             'series' => $this->series,
@@ -244,7 +259,7 @@ class LeadCreate extends Component
             'reference_id' => $this->referenceId,
             'amount' => $this->amount,
             'specification' => $this->specification,
-            'assigned_to' => auth()->id(),
+            'assigned_to' => $this->assigned_to, 
             'user_id' => auth()->id(),
         ]);
 
@@ -261,8 +276,10 @@ class LeadCreate extends Component
     }
 
 
+
     public function render()
-    {
+    { 
+        
         return view('livewire.crm.lead-create', [
             'leadStatuses' => $this->leadStatuses,
             'leadSources' => $this->leadSources,
@@ -275,6 +292,8 @@ class LeadCreate extends Component
             'leadTypes' => $this->leadTypes,
             'contractors' => $this->contractors,
             'selectedCustomerUsers' => $this->selectedCustomerUsers,
+            'teamAgents' => $this->teamAgents,
+            'contractors' => $this->contractors,
         ]);
     }
 }

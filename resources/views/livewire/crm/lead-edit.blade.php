@@ -267,7 +267,7 @@
                             </div>
                             <div class="col-md-4">
                                 @if($showContractOptions)
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label for="contractor_id" class="form-label text-muted small">Contractor</label>
                                     <select wire:model="contractor_ids" id="contractor_ids"  class="form-select form-select-sm" multiple>
                                         <option value="">Select Contractor</option>
@@ -275,6 +275,50 @@
                                             <option value="{{ $contractor->id }}">{{ $contractor->name }}</option>
                                         @endforeach
                                     </select>
+                                </div> --}}
+                                <div class="">
+                                    <div class="col-md-12">
+                                        <h4 class="text-secondary"><i class="ri-contacts-line"></i> Select Contractors</h4>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead class="table-secondary">
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Contractor</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($contractor_ids as $index => $contractorId)
+                                                        <tr>
+                                                            <td>{{ $index + 1 }}</td>
+                                                            <td>
+                                                                <select wire:model="contractor_ids.{{ $index }}" class="form-control">
+                                                                    <option value="">Select Contractor</option>
+                                                                     @foreach ($contractors as $contractor)
+                                                                        <option value="{{ $contractor->id }}" {{ $contractor->id == $contractorId ? 'selected' : '' }}>
+                                                                            {{ $contractor->name }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                                @error("contractor_ids.{$index}") 
+                                                                    <span class="text-danger">{{ $message }}</span> 
+                                                                @enderror
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" wire:click.prevent="removeContractor({{ $index }})" class="btn btn-danger btn-sm">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <button type="button" wire:click.prevent="addContractor" class="btn btn-info btn-sm mt-2">
+                                            <i class="ri-add-line"></i> Add Contractor
+                                        </button>
+                                    </div>
                                 </div>
                                 @endif  
                             </div>

@@ -227,7 +227,14 @@
                                                     </a>
                                                 </td>
                                                 <td>{{ $user->email }}</td>
-                                                <td>{{ $user->leads->count() }}</td>
+                                                <td>
+                                                    @php
+                                                    // Find the team count for the current user
+                                                    $teamCount = $teamsCountByUser->firstWhere('creator_id', $user->id);
+                                                    @endphp
+                                                    {{-- If no teams found for the user, display 0 --}}
+                                                    {{ $teamCount ? $teamCount->count : 0 }}
+                                                </td>
                                             </tr>
                                         @endif
                                     @endforeach
@@ -253,62 +260,94 @@
             </div>
         </div>
         <!-- Lead Filters Section -->
-        <div class="container">
-            <div class="row mb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
+        <div class="container my-4">
+            <div class="card shadow-sm rounded bg-secondary">
+                <div class="card-body">
+                    <!-- Filters Row -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <!-- Status Filter -->
                         <div class="btn-group">
-                            <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                            <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filter: {{ $statusFilter ?: 'All' }}
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" wire:click="$set('statusFilter', '')">All</a></li>
                                 @foreach ($statuses as $status)
-                                    <li><a class="dropdown-item"
-                                            wire:click="$set('statusFilter', '{{ $status->name }}')">{{ $status->name }}</a>
+                                    <li>
+                                        <a class="dropdown-item" wire:click="$set('statusFilter', '{{ $status->name }}')">
+                                            {{ $status->name }}
+                                        </a>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
+
+                        <!-- Team Filter -->
                         <div class="btn-group">
-                            <button type="button" class="btn btn-secondary dropdown-toggle"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Teams : {{ $teamFilter ?: 'All' }}
+                            <button type="button" class="btn btn-dark btn-wave dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Teams: {{ $teamFilter ?: 'All' }}
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" wire:click="$set('teamFilter', '')">All</a></li>
                                 @foreach ($teams as $team)
-                                    <li><a class="dropdown-item"
-                                            wire:click="$set('teamFilter', '{{ $team->name }}')">{{ $team->name }}</a>
+                                    <li>
+                                        <a class="dropdown-item" wire:click="$set('teamFilter', '{{ $team->name }}')">
+                                            {{ $team->name }}
+                                        </a>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
+
+                        <!-- Per Page Filter -->
                         <div class="btn-group">
-                            <button type="button" class="btn btn-outline-secondary dropdown-toggle"
-                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-dark btn-wave dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 Per Page: {{ $perPage }}
                             </button>
                             <ul class="dropdown-menu">
                                 @foreach ([2, 5, 10, 20] as $size)
-                                    <li><a class="dropdown-item" href="#"
-                                            wire:click.prevent="updatePerPage({{ $size }})">{{ $size }}</a>
+                                    <li>
+                                        <a class="dropdown-item" href="#" wire:click.prevent="updatePerPage({{ $size }})">
+                                            {{ $size }}
+                                        </a>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
                     </div>
-                    <!-- Search Input -->
-                    <div class="d-flex align-items-center">
-                        <div class="col-auto">
-                            <input wire:model.live="search" type="text" id="search" class="form-control"
-                                placeholder="Search">
+
+                    <!-- Search and Filters Row -->
+                    <div class="row mt-3">
+                        <div class="col-md-9 d-flex gap-3">
+                            <!-- Search Input -->
+                            <div>
+                                <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
+                            </div>
+
+                            <!-- Date Filters -->
+                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                <label for="" class="text-white">Start</label>
+                                <input wire:model.live="startDate" type="date" class="form-control">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                <label for="" class="text-white">End</label>
+                                <input wire:model.live="endDate" type="date" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- Reset Filters -->
+                        <div class="col-md-3 d-flex justify-content-end">
+                            <button wire:click="resetFilters" class="btn btn-danger">
+                                <i class="bi bi-arrow-clockwise"></i> Reset Filters
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        
+        
         <div class="container mb-5">
             <div class="row">
                 <div class="col-xl-12">
@@ -321,12 +360,10 @@
                                             <th class="fw-bold">Action</th>
                                             <th class="fw-bold">Reference Id</th>
                                             <th class="fw-bold">Customer</th>
-                                            <th class="fw-bold">Lead Source</th>
-                                            <th class="fw-bold">Assigned Agent</th>
-                                            <th class="fw-bold">Team</th>
-                                            <th class="fw-bold">Capture Date</th>
-                                            <th class="fw-bold">Next Follow Up Date</th>
                                             <th class="fw-bold">Status</th>
+                                            <th class="fw-bold">Assigned Agent</th>
+                                            <th class="fw-bold">Expected Month</th>
+                                            <th class="fw-bold">Next Follow Up Date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -334,7 +371,7 @@
                                             <tr>
                                                 <td><a class="btn btn-sm btn-info"
                                                         href="{{ route('leads.edit', $lead->id) }}"><i
-                                                            class="ri-eye-2-line"></i> View Lead</a>
+                                                            class="ri-eye-2-line"></i></a>
                                                     <button class="btn btn-link text-danger fs-14 lh-1 p-0"
                                                         data-bs-toggle="modal" data-bs-target="#deleteSegmentModal"
                                                         wire:click="confirmDelete({{ $lead->id }})">
@@ -371,22 +408,25 @@
                                                         
                                                 </td>
                                                 <td>{{ $lead->reference_id }}</td>
-                                                <td>{{ $lead->customer->name }}</td>
-                                                <td>{{ $lead->leadSource->name }}</td>
-                                                <td>{{ $lead->assignedAgent->name }}</td>
+                                                <td>{{ \Illuminate\Support\Str::limit($lead->customer->name, 10) }}</td>
                                                 <td>
+                                                    <span class="badge"
+                                                    style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">
+                                                    {{ $lead->leadStatus->name ?? 'N/A' }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ $lead->assignedAgent->name  }}</td>
+                                                {{-- <td>
                                                     @foreach ($lead->assignedAgent->teams as $index => $team)
                                                         <span class="badge bg-secondary ">{{ $team->name }}</span>
                                                         @if (($index + 1) % 3 == 0)
                                                             <br>
                                                         @endif
                                                     @endforeach
-                                                </td>
-                                                <td>{{ $lead->created_at->format('Y-m-d') }}</td>
+                                                </td> --}}
+                                                <td>{{ $lead->expected_date }}</td>
                                                 <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>
-                                                <td><span class="badge"
-                                                        style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span>
-                                                </td>
+                                                
                                             </tr>
                                             @empty
                                             <tr>

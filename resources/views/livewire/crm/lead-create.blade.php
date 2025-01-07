@@ -283,7 +283,7 @@
                 @enderror
             </div>
             @if ($showContractOptions)
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <label for="contractor_ids" class="fw-semibold">Select Contractors</label>
                     <select id="contractor_ids" class="form-control" wire:model="contractor_ids" multiple>
                         @foreach ($contractors as $contractor)
@@ -295,7 +295,54 @@
                     @error('contractor_ids')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
+                </div> --}}
+                <div class="col-md-4">
+                    <div class="col-md-12">
+                        <h4 class="text-secondary"><i class="ri-contacts-line"></i> Select Contractors</h4>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-secondary">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Contractor</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($contractor_ids as $index => $contractorId)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>
+                                                <select wire:model="contractor_ids.{{ $index }}" class="form-control">
+                                                    <option value="">Select Contractor</option>
+                                                     @foreach ($contractors as $contractor)
+                                                        <option value="{{ $contractor->id }}" {{ $contractor->id == $contractorId ? 'selected' : '' }}>
+                                                            {{ $contractor->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error("contractor_ids.{$index}") 
+                                                    <span class="text-danger">{{ $message }}</span> 
+                                                @enderror
+                                            </td>
+                                            <td>
+                                                <button type="button" wire:click.prevent="removeContractor({{ $index }})" class="btn btn-danger btn-sm">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" wire:click.prevent="addContractor" class="btn btn-info btn-sm mt-2">
+                            <i class="ri-add-line"></i> Add Contractor
+                        </button>
+                    </div>
                 </div>
+                
+                
+
             @endif
 
             <div class="col-md-6 mb-3">
@@ -329,10 +376,22 @@
                 <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-secondary btn-sm me-2"><i class="ri-add-circle-line"></i> Create
-                Lead</button>
-            <a href="{{ route('leads.index') }}" class="btn btn-danger btn-sm">Cancel</a>
+        <div class="d-flex justify-content-between">
+            <div class="col-sm-3">
+                <label for="assigned_to" class="form-label fw-semibold">Assign to Agent</label>
+                <select wire:model="assigned_to" id="assigned_to" class="form-select form-select-sm">
+                    <option value="">Select an Agent</option>
+                    @foreach($teamAgents as $agent)
+                        <option value="{{ $agent->id }}">{{ $agent->name }}</option>
+                    @endforeach
+                </select>
+                @error('assigned_to') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <button type="submit" class="btn btn-secondary btn-sm me-2"><i class="ri-add-circle-line"></i> Create
+                    Lead</button>
+                <a href="{{ route('leads.index') }}" class="btn btn-danger btn-sm">Cancel</a>
+            </div>
         </div>
     </form>
 </div>
