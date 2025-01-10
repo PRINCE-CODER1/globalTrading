@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo; // Import BelongsTo relation
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LeadLog extends Model
 {
@@ -47,8 +47,28 @@ class LeadLog extends Model
             'lead_updated' => 'Lead Updated',
             'lead_reassigned' => 'Lead Reassigned',
             'lead_deleted' => 'Lead Deleted',
+            'lead_assigned' => 'Lead Assigned',
         ];
 
         return $types[$value] ?? 'Unknown';
     }
+
+    public function getColorClass(): string
+    {
+        $logTypeColors = [
+            'lead_assigned' => 'text-success',
+            'lead_updated' => 'text-primary',
+            'lead_closed' => 'text-danger',
+            'lead_deleted' => 'text-warning',
+            'lead_created' => 'text-info',
+            'lead_reassigned' => 'text-secondary',
+        ];
+
+        $normalizedLogType = strtolower(trim($this->log_type));
+
+        return $logTypeColors[$normalizedLogType] ?? 'text-muted';
+    }
+
+
+
 }

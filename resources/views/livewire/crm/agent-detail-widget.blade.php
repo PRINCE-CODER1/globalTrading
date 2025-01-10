@@ -32,7 +32,13 @@
                                     <div class="me-2 fw-medium">
                                         Total Leads :
                                     </div>
-                                    <span class="fs-12 text-muted">{{ $agent->leads()->where('assigned_to', $agent->id)->count() }}</span>
+                                    <span class="fs-12 text-muted">
+                                        {{ $agent->leads()
+                                        ->where('assigned_to', $agent->id)
+                                        ->orWhereHas('assignedAgent', function($query) use ($agent) {
+                                            $query->where('id', $agent->id);
+                                        })
+                                        ->count() }}</span>
                                 </div>
                             </li>
                         </ul>

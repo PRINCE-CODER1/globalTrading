@@ -9516,8 +9516,8 @@
     overflow: hidden;
 }
 .form-select option:checked {
-    background-color: #45D65B;
-    margin-bottom:10px;
+    background-color: #45d65b;
+    margin-bottom: 10px;
     color: white;
 }
 .form-check-input {
@@ -21934,12 +21934,12 @@ code[class*="language-"] {
 .app-sidebar .side-menu__item.active .side-menu__angle,
 .app-sidebar .side-menu__item:hover .side-menu__label,
 .app-sidebar .side-menu__item:hover .side-menu__angle {
-    color: var(--primary-color);
+    color: rgb(var(--secondary-rgb)) !important;
 }
 .app-sidebar .side-menu__item.active .side-menu__icon,
 .app-sidebar .side-menu__item:hover .side-menu__icon {
-    fill: var(--primary-color);
-    color: var(--primary-color);
+    fill: rgb(var(--secondary-rgb)) !important;
+    color: rgb(var(--secondary-rgb)) !important;
 }
 .app-sidebar .side-menu__item.active {
     font-weight: 400;
@@ -21948,11 +21948,13 @@ code[class*="language-"] {
 .app-sidebar .slide-menu.child2 .side-menu__item,
 .app-sidebar .slide-menu.child3 .side-menu__item {
     background-color: transparent !important;
+    color: var(--menu-prime-color);
 }
 .app-sidebar .slide-menu.child1 .side-menu__item.active,
 .app-sidebar .slide-menu.child2 .side-menu__item.active,
 .app-sidebar .slide-menu.child3 .side-menu__item.active {
     background-color: transparent !important;
+    color: rgb(var(--secondary-rgb)) !important;
 }
 .app-sidebar .slide-menu {
     padding: 0rem;

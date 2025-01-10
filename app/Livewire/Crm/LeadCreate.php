@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Lead;
 use App\Models\LeadStatus;
 use App\Models\LeadSource;
+use App\Models\LeadLog;
 use App\Models\LeadType;
 use App\Models\Segment;
 use App\Models\CustomerSupplier;
@@ -159,12 +160,13 @@ class LeadCreate extends Component
         $currentYear = date('Y');
         $currentMonth = date('M');
 
-        // Fetch the selected sub-segment abbreviation (if needed, but not for number calculation)
+        // Fetch the selected sub-segment abbreviation
         $subSegment = Segment::find($this->sub_segment_id); // Assuming this is the ID of the sub-segment you just saved
         $subSegmentAbbreviation = $subSegment ? $subSegment->abbreviation : 'SSG';
 
-        // Find the last lead to determine the next reference number (ignore sub-segment for number incrementation)
-        $lastLead = Lead::where('reference_id', 'like', "GTE/$currentYear/%")
+        // Find the last lead (including soft-deleted ones) to determine the next reference number
+        $lastLead = Lead::withTrashed() // Include soft-deleted records
+            ->where('reference_id', 'like', "GTE/$currentYear/%")
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -180,8 +182,9 @@ class LeadCreate extends Component
         $formattedNumber = str_pad($number, 3, '0', STR_PAD_LEFT);
 
         // Return the formatted reference ID using the current year, sub-segment abbreviation, and incremented number
-        return sprintf('GTE/%d/%s/%s/%03d', $currentYear, $currentMonth, $subSegmentAbbreviation, $formattedNumber);
+        return sprintf('GTE/%d/%s/%s/%s', $currentYear, $currentMonth, $subSegmentAbbreviation, $formattedNumber);
     }
+
 
 
     // Handle updates to category and child category selections
@@ -208,6 +211,17 @@ class LeadCreate extends Component
         // Toggle visibility of contractor selection based on lead type
         $projectTypeId = LeadType::where('name', 'Project')->value('id');
         $this->showContractOptions = $leadTypeId == $projectTypeId;
+    }
+    public function logLeadAction($lead, $logType, $details = null, $assignedTo = null)
+    {
+        // Log lead action
+        LeadLog::create([
+            'lead_id' => $lead->id,
+            'id_from' => auth()->id(), 
+            'id_to' => $assignedTo ?? null,
+            'log_type' => $logType,
+            'details' => $details,
+        ]);
     }
 
     public function submit()
@@ -262,6 +276,12 @@ class LeadCreate extends Component
             'assigned_to' => $this->assigned_to, 
             'user_id' => auth()->id(),
         ]);
+
+        // // Log lead creation
+        // $this->logLeadAction($lead, 'lead_created', 'Lead created successfully.');
+        // Example: Log lead creation with HTML in the message
+        $this->logLeadAction($lead, 'lead_created', '<strong class="text-secondary">Lead created successfully.</strong>');
+
 
         if ($this->remark) {
             Remark::create([

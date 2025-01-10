@@ -145,27 +145,71 @@ class LeadList extends Component
         $this->leadIdToDelete = $id;
     }
 
-    public function deleteConfirmed()
-    {
-        if ($this->leadIdToDelete) {
-            Lead::find($this->leadIdToDelete)->delete();
+    protected function logLeadAction($lead, $logType, $details)
+{
+    // Check if the lead exists before inserting the log
+    if ($lead) {
+        \App\Models\LeadLog::create([
+            'lead_id' => $lead->id,
+            'id_from' => auth()->id(),
+            'id_to' => $lead->assigned_to ?? null,
+            'log_type' => $logType,
+            'details' => $details,
+        ]);
+    } else {
+        toastr()->error("Lead with ID {$lead->id} does not exist.");
+    }
+}
+
+public function deleteConfirmed()
+{
+    if ($this->leadIdToDelete) {
+        $lead = Lead::find($this->leadIdToDelete);
+        if ($lead) {
+            // Log the action before deleting the lead
+            $this->logLeadAction(
+                $lead,
+                'lead_deleted',
+                "<strong class='text-danger'>Lead with ID {$lead->id} and customer {$lead->Customer->name} was deleted by </strong>" . auth()->user()->name
+            );
+
+            // Now delete the lead
+            $lead->delete();
             toastr()->closeButton(true)->success('Lead Deleted Successfully');
-            $this->leadIdToDelete = null;
+        } else {
+            toastr()->error('Lead not found.');
         }
-
-        $this->resetPage();
+        $this->leadIdToDelete = null;
     }
 
-    public function bulkDelete()
-    {
-        if (!empty($this->selectedLeads)) {
-            Lead::whereIn('id', $this->selectedLeads)->delete();
-            $this->selectedLeads = [];
-            toastr()->closeButton(true)->success('Leads Deleted Successfully');
+    $this->resetPage();
+}
+
+public function bulkDelete()
+{
+    if (!empty($this->selectedLeads)) {
+        $leads = Lead::whereIn('id', $this->selectedLeads)->get();
+        
+        foreach ($leads as $lead) {
+            if ($lead) {
+                // Log the action before deleting the lead
+                $this->logLeadAction(
+                    $lead,
+                    'lead_deleted',
+                    "<strong class='text-danger'>Lead with ID {$lead->id} and customer {$lead->Customer->name} was deleted by </strong>" . auth()->user()->name
+                );
+            }
         }
 
-        $this->resetPage();
+        // Proceed to delete the leads after logging
+        Lead::whereIn('id', $this->selectedLeads)->delete();
+        $this->selectedLeads = [];
+        toastr()->closeButton(true)->success('Leads Deleted Successfully');
     }
+
+    $this->resetPage();
+}
+
 
     public function setSortBy($sortByField)
     {

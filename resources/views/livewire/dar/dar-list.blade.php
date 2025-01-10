@@ -210,16 +210,18 @@
     <div class="container">
         @if($user->hasRole('Manager') && $team->isNotEmpty())
         <div class="team-info mb-5">
-            <h3 class=" mb-1">Manager's Teams</h3>
-            <p class="text-danger">Note: Check Reports of Agents</p>
+            <h3 class=" mb-1"><b>Manager's <span class="text-secondary">Teams</span></b></h3>
+            <p class="bg-danger d-inline-block rounded-sm p-1 mb-4 text-white fw-semibold">
+                <i class="ri-alert-line"></i> Note: Check Reports of Agents
+            </p>
             <div class="">
                 <div class="d-flex flex-wrap justify-content-start gap-3">
                     @foreach($team as $teamItem)
                         <div class="col-md-5">
                             <div class="card mb-4">
-                                <div class="p-2 d-flex justify-content-between align-items-center">
-                                    <h4 class="mb-3">Team: {{ $teamItem->name }}</h4>
-                                    <p><strong>Creator:</strong> {{ $teamItem->creator->name }}</p>
+                                <div class="p-2 bg-secondary d-flex justify-content-between align-items-center">
+                                    <h4 class="mb-0 text-white">Team: {{ $teamItem->name }}</h4>
+                                    <p class="mb-0 text-white"><strong>Creator:</strong> {{ $teamItem->creator->name }}</p>
                                 </div>
                                 <div class="card-body">
                                     <h5>Agents in this Team:</h5>

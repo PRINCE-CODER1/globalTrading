@@ -11,6 +11,10 @@ use App\Models\LeadStatus;
 use App\Models\User;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LeadsExport;
+
+
 
 class CrmDashboard extends Component
 {
@@ -43,6 +47,52 @@ class CrmDashboard extends Component
     {
         $this->resetPage();
     }
+    protected function logLeadAction($lead, $logType, $details)
+    {
+        // Check if the lead exists before inserting the log
+        if ($lead) {
+            \App\Models\LeadLog::create([
+                'lead_id' => $lead->id,
+                'id_from' => auth()->id(),
+                'id_to' => $lead->assigned_to ?? null,
+                'log_type' => $logType,
+                'details' => $details,
+            ]);
+        } else {
+            toastr()->error("Lead with ID {$lead->id} does not exist.");
+        }
+    }
+
+    public function exportLeads($type = 'xlsx')
+    {
+        $filteredLeads = Lead::with(['customer', 'leadStatus', 'assignedAgent', 'leadSource', 'remarks'])
+            ->when($this->teamFilter, function ($query) {
+                $query->whereHas('assignedAgent.teams', function ($q) {
+                    $q->where('name', 'like', '%' . $this->teamFilter . '%');
+                });
+            })
+            ->when($this->statusFilter, function ($query) {
+                $query->whereHas('leadStatus', function ($q) {
+                    $q->where('name', $this->statusFilter);
+                });
+            })
+            ->when($this->startDate && $this->endDate, function ($query) {
+                $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
+            })
+            ->get();
+            
+
+        $date = now()->format('Y_m_d');
+
+        if ($type === 'xlsx') {
+            return Excel::download(new LeadsExport($filteredLeads), "lead_report_{$date}.xlsx");
+        } elseif ($type === 'csv') {
+            return Excel::download(new LeadsExport($filteredLeads), "lead_report_{$date}.csv");
+        } else {
+            return redirect()->back()->with('error', 'Invalid file type selected.');
+        }
+    }
+
 
     public function render()
     {
@@ -90,7 +140,9 @@ class CrmDashboard extends Component
                 ->paginate($this->perPage);
 
         // Recent lead logs
-        $leadLogs = LeadLog::with(['lead', 'fromUser', 'toUser'])
+        $leadLogs = LeadLog::with(['lead' => function ($query) {
+            $query->withTrashed();
+        }, 'fromUser', 'toUser'])
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
@@ -99,10 +151,19 @@ class CrmDashboard extends Component
         $statuses = LeadStatus::all();
 
         // Count open leads globally (new + in progress)
-        $openLeads = Lead::whereIn('lead_status_id', LeadStatus::whereIn('name', ['new', 'in progress'])->pluck('id'))->count();
+        $openLeads = Lead::whereIn('lead_status_id', LeadStatus::where('category', 'open')->pluck('id'))->count();
 
         // Count closed leads globally (completed + lost)
-        $closedLeads = Lead::whereIn('lead_status_id', LeadStatus::whereIn('name', ['completed', 'lost'])->pluck('id'))->count();
+        $closedLeads = Lead::whereIn('lead_status_id', LeadStatus::whereIn('category', ['closed', 'completed'])->pluck('id'))->count();
+
+        // Count lost leads globally (lost)
+        $lostLeads = Lead::whereIn('lead_status_id', LeadStatus::where('category', 'lost')->pluck('id'))->count();
+
+        $leadCreationData = Lead::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+        ->groupByRaw('MONTH(created_at)')
+        ->orderBy('month')
+        ->get()
+        ->pluck('total', 'month');
 
         // Leads created per day for the last 30 days
         $leadsPerDay = Lead::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
@@ -126,7 +187,7 @@ class CrmDashboard extends Component
             ->get();
 
         return view('livewire.crm.crm-dashboard', compact('teams','totalTeams','teamsCountByUser',
-            'leadsPerDay', 'openLeads', 'closedLeads', 'leads', 'users', 
+            'leadsPerDay', 'openLeads', 'closedLeads','lostLeads','leadCreationData', 'leads', 'users', 
             'leadLogs', 'statuses', 'totalLeads', 'currentLeads', 
             'percentageChange', 'remarks', 'leadStatusCounts'
         ));
@@ -152,22 +213,61 @@ class CrmDashboard extends Component
     public function deleteConfirmed()
     {
         if ($this->leadIdToDelete) {
-            Lead::find($this->leadIdToDelete)->delete();
-            toastr()->closeButton(true)->success('Lead Deleted Successfully');
+            // Find the lead before deletion
+            $lead = Lead::find($this->leadIdToDelete);
+
+            if ($lead) {
+                // Log the lead deletion
+                $this->logLeadAction(
+                    $lead,
+                    'lead_deleted',
+                    "<strong class='text-danger'>Lead with ID {$lead->id} and customer {$lead->Customer->name} was deleted by </strong>" . auth()->user()->name
+                );
+    
+
+                // Delete the lead
+                $lead->delete();
+
+                toastr()->closeButton(true)->success('Lead Deleted Successfully');
+            } else {
+                toastr()->error('Lead not found or already deleted.');
+            }
+
             $this->leadIdToDelete = null;
         }
 
         $this->resetPage();
     }
 
+
     public function bulkDelete()
     {
         if (!empty($this->selectedLeads)) {
-            Lead::whereIn('id', $this->selectedLeads)->delete();
+            // Fetch all selected leads
+            $leads = Lead::whereIn('id', $this->selectedLeads)->get();
+
+            foreach ($leads as $lead) {
+                // Log the lead deletion for each lead
+                $this->logLeadAction(
+                    $lead,
+                    'lead_deleted',
+                    "<strong class='text-danger'>Lead with ID {$lead->id} and customer {$lead->Customer->name} was deleted by </strong>" . auth()->user()->name
+                );
+    
+
+                // Delete the lead
+                $lead->delete();
+            }
+
+            // Clear selected leads
             $this->selectedLeads = [];
-            toastr()->closeButton(true)->success('Leads Deleted Successfully');
+
+            toastr()->closeButton(true)->success('Selected Leads Deleted Successfully');
+        } else {
+            toastr()->warning('No leads selected for deletion.');
         }
 
         $this->resetPage();
     }
+
 }

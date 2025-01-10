@@ -84,6 +84,23 @@
                 </div>
             </div>
             <div class="col-md-3">
+                <div class="card custom-card card-bg-danger text-fixed-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-top mb-2">
+                            <div class="flex-fill">
+                                <p class="mb-0 op-7">Lost Leads</p>
+                            </div>
+                            <div class="ms-2">
+                                <span class="avatar avatar-md bg-white shadow-sm fs-18">
+                                    <i class="text-dark bi bi-x-square"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <span class="fs-5 fw-medium">{{ $lostLeads }}</span>
+                    </div>
+                </div>
+            </div>  
+            <div class="col-md-3">
                 <div class="card custom-card card-bg-white text-fixed-white">
                     <div class="card-body">
                         <div class="d-flex align-items-top mb-2">
@@ -125,23 +142,23 @@
         </div>
     </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-               <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Make your <span class="text-secondary">Lead</span> here</h5>
-                        <a href="{{ route('leads.create') }}" class="btn btn-secondary"><i
-                            class="ri-add-circle-line"></i>
-                            Create Lead
-                        </a>
-                    </div>
-               </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Make your <span class="text-secondary">Lead</span> here</h5>
+                            <a href="{{ route('leads.create') }}" class="btn btn-secondary"><i
+                                class="ri-add-circle-line"></i>
+                                Create Lead
+                            </a>
+                        </div>
+                </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <div class="container">
         <div class="row mt-4">
@@ -174,7 +191,13 @@
                                                 </td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>
-                                                    {{ $user->leads()->where('assigned_to', $user->id)->count() }}
+                                                    <!-- Count leads assigned to or created by the admin -->
+                                                    {{ $user->leads()
+                                                        ->where('assigned_to', $user->id)
+                                                        ->orWhereHas('assignedAgent', function($query) use ($user) {
+                                                            $query->where('id', $user->id);
+                                                        })
+                                                        ->count() }}
                                                 </td>
                                                 <td>
                                                     @php
@@ -244,6 +267,51 @@
                     </div>
                 </div>
             </div>
+            <!-- Admin Table -->
+            <div class="col-xl-6">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <h3 class="fw-bold">Admin</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table text-nowrap table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="fw-bold">Name</th>
+                                        <th class="fw-bold">Email</th>
+                                        <th class="fw-bold">Total Leads</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($users as $user)
+                                        @if ($user->hasRole('Admin'))
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ route('lead.agent', $user->id) }}" class="text-decoration-none text-dark">
+                                                        {{ $user->name }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ $user->email }}</td>
+                                                <td>
+                                                    <!-- Count leads assigned to or created by the admin -->
+                                                    {{ $user->leads()
+                                                        ->where('assigned_to', $user->id)
+                                                        ->orWhereHas('assignedAgent', function($query) use ($user) {
+                                                            $query->where('id', $user->id);
+                                                        })
+                                                        ->count() }}
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -262,12 +330,11 @@
         <!-- Lead Filters Section -->
         <div class="container my-4">
             <div class="card shadow-sm rounded bg-secondary">
-                <div class="card-body">
-                    <!-- Filters Row -->
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="card-body d-flex flex-wrap align-items-center justify-content-between">
+                    <div class="d-flex flex-wrap align-items-center justify-content-start gap-3">
                         <!-- Status Filter -->
                         <div class="btn-group">
-                            <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-dark dropdown-toggle fw-bold" data-bs-toggle="dropdown" aria-expanded="false">
                                 Filter: {{ $statusFilter ?: 'All' }}
                             </button>
                             <ul class="dropdown-menu">
@@ -281,10 +348,10 @@
                                 @endforeach
                             </ul>
                         </div>
-
+    
                         <!-- Team Filter -->
                         <div class="btn-group">
-                            <button type="button" class="btn btn-dark btn-wave dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-dark btn-wave dropdown-toggle fw-bold" data-bs-toggle="dropdown" aria-expanded="false">
                                 Teams: {{ $teamFilter ?: 'All' }}
                             </button>
                             <ul class="dropdown-menu">
@@ -298,10 +365,10 @@
                                 @endforeach
                             </ul>
                         </div>
-
+    
                         <!-- Per Page Filter -->
                         <div class="btn-group">
-                            <button type="button" class="btn btn-dark btn-wave dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-dark btn-wave dropdown-toggle fw-bold" data-bs-toggle="dropdown" aria-expanded="false">
                                 Per Page: {{ $perPage }}
                             </button>
                             <ul class="dropdown-menu">
@@ -315,39 +382,62 @@
                             </ul>
                         </div>
                     </div>
-
-                    <!-- Search and Filters Row -->
-                    <div class="row mt-3">
-                        <div class="col-md-9 d-flex gap-3">
-                            <!-- Search Input -->
-                            <div>
-                                <input wire:model.live="search" type="text" id="search" class="form-control" placeholder="Search">
-                            </div>
-
-                            <!-- Date Filters -->
-                            <div class="d-flex justify-content-center align-items-center gap-2">
-                                <label for="" class="text-white">Start</label>
-                                <input wire:model.live="startDate" type="date" class="form-control">
-                            </div>
-                            <div class="d-flex justify-content-center align-items-center gap-2">
-                                <label for="" class="text-white">End</label>
-                                <input wire:model.live="endDate" type="date" class="form-control">
-                            </div>
+                   <!-- Export Lead -->
+                    <div class="d-flex justify-content-between gap-3 mb-1 position-relative align-items-center">
+                        <!-- Export as Excel -->
+                        <button 
+                            wire:click="exportLeads('xlsx')" 
+                            wire:loading.attr="disabled" 
+                            class="btn btn-dark btn-wave fw-bold d-flex align-items-center">
+                            <i class="ri-file-excel-2-line me-1"></i> Export as Excel
+                        </button>
+                        
+                        <!-- Export as CSV -->
+                        <button 
+                            wire:click="exportLeads('csv')" 
+                            wire:loading.attr="disabled" 
+                            class="btn btn-dark btn-wave fw-bold d-flex align-items-center">
+                            <i class="ri-export-line me-1"></i> Export as CSV
+                        </button>
+                        
+                        <!-- Loading Spinner -->
+                        <div wire:loading class="spinner-border text-dark ms-2" role="status" style="width: 1.5rem; height: 1.5rem;">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-
-                        <!-- Reset Filters -->
-                        <div class="col-md-3 d-flex justify-content-end">
-                            <button wire:click="resetFilters" class="btn btn-danger">
-                                <i class="bi bi-arrow-clockwise"></i> Reset Filters
-                            </button>
+                    </div>
+    
+    
+    
+                    {{-- Search and Filters Row --}}
+                    <div class="col-md-12 mt-3">
+                        <div class=" d-flex align-items-center justify-content-between">
+                            <div class="d-flex gap-3 ">
+                                <!-- Search Input -->
+                                <div>
+                                    <input wire:model.live="search" type="text" id="search" class="form-control fw-bold" placeholder="Search">
+                                </div>
+                                <!-- Date Filters -->
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <label for="" class="text-white fw-bold">Start</label>
+                                    <input wire:model.live="startDate" type="date" class="form-control fw-bold">
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <label for="" class="text-white fw-bold">End</label>
+                                    <input wire:model.live="endDate" type="date" class="form-control fw-bold">
+                                </div>
+                            </div>
+                            {{-- Reset Filters --}}
+                            <div class="d-flex justify-content-end">
+                                <button wire:click="resetFilters" class="btn btn-danger fw-bold">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset Filters
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        
-        
+        </div>   
+           
         <div class="container mb-5">
             <div class="row">
                 <div class="col-xl-12">
@@ -416,14 +506,6 @@
                                                     </span>
                                                 </td>
                                                 <td>{{ $lead->assignedAgent->name  }}</td>
-                                                {{-- <td>
-                                                    @foreach ($lead->assignedAgent->teams as $index => $team)
-                                                        <span class="badge bg-secondary ">{{ $team->name }}</span>
-                                                        @if (($index + 1) % 3 == 0)
-                                                            <br>
-                                                        @endif
-                                                    @endforeach
-                                                </td> --}}
                                                 <td>{{ $lead->expected_date }}</td>
                                                 <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>
                                                 
@@ -453,16 +535,18 @@
             <div class="col-md-6">
                 <h3 class="fw-bold">Leads Created Per Day <span class="text-secondary">(Last 30 Days)</span></h3>
                 <hr>
-                <canvas id="leadsChart"></canvas>
+                <div class="d-flex justify-content-center align-items-center" style="height: 400px">
+                    <canvas id="leadsChart"  style="height: 100%"></canvas>
+                </div>
             </div>
             <div class="col-md-6">
                 <h3 class="fw-bold">Lead Status <span class="text-secondary">Distribution</span></h3>
                 <hr>
-                <div style="height:300px">
-                    <div class="d-flex justify-content-center" style="max-height:100%">
-                        <canvas id="leadStatusCh"></canvas>
-                    </div>
-                </div>
+                <div class="d-flex justify-content-center align-items-center" style="max-height: 400px">
+                    {{-- <canvas id="leadStatusCh" style="height: 100%"></canvas> --}}
+                    <canvas id="leadStatusChart" style="height:100%;"></canvas>
+
+                </div>   
             </div>
         </div>
     </div>
@@ -503,40 +587,59 @@
     <div class="container mb-5">
         <div class="row">
             <!-- Lead Activity Section -->
-            <div class="col-md-5">
+            <div class="col-md-7">
                 <div class="mt-5">
                     <h4 class="mb-4 fw-bold">Leads Created</h4>
                     <hr>
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                @foreach ($leadLogs as $log)
-                                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <strong>{{ $log->fromUser->name }}</strong>
-                                            @if ($log->id_to)
-                                                <span class="text-success">reassigned lead to
-                                                    <strong>{{ $log->toUser->name }}</strong></span>
-                                            @else
-                                                <span
-                                                    class="text-muted">{{ str_replace('_', ' ', $log->log_type) }}</span>
-                                            @endif
-                                        </div>
-                                        <small
-                                            class="text-muted">{{ $log->created_at->format('Y-m-d H:i:s') }}</small>
-                                    </li>
-                                @endforeach
-                            </ul>
+                </div>
+                <div class="card shadow">
+                    <div class=" bg-secondary  d-flex justify-content-between align-items-center  p-3">
+                        <h5 class="mb-0 text-white">Lead Log</h5>
+                        <a href="{{ route('leads.index') }}" class="btn btn-sm btn-dark">Back to Leads</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="fw-bold">Lead ID</th>
+                                        <th class="fw-bold">Performed By</th>
+                                        <th class="fw-bold">Performed On</th>
+                                        <th class="fw-bold">Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($leadLogs as $log)
+                                        <tr>
+                                            <td>{{ $log->lead->reference_id ?? 'N/A' }}</td>
+                                            
+                                            <td>
+                                                {{ $log->fromUser->name ?? 'System' }}
+                                            </td>
+                                            <td>
+                                                {{ $log->created_at->format('d M Y, h:i A') }}
+                                            </td>
+                                            <td>
+                                                {!! $log->details !!}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center">No logs available for this lead.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="mt-5" style="height:400px">
+            <div class="col-md-5">
+                <div class="mt-5" >
                     <h4 class="mb-4 fw-bold">Lead Creation Graph</h4>
                     <hr>
-                    <div class="d-flex justify-content-center" style="height:400px">
-                        <canvas id="leadStatusChart"></canvas>
+                    <div class="d-flex justify-content-center" style="max-height: 400px">
+                        <canvas id="leadCreationChart" style="height:100%;"></canvas>
                     </div>
                 </div>
             </div>
@@ -596,103 +699,87 @@
             });
         });
     </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('leadStatusChart').getContext('2d');
 
-            const statusCounts = @json($leadStatusCounts); // Your PHP data
-            const statusNames = @json($statuses); // Your PHP data
+        // Lead Creation Graph (Bar chart)
+        var ctx2 = document.getElementById('leadCreationChart').getContext('2d');
+        var leadCreationData = @json($leadCreationData);
+        var months = Object.keys(leadCreationData).map(month => {
+            return new Date(0, month - 1).toLocaleString('en-US', { month: 'short' });
+        });
+        var leadCounts = Object.values(leadCreationData);
 
-            // Prepare data for the chart
-            const dataValues = Object.values(statusCounts);
-            const labels = Object.keys(statusCounts).map((statusId) => {
-                const foundStatus = statusNames.find(status => status.id == statusId); // Match status ID
-                return foundStatus ? foundStatus.name : statusId; // Return name if found, else return ID
-            });
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Leads Created',
+                    data: leadCounts,
+                    backgroundColor: '#45d65b',
+                    borderColor: '#45d65b',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw + ' leads';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { beginAtZero: true },
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+        });
+    </script>
 
-            // Define an array of 15 custom colors
-            const customColors = [
-                'rgba(76, 175, 80, 0.7)', // Green
-                'rgba(244, 67, 54, 0.7)', // Red
-                'rgba(255, 152, 0, 0.7)', // Orange
-                'rgba(33, 150, 243, 0.7)', // Blue
-                'rgba(156, 39, 176, 0.7)', // Purple
-                'rgba(255, 193, 7, 0.7)', // Yellow
-                'rgba(0, 150, 136, 0.7)', // Teal
-                'rgba(158, 158, 158, 0.7)', // Grey
-                'rgba(255, 87, 34, 0.7)', // Deep Orange
-                'rgba(63, 81, 181, 0.7)', // Indigo
-                'rgba(76, 175, 80, 0.7)', // Light Green
-                'rgba(244, 67, 54, 0.7)', // Deep Red
-                'rgba(0, 188, 212, 0.7)', // Cyan
-                'rgba(121, 85, 72, 0.7)', // Brown
-                'rgba(96, 125, 139, 0.7)', // Blue Grey
-                'rgba(255, 235, 59, 0.7)' // Lime
-            ];
-
-            // Generate background and border colors based on the number of labels
-            const backgroundColors = labels.map((_, index) => customColors[index % customColors.length]);
-            const borderColors = labels.map((_, index) => customColors[index % customColors.length]);
-
-            const leadStatusChart = new Chart(ctx, {
-                type: 'pie', // Or any other type
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('leadStatusChart').getContext('2d');
+            
+            // Lead counts passed from the controller
+            var openLeads = @json($openLeads);
+            var closedLeads = @json($closedLeads);
+            var lostLeads = @json($lostLeads);
+    
+            var leadStatusChart = new Chart(ctx, {
+                type: 'pie', // Pie chart type
                 data: {
-                    labels: labels, // This will now contain the names
+                    labels: ['Open Leads', 'Closed Leads', 'Lost Leads'],
                     datasets: [{
-                        label: 'Lead Status',
-                        data: dataValues,
-                        backgroundColor: backgroundColors,
-                        borderColor: borderColors,
-                        borderWidth: 1
+                        label: 'Lead Statuses',
+                        data: [openLeads, closedLeads, lostLeads],
+                        backgroundColor: ['#45D65B', '#F39C12', '#E74C3C'], // Colors for each section
+                        hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: {
                         legend: {
-                            display: true,
                             position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw + ' leads';
+                                }
+                            }
                         }
                     }
                 }
             });
         });
     </script>
-
-    <script>
-        const ctx = document.getElementById('leadStatusCh').getContext('2d');
-        const leadStatusData = {
-            labels: ['Open', 'Closed', 'Follow-up', 'Lost'], // Replace with dynamic data
-            datasets: [{
-                label: 'Lead Status Distribution',
-                data: [12, 19, 3, 5], // Replace with dynamic counts
-                backgroundColor: [
-                    '#4CAF50', // Green for Open
-                    '#F44336', // Red for Closed
-                    '#FF9800', // Orange for Follow-up
-                    '#2196F3', // Blue for Lost
-                ],
-                borderWidth: 1
-            }]
-        };
-
-
-        const leadStatusChart = new Chart(ctx, {
-            type: 'pie',
-            data: leadStatusData,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Lead Status Distribution'
-                    }
-                }
-            }
-        });
-    </script>
+    
 </div>

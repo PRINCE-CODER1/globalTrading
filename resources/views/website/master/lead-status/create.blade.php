@@ -63,7 +63,15 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-
+                <div class="form-group mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select id="category" name="category" class="form-select" required>
+                        <option value="open" {{ old('category') == 'open' ? 'selected' : '' }}>Open</option>
+                        <option value="closed" {{ old('category') == 'closed' ? 'selected' : '' }}>Closed</option>
+                        <option value="lost" {{ old('category') == 'lost' ? 'selected' : '' }}>Lost</option>
+                        <option value="completed" {{ old('category') == 'completed' ? 'selected' : '' }}>Completed</option>
+                    </select>
+                </div>
                 <!-- Details Field -->
                 <div class="mb-3">
                     <label for="details" class="form-label">

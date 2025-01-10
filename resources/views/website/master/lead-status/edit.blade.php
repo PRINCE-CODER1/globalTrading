@@ -64,7 +64,19 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-
+                <!-- Category Dropdown -->
+                <div class="mb-3">
+                    <label for="category" class="form-label fw-bold">Category</label>
+                    <select class="form-select @error('category') is-invalid @enderror" id="category" name="category" required>
+                        <option value="open" {{ old('category', $lead->category) == 'open' ? 'selected' : '' }}>Open</option>
+                        <option value="closed" {{ old('category', $lead->category) == 'closed' ? 'selected' : '' }}>Closed</option>
+                        <option value="lost" {{ old('category', $lead->category) == 'lost' ? 'selected' : '' }}>Lost</option>
+                        <option value="completed" {{ old('category', $lead->category) == 'completed' ? 'selected' : '' }}>Completed</option>
+                    </select>
+                    @error('category')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div> 
                 <!-- Details Field -->
                 <div class="mb-3">
                     <label for="details" class="form-label">

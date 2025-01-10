@@ -9,5 +9,5 @@ class LeadStatus extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'status', 'details','color'];
+    protected $fillable = ['name', 'status', 'details','color','category'];
 }

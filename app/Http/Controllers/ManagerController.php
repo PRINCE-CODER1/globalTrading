@@ -82,18 +82,22 @@ class ManagerController extends Controller implements HasMiddleware
     // }
     public function showManagerLeads($managerId)
     {
-        if (!auth()->user()->hasRole(['Manager', 'Admin'])) {
-            abort(403, 'Unauthorized access');
-        }
+        // if (!auth()->user()->hasRole(['Manager', 'Admin'])) {
+        //     abort(403, 'Unauthorized access');
+        // }
 
-        // Retrieve the manager details
-        $manager = User::findOrFail($managerId);
+        // // Retrieve the manager details
+        // $manager = User::findOrFail($managerId);
         
-        // Get the manager's teams
-        // $teams = DB::table('teams')->where('creator_id', $managerId)->get();
-        $teams = Team::with('agents')->where('creator_id', $managerId)->get();
-
-        return view('manager.team.manager-leads', compact('manager', 'teams'));
+        // // Get the manager's teams
+        // // $teams = DB::table('teams')->where('creator_id', $managerId)->get();
+        // $teams = Team::with('agents')->where('creator_id', $managerId)->get();
+        // $agentIds = $teams->flatMap(function ($team) {
+        //     return $team->agents->pluck('id');
+        // })->toArray();
+        // $managerAndAgentIds = array_merge([$managerId], $agentIds);
+        // $leads = Lead::whereIn('assigned_to', $managerAndAgentIds)->get();
+        return view('manager.team.manager-leads',compact('managerId'));
     }
 
     /**

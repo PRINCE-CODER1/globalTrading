@@ -95,7 +95,8 @@ class ManagerTeamController extends Controller
             $team->agents()->sync($agentsToAssign);
         });
 
-        return redirect()->route('teams.index')->with('success', 'Agents assigned successfully!');
+        toastr()->closeButton(true)->success('Agents assigned successfully!');
+        return redirect()->route('teams.index');
     }
     // public function showManagerLeads()
     // {

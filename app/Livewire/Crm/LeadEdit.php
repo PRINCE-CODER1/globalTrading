@@ -168,7 +168,17 @@ class LeadEdit extends Component
     {
         $this->subSegments = Segment::where('parent_id', $this->segment_id)->get();
     }
-
+    protected function logLeadAction($lead, $logType, $details)
+    {
+        \App\Models\LeadLog::create([
+            'lead_id' => $lead->id,
+            'id_from' => auth()->id(), 
+            'id_to' => $assignedTo ?? null,
+            'log_type' => $logType,
+            'details' => $details,
+        ]);
+        
+    }
     public function save()
     {
         $this->validate();
@@ -180,7 +190,7 @@ class LeadEdit extends Component
             $imagePath = $this->image->storeAs('remarks', $fileName, 'public');
         }
 
-        // Update the lead
+        // Save the other fields of the lead
         $this->lead->update([
             'customer_id' => $this->customer_id,
             'customer_supplier_user_id' => $this->customer_supplier_user_id,
@@ -198,37 +208,53 @@ class LeadEdit extends Component
             'amount' => $this->amount,
             'application_id' => $this->application_id,
             'specification' => $this->specification,
-            'assigned_to' => $this->assigned_to,
         ]);
+
+        // After the lead is updated, handle the assignment logic
+        $this->assignAgent();
+
+        $this->logLeadAction($this->lead, 'lead_updated', '<strong class="text-warning">Lead updated successfully.</strong>');
+
+        toastr()->closeButton(true)->success("Lead updated successfully!");
 
         // Update the Livewire component values with the saved values
         $this->contractor_ids = is_array($this->lead->contractor_ids) ? $this->lead->contractor_ids : explode(',', $this->lead->contractor_ids);
-
-        $this->assignAgent();
     }
-
-
 
     public function assignAgent()
     {
+        // If assigned_to is the same, we do not need to assign again
+        if ($this->assigned_to === $this->lead->assigned_to) {
+            return;
+        }
+
+        // If no agent is assigned, show an error message
         if ($this->assigned_to === null) {
             toastr()->error('Please assign an agent.');
             return;
         }
 
+        $previousAssignedTo = $this->lead->assigned_to;
+
+        // Validate the assigned_to field
         $this->validate(['assigned_to' => 'required']);
 
         // Update the lead with the new assigned agent
         $this->lead->update(['assigned_to' => $this->assigned_to]);
 
-        // Update the visibility logic
+        // Update the visibility logic for the reassignment
         $agentName = User::find($this->assigned_to)->name;
-        toastr()->closeButton(true)->success("Successfully assigned to $agentName");
+        $previousAgentName = $previousAssignedTo ? User::find($previousAssignedTo)->name : 'None';
+        
+        $this->logLeadAction(
+            $this->lead,
+            'lead_reassigned',
+            "<strong class='text-info'>Lead reassigned </strong>from $previousAgentName to $agentName."
+        );
 
-        // Update the Livewire component values with the saved values
-        // $this->assigned_to = null;
-        // $this->reset(['assigned_to']);
+        toastr()->closeButton(true)->success("Successfully assigned to $agentName");
     }
+
 
 
 
@@ -253,7 +279,6 @@ class LeadEdit extends Component
             'image' => $imagePath,
             'date' => $this->date,
         ]);
-
         $this->refreshRemarks();
         $this->remark = '';
         $this->image = null;

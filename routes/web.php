@@ -93,8 +93,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Agent-specific routes
     Route::get('/agent/dashboard', [AgentController::class, 'index'])->name('agent.dashboard');
-    Route::resource('/agent/leads',LeadController::class);
         
+    // leads by agent
+    Route::get('lead-by-agent/{agentID}', [LeadController::class, 'leadByAgent'])->name('lead.agent');
+    Route::resource('/agent/leads',LeadController::class);
+
     // Manager-specific routes
     Route::get('/manager/dashboard', [ManagerController::class, 'index'])->name('manager.dashboard');
     // Manager viewing agent leads
@@ -117,8 +120,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('website.main-erp.index');
     })->name('admin.dashboard');
 
-    // leads by agent
-    Route::get('lead-by-agent/{agentID}', [LeadController::class, 'leadByAgent'])->name('lead.agent');
     
     // Resourceful routes (users, roles, permissions, etc.)
     Route::resource('users', UserController::class);
