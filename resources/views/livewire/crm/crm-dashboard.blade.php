@@ -236,7 +236,7 @@
                                     <tr>
                                         <th class="fw-bold">Name</th>
                                         <th class="fw-bold">Email</th>
-                                        <th class="fw-bold">Total Teams</th>
+                                        <th class="fw-bold">Total Leads</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -251,12 +251,18 @@
                                                 </td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>
-                                                    @php
+                                                    {{ $user->leads() 
+                                                        ->where('assigned_to', $user->id)
+                                                        ->orWhereHas('assignedAgent', function($query) use ($user) {
+                                                            $query->where('id', $user->id);
+                                                        })
+                                                        ->count() }}
+                                                    {{-- @php
                                                     // Find the team count for the current user
                                                     $teamCount = $teamsCountByUser->firstWhere('creator_id', $user->id);
-                                                    @endphp
+                                                    @endphp --}}
                                                     {{-- If no teams found for the user, display 0 --}}
-                                                    {{ $teamCount ? $teamCount->count : 0 }}
+                                                    {{-- {{ $teamCount ? $teamCount->count : 0 }} --}}
                                                 </td>
                                             </tr>
                                         @endif
@@ -437,7 +443,7 @@
                 </div>
             </div>
         </div>   
-           
+
         <div class="container mb-5">
             <div class="row">
                 <div class="col-xl-12">

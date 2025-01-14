@@ -6,8 +6,11 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Lead;
 use App\Models\User;
+use App\Models\Team;
 use App\Models\LeadStatus;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LeadsExport;
 
 class LeadList extends Component
 {
@@ -15,6 +18,7 @@ class LeadList extends Component
 
     public $search = '';
     public $perPage = 10;
+    public $teamFilter = '';
     public $selectAll = false;
     public $selectedLeads = [];
     public $leadIdToDelete = null;
@@ -22,14 +26,53 @@ class LeadList extends Component
     public $sortDir = 'asc';
     public $statusFilter = '';
     public $totalLeadsForAgent = 0;
+    public $startDate;
+    public $endDate;
 
 
     protected $listeners = ['deleteConfirmed'];
-    protected $updatesQueryString = ['search'];
 
     public $userId = 0;
 
-   
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->teamFilter = null;
+        $this->statusFilter = null;
+        $this->startDate = null;
+        $this->endDate = null;
+    }
+    // Listen for filter changes and reset the pagination
+    protected $updatesQueryString = ['search', 'statusFilter', 'teamFilter', 'sortBy', 'sortDir', 'perPage'];
+    public function exportLeads($type = 'xlsx')
+    {
+        $filteredLeads = Lead::with(['customer', 'leadStatus', 'assignedAgent', 'leadSource', 'remarks'])
+            ->when($this->teamFilter, function ($query) {
+                $query->whereHas('assignedAgent.teams', function ($q) {
+                    $q->where('name', 'like', '%' . $this->teamFilter . '%');
+                });
+            })
+            ->when($this->statusFilter, function ($query) {
+                $query->whereHas('leadStatus', function ($q) {
+                    $q->where('name', $this->statusFilter);
+                });
+            })
+            ->when($this->startDate && $this->endDate, function ($query) {
+                $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
+            })
+            ->get();
+            
+
+        $date = now()->format('Y_m_d');
+
+        if ($type === 'xlsx') {
+            return Excel::download(new LeadsExport($filteredLeads), "lead_report_{$date}.xlsx");
+        } elseif ($type === 'csv') {
+            return Excel::download(new LeadsExport($filteredLeads), "lead_report_{$date}.csv");
+        } else {
+            return redirect()->back()->with('error', 'Invalid file type selected.');
+        }
+    }
 
     public function mount($userId = 0)
     {
@@ -81,7 +124,7 @@ class LeadList extends Component
     public function render()
     {
         $user = Auth::user();
-
+        $teams = Team::all();
         // Filter leads
         $leads = Lead::with(['assignedAgent', 'creator']) // Load only necessary relationships
             ->when($this->userId > 0, function ($query) {
@@ -101,6 +144,9 @@ class LeadList extends Component
                     $q->where('name', 'like', '%' . $this->search . '%');
                 });
             })
+            ->when($this->startDate && $this->endDate, function ($query) {
+                $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
+            })
             ->when($this->statusFilter, function ($query) {
                 $query->whereHas('leadStatus', function ($q) {
                     $q->where('name', $this->statusFilter);
@@ -110,7 +156,7 @@ class LeadList extends Component
             ->paginate($this->perPage);
 
         $statuses = LeadStatus::all();
-        return view('livewire.crm.lead-list', compact('leads', 'statuses'));
+        return view('livewire.crm.lead-list', compact('leads', 'statuses','teams'));
     }
     
 
