@@ -46,22 +46,8 @@ class LeadList extends Component
     protected $updatesQueryString = ['search', 'statusFilter', 'teamFilter', 'sortBy', 'sortDir', 'perPage'];
     public function exportLeads($type = 'xlsx')
     {
-        $filteredLeads = Lead::with(['customer', 'leadStatus', 'assignedAgent', 'leadSource', 'remarks'])
-            ->when($this->teamFilter, function ($query) {
-                $query->whereHas('assignedAgent.teams', function ($q) {
-                    $q->where('name', 'like', '%' . $this->teamFilter . '%');
-                });
-            })
-            ->when($this->statusFilter, function ($query) {
-                $query->whereHas('leadStatus', function ($q) {
-                    $q->where('name', $this->statusFilter);
-                });
-            })
-            ->when($this->startDate && $this->endDate, function ($query) {
-                $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
-            })
-            ->get();
-            
+        $user = Auth::user();
+        $filteredLeads = $this->filteredQuery($user)->get();
 
         $date = now()->format('Y_m_d');
 
@@ -126,7 +112,15 @@ class LeadList extends Component
         $user = Auth::user();
         $teams = Team::all();
         // Filter leads
-        $leads = Lead::with(['assignedAgent', 'creator']) // Load only necessary relationships
+        $leads = $this->filteredQuery($user)->paginate($this->perPage);
+        $statuses = LeadStatus::all();
+        return view('livewire.crm.lead-list', compact('leads', 'statuses','teams'));
+    }
+    
+
+    private function filteredQuery($user)
+    {
+        return Lead::with(['assignedAgent', 'creator']) // Load only necessary relationships
             ->when($this->userId > 0, function ($query) {
                 $query->where('assigned_to', $this->userId); // Filter for specific agent
             }, function ($query) use ($user) {
@@ -152,15 +146,8 @@ class LeadList extends Component
                     $q->where('name', $this->statusFilter);
                 });
             })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
-
-        $statuses = LeadStatus::all();
-        return view('livewire.crm.lead-list', compact('leads', 'statuses','teams'));
+            ->orderBy($this->sortBy, $this->sortDir);
     }
-    
-
-    
 
     
 

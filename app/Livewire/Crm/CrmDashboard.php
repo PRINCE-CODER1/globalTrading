@@ -10,6 +10,7 @@ use App\Models\Team;
 use App\Models\LeadStatus;
 use App\Models\User;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LeadsExport;
@@ -65,22 +66,10 @@ class CrmDashboard extends Component
 
     public function exportLeads($type = 'xlsx')
     {
-        $filteredLeads = Lead::with(['customer', 'leadStatus', 'assignedAgent', 'leadSource', 'remarks'])
-            ->when($this->teamFilter, function ($query) {
-                $query->whereHas('assignedAgent.teams', function ($q) {
-                    $q->where('name', 'like', '%' . $this->teamFilter . '%');
-                });
-            })
-            ->when($this->statusFilter, function ($query) {
-                $query->whereHas('leadStatus', function ($q) {
-                    $q->where('name', $this->statusFilter);
-                });
-            })
-            ->when($this->startDate && $this->endDate, function ($query) {
-                $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
-            })
-            ->get();
-            
+        $user = Auth::user();
+
+        // Get all filtered leads
+        $filteredLeads = $this->filteredQuery($user)->get();
 
         $date = now()->format('Y_m_d');
 
@@ -116,28 +105,10 @@ class CrmDashboard extends Component
         // Calculate percentage change in leads
         $percentageChange = $previousLeads > 0 ? (($currentLeads - $previousLeads) / $previousLeads) * 100 : 0;
 
+        $user = Auth::user();
         // Fetch leads with filters and search
-        $leads = Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
-                ->when($this->teamFilter, function ($query) {
-                    $query->whereHas('assignedAgent.teams', function ($q) {
-                        $q->where('name', 'like', '%' . $this->teamFilter . '%');
-                    });
-                })
-                ->when($this->statusFilter, function ($query) {
-                    $query->whereHas('leadStatus', function ($q) {
-                        $q->where('name', $this->statusFilter);
-                    });
-                })
-                ->when($this->search, function ($query) {
-                    $query->whereHas('customer', function ($q) {
-                        $q->where('name', 'like', '%' . $this->search . '%');
-                    })->orWhere('reference_id', 'like', '%' . $this->search . '%');
-                })
-                ->when($this->startDate && $this->endDate, function ($query) {
-                    $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
-                })
-                ->orderBy($this->sortBy, $this->sortDir)
-                ->paginate($this->perPage);
+        $leads = $this->filteredQuery($user)->paginate($this->perPage);
+
 
         // Recent lead logs
         $leadLogs = LeadLog::with(['lead' => function ($query) {
@@ -192,6 +163,30 @@ class CrmDashboard extends Component
             'percentageChange', 'remarks', 'leadStatusCounts'
         ));
     }
+    protected function filteredQuery($user)
+    {
+        return Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
+            ->when($this->teamFilter, function ($query) {
+                $query->whereHas('assignedAgent.teams', function ($q) {
+                    $q->where('name', 'like', '%' . $this->teamFilter . '%');
+                });
+            })
+            ->when($this->statusFilter, function ($query) {
+                $query->whereHas('leadStatus', function ($q) {
+                    $q->where('name', $this->statusFilter);
+                });
+            })
+            ->when($this->search, function ($query) {
+                $query->whereHas('customer', function ($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%');
+                })->orWhere('reference_id', 'like', '%' . $this->search . '%');
+            })
+            ->when($this->startDate && $this->endDate, function ($query) {
+                $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
+            })
+            ->orderBy($this->sortBy, $this->sortDir);
+    }
+
     public function resetFilters()
     {
         $this->search = '';

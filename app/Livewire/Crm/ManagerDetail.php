@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\Team;
 use App\Models\Lead;
 use App\Models\LeadStatus;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LeadsExport;
 
 class ManagerDetail extends Component
 {
@@ -57,17 +59,23 @@ class ManagerDetail extends Component
         // Select or unselect all leads based on the 'selectAll' checkbox
         $this->selectedLeads = $value ? Lead::pluck('id')->toArray() : [];
     }
-
-    public function render()
+    public function exportLeads($type = 'xlsx')
     {
-        // Retrieve the manager details
-        $manager = User::findOrFail($this->managerId);
+        $filteredLeads = $this->filteredLeadsQuery()->get();
 
-        // Get the manager's teams (not needed for the leads directly assigned to the manager)
-        $teams = Team::with('agents')->where('creator_id', $this->managerId)->get();
+        $date = now()->format('Y_m_d');
 
-        // Fetch leads with applied filters and pagination
-        $leads = Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
+        if ($type === 'xlsx') {
+            return Excel::download(new LeadsExport($filteredLeads), "lead_report_{$date}.xlsx");
+        } elseif ($type === 'csv') {
+            return Excel::download(new LeadsExport($filteredLeads), "lead_report_{$date}.csv");
+        } else {
+            return redirect()->back()->with('error', 'Invalid file type selected.');
+        }
+    }
+    private function filteredLeadsQuery()
+    {
+        return Lead::with(['customer', 'leadStatus', 'assignedAgent', 'leadSource', 'remarks'])
             ->when($this->search, function ($query) {
                 $query->whereHas('customer', function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%');
@@ -86,10 +94,45 @@ class ManagerDetail extends Component
             })
             ->when($this->startDate && $this->endDate, function ($query) {
                 $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
-            })
-            ->where('assigned_to', $this->managerId)  // Only get leads assigned directly to the manager
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+            });
+    }
+    
+    public function render()
+    {
+        // Retrieve the manager details
+        $manager = User::findOrFail($this->managerId);
+
+        // Get the manager's teams (not needed for the leads directly assigned to the manager)
+        $teams = Team::with('agents')->where('creator_id', $this->managerId)->get();
+
+        // Fetch leads with applied filters and pagination
+        // $leads = Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
+        //     ->when($this->search, function ($query) {
+        //         $query->whereHas('customer', function ($q) {
+        //             $q->where('name', 'like', '%' . $this->search . '%');
+        //         })
+        //         ->orWhere('reference_id', 'like', '%' . $this->search . '%');
+        //     })
+        //     ->when($this->teamFilter, function ($query) {
+        //         $query->whereHas('assignedAgent.teams', function ($q) {
+        //             $q->where('name', 'like', '%' . $this->teamFilter . '%');
+        //         });
+        //     })
+        //     ->when($this->statusFilter, function ($query) {
+        //         $query->whereHas('leadStatus', function ($q) {
+        //             $q->where('name', $this->statusFilter);
+        //         });
+        //     })
+        //     ->when($this->startDate && $this->endDate, function ($query) {
+        //         $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
+        //     })
+        //     ->where('assigned_to', $this->managerId)  // Only get leads assigned directly to the manager
+        //     ->orderBy($this->sortBy, $this->sortDir)
+        //     ->paginate($this->perPage);
+        $leads = $this->filteredLeadsQuery()
+                ->where('assigned_to', $this->managerId)
+                ->orderBy($this->sortBy, $this->sortDir)
+                ->paginate($this->perPage);
 
         // Count manager leads (leads directly assigned to the manager)
         $managerLeadsCount = Lead::where('assigned_to', $this->managerId)

@@ -7,6 +7,8 @@ use App\Models\Lead;
 use App\Models\LeadStatus;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LeadsExport;
 
 class AgentDashboard extends Component
 {
@@ -17,6 +19,12 @@ class AgentDashboard extends Component
     public $leadsPerDay = []; // Store leads data for graph
     public $perPage = 10; // Leads per page
     public $selectedRange = 'day'; // Default time range
+    public $startDate;
+    public $endDate;
+
+    
+    // Listen for filter changes and reset the pagination
+    protected $updatesQueryString = ['search', 'statusFilter', 'teamFilter', 'sortBy', 'sortDir', 'perPage'];
 
     public function mount()
     {
@@ -24,29 +32,52 @@ class AgentDashboard extends Component
         $this->fetchLeadsData($this->selectedRange);
     }
 
+    public function exportLeads($type = 'xlsx')
+    {
+        $user = Auth::user();
+
+        // Get all filtered leads
+        $filteredLeads = $this->filteredQuery($user)->get();
+
+        $date = now()->format('Y_m_d');
+
+        if ($type === 'xlsx') {
+            return Excel::download(new LeadsExport($filteredLeads), "lead_report_{$date}.xlsx");
+        } elseif ($type === 'csv') {
+            return Excel::download(new LeadsExport($filteredLeads), "lead_report_{$date}.csv");
+        } else {
+            return redirect()->back()->with('error', 'Invalid file type selected.');
+        }
+    }
     public function render()
     {
         $user = Auth::user();
 
-        // Fetch the agent's leads
-        $leads = Lead::with(['customer', 'leadStatus', 'leadSource'])
+        $leads = $this->filteredQuery($user)->paginate($this->perPage);
+
+        $statuses = LeadStatus::all();
+
+        return view('livewire.crm.agent-dashboard', compact('leads','statuses'));
+    }
+    protected function filteredQuery($user)
+    {
+        return Lead::with(['customer', 'leadStatus', 'leadSource'])
             ->where('assigned_to', $user->id) // Fetch leads assigned to the agent
-            ->when($this->statusFilter, function($query) {
+            ->when($this->statusFilter, function ($query) {
                 $query->whereHas('leadStatus', function ($q) {
                     $q->where('name', $this->statusFilter);
                 });
+            })
+            ->when($this->startDate && $this->endDate, function ($query) {
+                $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
             })
             ->where(function ($query) {
                 $query->whereHas('customer', function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%');
                 })->orWhere('reference_id', 'like', '%' . $this->search . '%');
-            })
-            ->paginate($this->perPage);
-            $statuses = LeadStatus::all();
-
-        return view('livewire.crm.agent-dashboard', compact('leads','statuses'));
+            });
     }
-
+    
     public function fetchLeadsData($range)
     {
         $this->leadsPerDay = []; // Clear existing data

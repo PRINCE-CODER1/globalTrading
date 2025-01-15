@@ -153,7 +153,7 @@
                     </div>
 
                     <!-- Team Filter -->
-                    <div class="btn-group">
+                    {{-- <div class="btn-group">
                         <button type="button" class="btn btn-dark btn-wave dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             Teams: {{ $teamFilter ?: 'All' }}
                         </button>
@@ -168,7 +168,7 @@
                             @endforeach
                         </ul>
                         
-                    </div>
+                    </div> --}}
 
                     <!-- Per Page Filter -->
                     <div class="btn-group">
@@ -185,7 +185,31 @@
                             @endforeach
                         </ul>
                     </div>
+                    <!-- Export Lead -->
+                <div class="d-flex justify-content-between gap-3 mb-1 position-relative align-items-center">
+                    <!-- Export as Excel -->
+                    <button 
+                        wire:click="exportLeads('xlsx')" 
+                        wire:loading.attr="disabled" 
+                        class="btn btn-dark btn-wave fw-bold d-flex align-items-center">
+                        <i class="ri-file-excel-2-line me-1"></i> Export as Excel
+                    </button>
+                    
+                    <!-- Export as CSV -->
+                    <button 
+                        wire:click="exportLeads('csv')" 
+                        wire:loading.attr="disabled" 
+                        class="btn btn-dark btn-wave fw-bold d-flex align-items-center">
+                        <i class="ri-export-line me-1"></i> Export as CSV
+                    </button>
+                    
+                    <!-- Loading Spinner -->
+                    <div wire:loading class="spinner-border text-dark ms-2" role="status" style="width: 1.5rem; height: 1.5rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 </div>
+                </div>
+                
 
                 <!-- Search and Filters Row -->
                 <div class="row mt-3">
