@@ -62,7 +62,7 @@ class AgentDashboard extends Component
     protected function filteredQuery($user)
     {
         return Lead::with(['customer', 'leadStatus', 'leadSource'])
-            ->where('assigned_to', $user->id) // Fetch leads assigned to the agent
+            ->where('assigned_to', $user->id) // Always restrict to leads assigned to the authenticated user
             ->when($this->statusFilter, function ($query) {
                 $query->whereHas('leadStatus', function ($q) {
                     $q->where('name', $this->statusFilter);
@@ -77,6 +77,7 @@ class AgentDashboard extends Component
                 })->orWhere('reference_id', 'like', '%' . $this->search . '%');
             });
     }
+
     
     public function fetchLeadsData($range)
     {

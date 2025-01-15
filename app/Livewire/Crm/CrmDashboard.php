@@ -166,6 +166,7 @@ class CrmDashboard extends Component
     protected function filteredQuery($user)
     {
         return Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
+            ->where('assigned_to', $user->id) // Always restrict to the authenticated user's leads
             ->when($this->teamFilter, function ($query) {
                 $query->whereHas('assignedAgent.teams', function ($q) {
                     $q->where('name', 'like', '%' . $this->teamFilter . '%');
@@ -186,6 +187,7 @@ class CrmDashboard extends Component
             })
             ->orderBy($this->sortBy, $this->sortDir);
     }
+
 
     public function resetFilters()
     {
