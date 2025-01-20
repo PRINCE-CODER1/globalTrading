@@ -123,6 +123,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Resourceful routes (users, roles, permissions, etc.)
     Route::resource('users', UserController::class);
+    // Route::post('profile-user', [UserController::class, 'profile'])->name('profile.updateuser');
+
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
 

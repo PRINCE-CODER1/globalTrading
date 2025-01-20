@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12 mt-5 d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">User's List</h4>
-            <a href="{{route('users.create')}}" class="btn btn-secondary btn-wave float-end">Create User</a>
+            <a href="{{route('users.create')}}" class="btn btn-secondary btn-wave float-end"><i class="ri-add-circle-line"></i> Create User</a>
             </div>
         </div>
     </div>

@@ -121,8 +121,8 @@ class Lead extends Model
     {
         return $this->belongsTo(Contractor::class);
     }
-    public function applicaion()
+    public function application()
     {
-        return $this->belongsTo(Applicaion::class,'application_id');
+        return $this->belongsTo(Application::class,'application_id');
     }
 }

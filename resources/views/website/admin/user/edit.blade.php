@@ -8,10 +8,13 @@
             <h4 class="mb-0">
                 Edit User
             </h4>
+            @if(Auth::user()->hasRole('Admin')) 
             <a href="{{route('users.index')}}" type="button" class="btn btn-secondary">Back</a>
+            @endif
         </div>
     </div>
 </div>
+@if(Auth::user()->hasRole('Admin')) 
 <div class="container">
     <div class="row">
         <div class="col-12">
@@ -25,6 +28,7 @@
         </div>
     </div>
 </div>
+@endif
 <div class="container">
     <div class="row d-flex justify-content-center">
         <div class="col-12 mb-5 mt-3 bg-white p-5 shadow">
@@ -75,21 +79,26 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label fs-14 text-dark" for="permissions">Roles</label>
-                    @foreach($roles as $roles)
-                        <div class="mb-3">
-                            <label for="role-{{ $roles->id }}">{{ $roles->name }}</label>
-                            <label class="switch">
-                                <input type="checkbox" 
-                                       {{ $hasRoles->contains($roles->id) ? 'checked' : '' }} 
-                                       id="role-{{ $roles->id }}" 
-                                       name="role[]" 
-                                       class="role-checkbox" 
-                                       value="{{ $roles->id }}">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                    @endforeach
-                </div>                
+                    @if(Auth::user()->hasRole('Admin'))  <!-- Check if the logged-in user is an admin -->
+                        @foreach($roles as $role)
+                            <div class="mb-3">
+                                <label for="role-{{ $role->id }}">{{ $role->name }}</label>
+                                <label class="switch">
+                                    <input type="checkbox" 
+                                           {{ $hasRoles->contains($role->id) ? 'checked' : '' }} 
+                                           id="role-{{ $role->id }}" 
+                                           name="role[]" 
+                                           class="role-checkbox" 
+                                           value="{{ $role->id }}">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        @endforeach
+                    @else
+                        <p>You do not have permission to view roles.</p> <!-- Optional: Message for non-admin users -->
+                    @endif
+                </div>
+                
                 
 
                 <button type="submit" class="btn btn-secondary">Update</button>

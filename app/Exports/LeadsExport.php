@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use App\Models\Contractor;
 
 class LeadsExport implements FromCollection, WithHeadings
 {
@@ -21,6 +22,12 @@ class LeadsExport implements FromCollection, WithHeadings
     public function collection()
     {
         return $this->leads->map(function ($lead) {
+            $contractorIds = is_string($lead->contractor_ids) 
+                             ? explode(',', $lead->contractor_ids) 
+                             : $lead->contractor_ids;
+            $contractorNames = Contractor::whereIn('id', $contractorIds)
+                            ->pluck('name')
+                            ->implode(', ');
             return [
                 'reference_id' => $lead->reference_id,
                 'customer' => $lead->customer->name ?? 'N/A',
@@ -35,7 +42,7 @@ class LeadsExport implements FromCollection, WithHeadings
                 'amount' => $lead->amount ?? 'N/A',
                 'application' => $lead->application->name ?? 'N/A',
                 'lead_type' => $lead->leadType->name ?? 'N/A',
-                'contractor' => $lead->contractor->name ?? 'N/A',
+                'contractor' => $contractorNames ?: 'N/A',
                 'specification' => $lead->specification ?? 'N/A',
                 'expected_date' => $lead->expected_date,
                 'next_follow_up_date' => $lead->remarks->last()?->date ?? 'N/A',
@@ -62,7 +69,7 @@ class LeadsExport implements FromCollection, WithHeadings
             'Amount',
             'Apllication',
             'Lead Type',
-            'Contractors',
+            'Contractor',
             'specification',
             'Expected Date',
             'Next Follow-Up Date',

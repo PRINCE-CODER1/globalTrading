@@ -107,8 +107,12 @@ class CrmDashboard extends Component
 
         $user = Auth::user();
         // Fetch leads with filters and search
-        $leads = $this->filteredQuery($user)->paginate($this->perPage);
+        // $leads = $this->filteredQuery($user)->paginate($this->perPage);
+        $hasFilters = !empty($this->teamFilter) || !empty($this->statusFilter) || !empty($this->search) || (!empty($this->startDate) && !empty($this->endDate));
 
+        $leads = $hasFilters
+        ? $this->filteredQuery($user)->paginate($this->perPage) // Apply filters
+        : Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])->latest('created_at')->paginate($this->perPage); // Show all leads
 
         // Recent lead logs
         $leadLogs = LeadLog::with(['lead' => function ($query) {
@@ -166,7 +170,6 @@ class CrmDashboard extends Component
     protected function filteredQuery($user)
     {
         return Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
-            ->where('assigned_to', $user->id) // Always restrict to the authenticated user's leads
             ->when($this->teamFilter, function ($query) {
                 $query->whereHas('assignedAgent.teams', function ($q) {
                     $q->where('name', 'like', '%' . $this->teamFilter . '%');
@@ -187,7 +190,6 @@ class CrmDashboard extends Component
             })
             ->orderBy($this->sortBy, $this->sortDir);
     }
-
 
     public function resetFilters()
     {
