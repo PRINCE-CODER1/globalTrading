@@ -404,6 +404,8 @@
                                         <th class="fw-bold">Customer</th>
                                         <th class="fw-bold">Assigned Agent</th>
                                         <th class="fw-bold">Status</th>
+                                        <th class="fw-bold">Series</th>
+                                        <th class="fw-bold">Amount</th>
                                         <th class="fw-bold">Expected Date</th>
                                         <th class="fw-bold">Next Follow Up Date</th>
                                     </tr>
@@ -454,6 +456,8 @@
                                             <td>{{ $lead->customer->name }}</td>
                                             <td>{{ $lead->assignedAgent->name }}</td>
                                             <td><span class="badge" style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span></td>
+                                            <td>{{ $lead->Series->name ?? 'N/A' }}</td>
+                                            <td>{{ $lead->amount ?? 'N/A' }}</td>
                                             <td>{{ $lead->expected_date ? \Carbon\Carbon::parse($lead->expected_date)->format('Y-m-d') : 'N/A' }}</td>
                                             <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>
                                         </tr>

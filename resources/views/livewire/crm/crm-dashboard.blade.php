@@ -457,6 +457,8 @@
                                             <th class="fw-bold">Reference Id</th>
                                             <th class="fw-bold">Customer</th>
                                             <th class="fw-bold">Status</th>
+                                            <th class="fw-bold">Series</th>
+                                            <th class="fw-bold">Amount</th>
                                             <th class="fw-bold">Assigned Agent</th>
                                             <th class="fw-bold">Expected Month</th>
                                             <th class="fw-bold">Next Follow Up Date</th>
@@ -511,6 +513,8 @@
                                                     {{ $lead->leadStatus->name ?? 'N/A' }}
                                                     </span>
                                                 </td>
+                                                <td>{{ $lead->Series->name ?? 'N/A'  }}</td>
+                                                <td>{{ $lead->amount  }}</td>
                                                 <td>{{ $lead->assignedAgent->name  }}</td>
                                                 <td>{{ $lead->expected_date }}</td>
                                                 <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>

@@ -13,4 +13,8 @@ class Application extends Model
         'name',
         'user_id',
     ];
+    public function leads()
+    {
+        return $this->belongsTo(Lead::class);
+    }
 }

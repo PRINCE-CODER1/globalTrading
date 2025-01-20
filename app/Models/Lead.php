@@ -61,6 +61,10 @@ class Lead extends Model
     {
         return $this->belongsTo(StockCategory::class);
     }
+    public function ChildCategory()
+    {
+        return $this->belongsTo(ChildCategory::class, 'child_category_id');
+    }
     public function series()
     {
         return $this->belongsTo(Series::class, 'series');
@@ -74,6 +78,11 @@ class Lead extends Model
     public function leadSource()
     {
         return $this->belongsTo(LeadSource::class, 'lead_source_id');
+    }
+
+    public function leadType()
+    {
+        return $this->belongsTo(LeadType::class, 'lead_type_id');
     }
 
     public function assignedAgent()
@@ -112,8 +121,8 @@ class Lead extends Model
     {
         return $this->belongsTo(Contractor::class);
     }
-    // public function applicaion()
-    // {
-    //     return $this->belongsTo(Applicaion::class);
-    // }
+    public function applicaion()
+    {
+        return $this->belongsTo(Applicaion::class,'application_id');
+    }
 }

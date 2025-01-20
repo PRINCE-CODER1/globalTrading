@@ -84,10 +84,10 @@ class ManagerDashboard extends Component
         $user = Auth::user();  
 
         $teams = Team::where('creator_id', $user->id)->get();
-
+        $assignedToIds = $teams->pluck('creator_id')->push($user->id);
         // Fetch leads assigned to the manager's teams
         $leads = Lead::with(['customer', 'leadStatus', 'leadSource', 'assignedAgent.teams'])
-            ->whereIn('assigned_to', $teams->pluck('creator_id'))  // Only leads assigned to the manager's teams
+            ->whereIn('assigned_to',$assignedToIds)  // Only leads assigned to the manager's teams
             ->when($this->teamFilter, function($query) {
                 $query->whereHas('assignedAgent.teams', function ($q) {
                     $q->where('name', 'like', '%' . $this->teamFilter . '%');

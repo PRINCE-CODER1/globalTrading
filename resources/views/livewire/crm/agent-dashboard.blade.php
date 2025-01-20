@@ -142,11 +142,13 @@
                             <table class="table table-bordered text-nowrap">
                                 <thead>
                                     <tr>
-                                        <th>Refrence Id</th>
-                                        <th>Customer Name</th>
-                                        <th>Status</th>
-                                        <th>Next Follow Up Date</th>
-                                        <th>Created At</th>
+                                        <th class="fw-bold">Refrence Id</th>
+                                        <th class="fw-bold">Customer Name</th>
+                                        <th class="fw-bold">Status</th>
+                                        <th class="fw-bold">Series</th>
+                                        <th class="fw-bold">Amount</th>
+                                        <th class="fw-bold">Next Follow Up Date</th>
+                                        <th class="fw-bold">Created At</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -155,6 +157,8 @@
                                             <td>{{ $lead->reference_id }}</td>
                                             <td>{{ $lead->customer->name }}</td>
                                             <td><span class="badge" style="background-color: {{ $lead->leadStatus->color }}; color: #fff;">{{ $lead->leadStatus->name }}</span></td>
+                                            <td>{{ $lead->Series->name ?? 'N/A' }}</td>
+                                            <td>{{ $lead->amount ?? 'N/A' }}</td>
                                             <td>{{ $lead->remarks->last()?->date ?? 'N/A' }}</td>
                                             <td>{{ $lead->created_at->format('Y-m-d') }}</td>
                                         </tr>
