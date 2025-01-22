@@ -7,7 +7,7 @@ use Livewire\WithPagination;
 use App\Models\Purchase;
 use App\Exports\PurchaseExport;
 use Maatwebsite\Excel\Facades\Excel;
-use Carbon\Carbon;  
+use Carbon\Carbon;
 
 class PurchaseReport extends Component
 {
@@ -17,6 +17,8 @@ class PurchaseReport extends Component
     public $perPage = 10;
     public $sortBy = 'created_at';
     public $sortDir = 'asc';
+
+    protected $queryString = ['search', 'perPage', 'sortBy', 'sortDir'];
 
     public function mount()
     {
@@ -37,10 +39,10 @@ class PurchaseReport extends Component
         session()->put('search', $this->search);
         $this->resetPage();
     }
-    // Export method that handles download
-    public function export($type)
+
+    public function filteredQuery()
     {
-        $purchases = Purchase::query()
+        return Purchase::query()
             ->with(['purchaseOrder', 'supplier', 'branch', 'items'])
             ->when($this->search, function ($query) {
                 $query->whereHas('purchaseOrder', function ($subQuery) {
@@ -50,40 +52,34 @@ class PurchaseReport extends Component
                     $subQuery->where('name', 'like', '%' . $this->search . '%');
                 });
             })
-            ->get();
+            ->orderBy($this->sortBy, $this->sortDir);
+    }
+
+    public function export($type)
+    {
+        $purchases = $this->filteredQuery()->get();
 
         if ($purchases->isEmpty()) {
             toastr()->closeButton(true)->error('No data found!');
+            return;
         }
 
-        $date = now()->format('Y_m_d');
+        $date = Carbon::now()->format('Y_m_d');
+        $fileName = "purchase_report_{$date}";
 
         if ($type === 'xlsx') {
-            return Excel::download(new PurchaseExport($purchases), "purchase_report_{$date}.xlsx");
+            return Excel::download(new PurchaseExport($purchases), "{$fileName}.xlsx");
         } elseif ($type === 'csv') {
-            return Excel::download(new PurchaseExport($purchases), "purchase_report_{$date}.csv");
+            return Excel::download(new PurchaseExport($purchases), "{$fileName}.csv");
         }
 
         return redirect()->route('purchase-reports.index');
     }
 
-
-
     public function render()
     {
-        $purchase = Purchase::query()
-            ->when($this->search, function ($query) {
-                $query->whereHas('purchaseOrder', function ($subQuery) {
-                    $subQuery->where('purchase_order_no', 'like', '%' . $this->search . '%');
-                })
-                ->orWhereHas('supplier', function ($subQuery) {
-                    $subQuery->where('name', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
-    
+        $purchase = $this->filteredQuery()->paginate($this->perPage);
+
         return view('livewire.reports.purchase-report', compact('purchase'));
     }
-    
 }

@@ -7,21 +7,32 @@ use Livewire\WithPagination;
 use App\Models\PurchaseOrder;
 use App\Exports\PurchaseOrderExport;
 use Maatwebsite\Excel\Facades\Excel;
-use Carbon\Carbon;  
 
 class PurchaseOrderReport extends Component
 {
     use WithPagination;
 
     public $search = '';
+    public $teamFilter = '';
+    public $statusFilter = '';
+    public $startDate = '';
+    public $endDate = '';
     public $perPage = 10;
     public $sortBy = 'created_at';
     public $sortDir = 'asc';
 
+    protected $queryString = ['search', 'teamFilter', 'statusFilter', 'startDate', 'endDate', 'perPage', 'sortBy', 'sortDir'];
+
     public function mount()
     {
-        $this->search = session()->get('search', '');
-        $this->perPage = session()->get('perPage', 10);
+        $this->search = session()->get('search', $this->search);
+        $this->perPage = session()->get('perPage', $this->perPage);
+    }
+
+    public function resetFilters()
+    {
+        $this->reset(['search', 'teamFilter', 'statusFilter', 'startDate', 'endDate']);
+        $this->resetPage();
     }
 
     public function updatePerPage($value)
@@ -33,25 +44,13 @@ class PurchaseOrderReport extends Component
 
     public function updatedSearch($value)
     {
-        $this->search = $value;
-        session()->put('search', $this->search);
+        session()->put('search', $value);
         $this->resetPage();
     }
 
     public function export($type)
     {
-        $purchaseOrders = PurchaseOrder::query()
-            ->when($this->search, function ($query) {
-                $query->where('purchase_order_no', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('supplier', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('orderBranch', function ($subQuery) {
-                        $subQuery->where('name', 'like', '%' . $this->search . '%');
-                    });
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->get();
+        $purchaseOrders = $this->filteredQuery()->get();
 
         $date = now()->format('Y_m_d');
         $fileName = "purchase_order_report_{$date}";
@@ -65,9 +64,9 @@ class PurchaseOrderReport extends Component
         return redirect()->route('purchase-order-reports.index');
     }
 
-    public function render()
+    public function filteredQuery()
     {
-        $purchaseOrder = PurchaseOrder::query()
+        return PurchaseOrder::query()
             ->when($this->search, function ($query) {
                 $query->where('purchase_order_no', 'like', '%' . $this->search . '%')
                     ->orWhereHas('supplier', function ($subQuery) {
@@ -77,10 +76,16 @@ class PurchaseOrderReport extends Component
                         $subQuery->where('name', 'like', '%' . $this->search . '%');
                     });
             })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+            ->when($this->startDate && $this->endDate, function ($query) {
+                $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
+            })
+            ->orderBy($this->sortBy, $this->sortDir);
+    }
+
+    public function render()
+    {
+        $purchaseOrder = $this->filteredQuery()->paginate($this->perPage);
 
         return view('livewire.reports.purchase-order-report', compact('purchaseOrder'));
     }
-
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Livewire\Reports;
 
@@ -17,11 +17,21 @@ class StockReport extends Component
     public $perPage = 10;
     public $sortBy = 'created_at';
     public $sortDir = 'asc';
+    public $startDate = '';
+    public $endDate = '';
+
+    protected $queryString = ['search', 'perPage', 'sortBy', 'sortDir', 'startDate', 'endDate'];
 
     public function mount()
     {
         $this->search = session()->get('search', '');
         $this->perPage = session()->get('perPage', 10);
+    }
+
+    public function resetFilters()
+    {
+        $this->reset(['search', 'startDate', 'endDate']);
+        $this->resetPage();
     }
 
     public function updatePerPage($value)
@@ -38,37 +48,11 @@ class StockReport extends Component
         $this->resetPage();
     }
 
-    // Export method that handles download
-    public function export($type)
-    {
-        $userId = auth()->id();
-        $products = Product::with(['stock'])
-            ->withCount([
-                'purchase',
-                'sale' => function ($query) use ($userId) {
-                    $query->where('user_id', $userId);
-                }
-            ])
-            ->when($this->search, function ($query) {
-                $query->where('product_name', 'like', '%' . $this->search . '%');
-            })
-            ->get();
-        $date = Carbon::now()->format('Y_m_d');
-        if ($type == 'xlsx') {
-            return Excel::download(new ProductStockExport($products), "stock_report_{$date}.xlsx");
-        } elseif ($type == 'csv') {
-            return Excel::download(new ProductStockExport($products), "stock_report_{$date}.csv");
-        }
-
-        return redirect()->route('stock-reports.index'); 
-    }
-
-    public function render()
+    public function filteredQuery()
     {
         $userId = auth()->id();
 
-        // Filtered product report
-        $productreport = Product::withCount([
+        return Product::withCount([
             'purchase',
             'sale' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
@@ -77,7 +61,27 @@ class StockReport extends Component
         ->when($this->search, function ($query) {
             $query->where('product_name', 'like', '%' . $this->search . '%');
         })
-        ->paginate($this->perPage);
+        ->orderBy($this->sortBy, $this->sortDir);
+    }
+
+    public function export($type)
+    {
+        $products = $this->filteredQuery()->get();
+        $date = Carbon::now()->format('Y_m_d');
+        $fileName = "stock_report_{$date}";
+
+        if ($type === 'xlsx') {
+            return Excel::download(new ProductStockExport($products), "{$fileName}.xlsx");
+        } elseif ($type === 'csv') {
+            return Excel::download(new ProductStockExport($products), "{$fileName}.csv");
+        }
+
+        return redirect()->route('stock-reports.index');
+    }
+
+    public function render()
+    {
+        $productreport = $this->filteredQuery()->paginate($this->perPage);
 
         return view('livewire.reports.stock-report', compact('productreport'));
     }

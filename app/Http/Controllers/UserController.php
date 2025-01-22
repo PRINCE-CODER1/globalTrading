@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
-class UserController extends Controller 
+class UserController extends Controller implements HasMiddleware
 {
     public static function middleware(): array{
         return [
