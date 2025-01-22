@@ -70,4 +70,8 @@ class SaleOrder extends Model
     {
         return $this->hasMany(SaleOrderItem::class, 'sale_order_id');
     }
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
 }

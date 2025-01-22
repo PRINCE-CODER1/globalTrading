@@ -52,8 +52,8 @@
                                     @forelse($purchases as $purchase)
                                         <tr wire:key="purchase-{{ $purchase->id }}">
                                             <td><input type="checkbox" wire:model.live="selectedPurchases" value="{{ $purchase->id }}"></td>
-                                            <td>{{ $purchase->purchaseOrder->purchase_order_no }}</td>
-                                            <td>{{ $purchase->purchaseOrder->GTE_PO_NO }}</td>
+                                            <td>{{ $purchase->purchaseOrder->purchase_order_no ?? 'N/A' }}</td>
+                                            <td>{{ $purchase->purchaseOrder->GTE_PO_NO  ?? 'N/A'}}</td>
                                             <td>{{ $purchase->purchase_date ? \Carbon\Carbon::parse($purchase->purchase_date)->format('Y-m-d') : 'N/A' }}</td>
                                             <td>{{ $purchase->supplier->name ?? 'N/A' }}</td>
                                             <td>{{ $purchase->user->name ?? 'N/A' }}</td>

@@ -72,26 +72,85 @@ class PurchaseOrder extends Component
 
     public function deleteConfirmed()
     {
+        // Initialize arrays for success and warning messages
+        $successMessages = [];
+        $warningMessages = [];
+
+        // Retrieve selected purchase orders based on either single ID or multiple IDs
+        $purchaseOrders = collect();
         if ($this->orderIdToDelete) {
-            PurchaseOrders::find($this->orderIdToDelete)->delete();
-            $this->orderIdToDelete = null;
-        } elseif ($this->selectedOrders) {
-            PurchaseOrders::whereIn('id', $this->selectedOrders)->delete();
-            $this->selectedOrders = [];
+            $purchaseOrders = PurchaseOrders::where('id', $this->orderIdToDelete)->get();
+        } elseif (!empty($this->selectedOrders)) {
+            $purchaseOrders = PurchaseOrders::whereIn('id', $this->selectedOrders)->get();
         }
-        toastr()->closeButton(true)->success('Purchase Order Deleted Successfully');
+
+        // Process each purchase order
+        foreach ($purchaseOrders as $purchaseOrder) {
+            if ($purchaseOrder->purchases()->exists()) {
+                $warningMessages[] = "Purchase Order #{$purchaseOrder->purchase_order_no} cannot be deleted because it has related Purchases.";
+            } else {
+                $purchaseOrder->delete();
+                $successMessages[] = "Purchase Order #{$purchaseOrder->purchase_order_no} Deleted Successfully.";
+            }
+        }
+
+        // Show toastr messages for warnings
+        foreach ($warningMessages as $message) {
+            toastr()->closeButton(true)->warning($message);
+        }
+
+        // Show toastr messages for successes
+        foreach ($successMessages as $message) {
+            toastr()->closeButton(true)->success($message);
+        }
+
+        // Reset selected orders and order ID
+        $this->orderIdToDelete = null;
+        $this->selectedOrders = [];
         $this->resetPage();
     }
 
     public function bulkDelete()
     {
+        $successMessages = [];
+        $warningMessages = [];
+
         if (!empty($this->selectedOrders)) {
-            PurchaseOrders::whereIn('id', $this->selectedOrders)->delete();
+            $purchaseOrders = PurchaseOrders::whereIn('id', $this->selectedOrders)->get();
+            
+            foreach ($purchaseOrders as $purchaseOrder) {
+                // Check if any purchase order has related purchases
+                if ($purchaseOrder->purchases()->exists()) {
+                    // Accumulate warning message for this purchase order
+                    $warningMessages[] = "Purchase Order #{$purchaseOrder->purchase_order_no} cannot be deleted because it has related Purchases.";
+                } else {
+                    // Delete the purchase order if no related purchases are found
+                    $purchaseOrder->delete();
+                    // Accumulate success message for this purchase order
+                    $successMessages[] = "Purchase Order #{$purchaseOrder->purchase_order_no} deleted successfully.";
+                }
+            }
+
             $this->selectedOrders = [];
         }
-        toastr()->closeButton(true)->success('Purchase Orders Deleted Successfully');
+
+        // Display toastr messages
+        if (!empty($warningMessages)) {
+            foreach ($warningMessages as $message) {
+                toastr()->closeButton(true)->warning($message);
+            }
+        }
+
+        if (!empty($successMessages)) {
+            foreach ($successMessages as $message) {
+                toastr()->closeButton(true)->success($message);
+            }
+        }
+
         $this->resetPage();
     }
+
+
 
     public function setSortBy($sortByField)
     {

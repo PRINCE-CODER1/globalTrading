@@ -75,25 +75,64 @@ class SaleOrder extends Component
     public function deleteConfirmed()
     {
         if ($this->orderIdToDelete) {
-            SaleOrderModel::find($this->orderIdToDelete)->delete();
+            $saleOrder = SaleOrderModel::find($this->orderIdToDelete);
+
+            if ($saleOrder && $saleOrder->sales()->exists()) {
+                // Warning message for related purchases
+                toastr()->closeButton(true)->warning('This Sale Order cannot be deleted because it has related Saless.');
+            } else {
+                // Delete the sale order
+                $saleOrder->delete();
+                toastr()->closeButton(true)->success('Sale Order Deleted Successfully');
+            }
+
+            // Reset the order ID
             $this->orderIdToDelete = null;
-        } elseif ($this->selectedOrders) {
-            SaleOrderModel::whereIn('id', $this->selectedOrders)->delete();
-            $this->selectedOrders = [];
         }
-        toastr()->closeButton(true)->success('Sale Order Deleted Successfully');
+
         $this->resetPage();
     }
+
 
     public function bulkDelete()
     {
         if (!empty($this->selectedOrders)) {
-            SaleOrderModel::whereIn('id', $this->selectedOrders)->delete();
+            $successMessages = [];
+            $warningMessages = [];
+
+            // Retrieve the selected sale orders
+            $saleOrders = SaleOrderModel::whereIn('id', $this->selectedOrders)->get();
+
+            foreach ($saleOrders as $saleOrder) {
+                if ($saleOrder->sales()->exists()) {
+                    // Add warning message for related purchases
+                    $warningMessages[] = "Sale Order #{$saleOrder->order_no} cannot be deleted because it has related Sales.";
+                } else {
+                    // Delete the sale order
+                    $saleOrder->delete();
+                    $successMessages[] = "Sale Order #{$saleOrder->order_no} Deleted Successfully.";
+                }
+            }
+
+            // Show warning messages
+            foreach ($warningMessages as $message) {
+                toastr()->closeButton(true)->warning($message);
+            }
+
+            // Show success messages
+            foreach ($successMessages as $message) {
+                toastr()->closeButton(true)->success($message);
+            }
+
+            // Clear selected orders
             $this->selectedOrders = [];
+        } else {
+            toastr()->closeButton(true)->warning('No Sale Orders Selected for Deletion.');
         }
-        toastr()->closeButton(true)->success('Sale Orders Deleted Successfully');
+
         $this->resetPage();
     }
+
 
     public function setSortBy($sortByField)
     {
