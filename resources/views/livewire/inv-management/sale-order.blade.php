@@ -85,7 +85,7 @@
                                                                         <div class="d-flex align-items-center">
                                                                             <!-- Product Name -->
                                                                             <div class="flex-grow-1">
-                                                                                <strong class="mb-0">{{ $item->product->product_name }}</strong>
+                                                                                <strong class="mb-0">{{ $item->product->product_name ?? 'N/A' }}</strong>
                                                                             </div>
                                                                             <!-- Quantity -->
                                                                             <span class="badge bg-danger me-2">Qty: {{ $item->quantity }}</span>

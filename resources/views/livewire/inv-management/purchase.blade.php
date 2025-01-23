@@ -100,7 +100,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="9" class="text-center">No purchase found.</td>
+                                            <td colspan="10" class="text-center">No purchase found.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

@@ -119,7 +119,7 @@
                                                                     <tbody>
                                                                         @foreach($order->items as $item)
                                                                             <tr>
-                                                                                <td>{{ $item->product->product_name }}</td>
+                                                                                <td>{{ $item->product->product_name ?? 'N/A' }}</td>
                                                                                 <td>{{ $item->quantity }}</td>
                                                                                 <td>{{ $item->price }}</td>
                                                                                 <td>{{ $item->discount }}</td>

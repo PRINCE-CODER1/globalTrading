@@ -138,7 +138,7 @@
                                                                             <tbody>
                                                                                 @foreach($report->purchase as $purchase)
                                                                                     <tr>
-                                                                                        <td>{{ $purchase->purchaseOrder->purchase_order_no }}</td>
+                                                                                        <td>{{ $purchase->purchaseOrder->purchase_order_no ?? 'N/A' }}</td>
                                                                                         <td>{{ $purchase->quantity }}</td>
                                                                                         <td>{{ $purchase->price }}</td>
                                                                                         <td>{{ $purchase->created_at->format('d-m-Y') }}</td>
@@ -185,7 +185,7 @@
                                                                             <tbody>
                                                                                 @foreach($report->sale as $sale)
                                                                                     <tr>
-                                                                                        <td>{{ $sale->id }}</td>
+                                                                                        <td>{{ $sale->saleOrder->sale_order_no ?? 'n/a' }}</td>
                                                                                         <td>{{ $sale->quantity }}</td>
                                                                                         <td>{{ $sale->price }}</td>
                                                                                         <td>{{ $sale->created_at->format('d-m-Y') }}</td>

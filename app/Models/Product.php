@@ -78,4 +78,8 @@ class Product extends Model
     {
         return $this->hasMany(SaleOrderItem::class); 
     }
+    public function saleOrder()
+    {
+        return $this->hasMany(SaleOrder::class); 
+    }
 }
