@@ -96,15 +96,13 @@ class InternalChalaanCreate extends Component
             $index = explode('.', $propertyName)[1];
             $fromGodownId = $this->products[$index]['from_godown_id'];
 
-            if ($fromGodownId) {
-                // Fetch available products based on the selected godown
+            if (isset($fromGodownId)) {
                 $this->availableProducts[$index] = Stock::where('godown_id', $fromGodownId)
                                                         ->with('product') // Load related product data
                                                         ->get()
-                                                        ->pluck('product'); // Get the associated products
+                                                        ->pluck('product');
             } else {
                 $this->availableProducts[$index] = [];
-                $this->products[$index]['product_id'] = null; // Reset product ID
             }
         }
     }

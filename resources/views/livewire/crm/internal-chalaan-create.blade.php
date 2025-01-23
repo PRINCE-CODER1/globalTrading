@@ -91,9 +91,12 @@
                                 <option value="">Select Product</option>
                                 @if(isset($availableProducts[$index]))
                                     @foreach($availableProducts[$index] as $availableProduct)
-                                        <option value="{{ $availableProduct->id }}">{{ $availableProduct->product_name }}</option>
+                                        @if($availableProduct)
+                                            <option value="{{ $availableProduct->id }}">{{ $availableProduct->product_name }}</option>
+                                        @endif
                                     @endforeach
                                 @endif
+
                             </select>
                             @error("products.$index.product_id") <div class="text-danger">{{ $message }}</div> @enderror
                         </td>
