@@ -32,7 +32,7 @@ class Products extends Component
         $userId = Auth::id();
 
         $products = Product::with(['user', 'modifier', 'series', 'category'])
-            ->where('user_id', $userId)
+            // ->where('user_id', $userId)
             ->where('product_name', 'like', '%' . $this->search . '%')
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);

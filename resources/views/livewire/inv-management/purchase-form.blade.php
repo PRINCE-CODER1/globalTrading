@@ -82,7 +82,7 @@
 
             <!-- Supplier Sale Order Number -->
             <div class="form-group">
-                <label for="supplier_sale_order_no">Supplier Sale Order No</label>
+                <label for="supplier_sale_order_no" class="form-label">Supplier Sale Order No</label>
                 <select id="supplier_sale_order_no" class="form-select" wire:model.live="supplier_sale_order_no" >
                     <option value="">Select Supplier Sale Order No</option>
                     @foreach ($supplierSaleOrderNos as $id => $orderNo)
@@ -94,7 +94,7 @@
 
 
             <!-- Reference No -->
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <div class="mb-3">
                     <label for="ref_no" class="form-label"><i class="ri-hashtag"></i> Reference No</label>
                     <div class="input-group">
@@ -105,7 +105,7 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
+            </div> --}}
             <input type="hidden" wire:model="user_id" value="{{ auth()->user()->id }}">
         </div>
 

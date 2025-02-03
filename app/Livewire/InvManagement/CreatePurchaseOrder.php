@@ -206,6 +206,12 @@ class CreatePurchaseOrder extends Component
      */
     public function save()
     {
+        // Ensure that at least one of the order fields is filled
+        if (!$this->GTE_PO_NO && !$this->supplier_sale_order_no) {
+            toastr()->closeButton(true)->error('Either GTE PO No. or Supplier Sale Order No. must be filled.');
+            return;
+        }
+
         $this->validate($this->getValidationRules());
 
         $purchaseOrder = PurchaseOrder::create($this->getPurchaseOrderData());
@@ -218,6 +224,7 @@ class CreatePurchaseOrder extends Component
         return redirect()->route('purchase_orders.index');
     }
 
+
     /**
      * Validation rules for the purchase order.
      */
@@ -225,7 +232,7 @@ class CreatePurchaseOrder extends Component
     {
         return [
             'purchase_order_no' => 'required|string|unique:purchase_orders,purchase_order_no',
-            'GTE_PO_NO' => 'required|string|unique:purchase_orders,GTE_PO_NO',
+            // 'GTE_PO_NO' => 'required|string|unique:purchase_orders,GTE_PO_NO',
             'date' => 'required|date',
             'supplier_id' => 'required|exists:customer_suppliers,id',
             'items' => 'required|array|min:1',

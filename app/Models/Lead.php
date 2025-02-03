@@ -32,6 +32,7 @@ class Lead extends Model
         'remarks',
         'expected_date',
         'assigned_to',
+        'management_status',
         'user_id', 
     ];
     protected $casts = [

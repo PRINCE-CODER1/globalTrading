@@ -40,7 +40,7 @@ class LeadStatusController extends Controller
         LeadStatus::create($request->all());
 
         toastr()->closeButton(true)->success('Lead Status created successfully.');
-        return redirect()->route('lead-statuses.index'); // Correct route name
+        return redirect()->route('leads-status.index'); // Correct route name
     }
 
     /**
@@ -69,7 +69,7 @@ class LeadStatusController extends Controller
         $lead->update($request->all());
 
         toastr()->closeButton(true)->success('Lead Status updated successfully.');
-        return redirect()->route('lead-statuses.index'); // Correct route name
+        return redirect()->route('leads-status.index'); // Correct route name
     }
 
     /**
@@ -81,6 +81,6 @@ class LeadStatusController extends Controller
         $lead->delete();
 
         toastr()->closeButton(true)->success('Lead Status deleted successfully.');
-        return redirect()->route('lead-statuses.index'); // Correct route name
+        return redirect()->route('leads-status.index'); // Correct route name
     }
 }

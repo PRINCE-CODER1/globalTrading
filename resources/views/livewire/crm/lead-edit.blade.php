@@ -265,6 +265,27 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-danger">Management Status *</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="management_status" id="management_status_yes"
+                                        value="Yes" wire:model="management_status" required>
+                                    <label class="form-check-label" for="management_status_yes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="management_status" id="management_status_no"
+                                        value="No" wire:model="management_status" required>
+                                    <label class="form-check-label" for="management_status_no">
+                                        No
+                                    </label>
+                                </div>
+                                @error('management_status')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
                             <div class="col-md-4">
                                 @if($showContractOptions)
                                 {{-- <div class="mb-3">

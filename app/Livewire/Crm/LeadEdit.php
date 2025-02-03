@@ -31,6 +31,7 @@ class LeadEdit extends Component
     public $lead_type_id;
     public $amount; 
     public $specification;
+    public $management_status; 
     public $applications;
     public $application_id;
     public $date;
@@ -65,6 +66,7 @@ class LeadEdit extends Component
         'lead_type_id' => 'required|exists:lead_types,id',
         'amount' => 'nullable|numeric',
         'specification' => 'nullable|in:favourable,non-favourable',
+        'management_status' => 'required|in:Yes,No', 
         'assigned_to' => 'nullable|exists:users,id',
         'contractor_ids' => 'nullable|array',
         'contractor_ids.*' => 'exists:contractors,id',
@@ -92,6 +94,7 @@ class LeadEdit extends Component
         $this->expected_date = $this->lead->expected_date;
         $this->amount = $this->lead->amount;
         $this->specification = $this->lead->specification;
+        $this->management_status = $this->lead->management_status;
         $this->application_id = $this->lead->application_id;
 
         // Set the flag for showing contractor options based on the lead type
@@ -208,6 +211,7 @@ class LeadEdit extends Component
             'amount' => $this->amount,
             'application_id' => $this->application_id,
             'specification' => $this->specification,
+            'management_status' => $this->management_status,
         ]);
 
         // After the lead is updated, handle the assignment logic

@@ -42,6 +42,7 @@ class LeadCreate extends Component
     public $lead_type_id; // For lead type
     public $amount; // Amount field
     public $specification; 
+    public $management_status; 
     public $referenceId;
     public $contractors = []; 
     public $contractor_ids = [];
@@ -246,6 +247,7 @@ class LeadCreate extends Component
             'contractor_ids' => 'nullable|array',
             'contractor_ids.*' => 'exists:contractors,id',
             'assigned_to' => 'required|exists:users,id', 
+            'management_status' => 'required|in:Yes,No', 
         ]);
 
         if ($this->expected_date) {
@@ -273,6 +275,7 @@ class LeadCreate extends Component
             'reference_id' => $this->referenceId,
             'amount' => $this->amount,
             'specification' => $this->specification,
+            'management_status' => $this->management_status,
             'assigned_to' => $this->assigned_to, 
             'user_id' => auth()->id(),
         ]);

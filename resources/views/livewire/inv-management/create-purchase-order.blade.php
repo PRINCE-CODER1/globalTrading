@@ -21,12 +21,12 @@
                     </div>
                     <div class="col-md-4">
                         <label for="GTE_PO_NO" class="form-label">GTE_PO_NO</label>
-                        <input type="text" class="form-control" id="GTE_PO_NO" wire:model="GTE_PO_NO" placeholder="Enter Number : GTE-PO-001" required>
-                        @error('GTE_PO_NO')
+                        <input type="text" class="form-control" id="GTE_PO_NO" wire:model="GTE_PO_NO" placeholder="Enter Number : GTE-PO-001" >
+                        {{-- @error('GTE_PO_NO')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
-                        @enderror
+                        @enderror --}}
                     </div>
 
                     <div class="col-md-4">
