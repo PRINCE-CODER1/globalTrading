@@ -85,7 +85,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <!-- Search Products -->
-                                                        <input type="text" class="form-control mb-3" placeholder="Search Products" wire:model.debounce.500ms="productSearch">
+                                                        <input type="text" class="form-control mb-3" placeholder="Search Products" wire:model.live="productSearch">
                                                         
                                                         <!-- Product List -->
                                                         <ul class="list-group">

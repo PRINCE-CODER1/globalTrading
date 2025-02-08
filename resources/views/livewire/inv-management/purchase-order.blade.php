@@ -76,7 +76,7 @@
                                             @endif
                                             
                                         </th>
-                                        
+                                        {{-- <th>status</th> --}}
                                         <th>Product Details</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -89,6 +89,17 @@
                                             <td>{{ $order->GTE_PO_NO }}</td>
                                             <td>{{ $order->date }}</td>
                                             <td>{{ $order->supplier->name ?? 'N/A' }}</td>
+                                            {{-- <td>
+                                            @if($order->status == 'open')
+                                                <span class="badge bg-warning">open</span>
+                                            @elseif($order->status == 'partial')
+                                                <span class="badge bg-warning">open</span>
+                                            @elseif($order->status == 'completed')
+                                                <span class="badge bg-warning">completed</span>
+                                            @else
+                                                <span class="badge bg-warning">cancelled</span>
+                                            @endif
+                                            </td> --}}
                                             <td class="text-center">
                                                 <!-- View Button -->
                                                 <div class="d-flex justify-content-center">

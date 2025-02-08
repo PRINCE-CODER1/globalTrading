@@ -223,7 +223,8 @@
                                 @enderror
                             </td>
                             <td>
-                                {{ number_format($product['subtotal'], 2) }} 
+                                {{-- {{ number_format($product['subtotal'], 2) }}  --}}
+                                {{ number_format($netAmount, 2) }}
                             </td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-danger btn-sm" wire:click="removeProduct({{ $index }})">

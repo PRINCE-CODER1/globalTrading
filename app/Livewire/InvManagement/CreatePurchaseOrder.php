@@ -219,6 +219,7 @@ class CreatePurchaseOrder extends Component
         foreach ($this->items as $item) {
             $purchaseOrder->items()->create($item);
         }
+        
 
         toastr()->closeButton(true)->success('Purchase Order created successfully.');
         return redirect()->route('purchase_orders.index');
@@ -256,6 +257,7 @@ class CreatePurchaseOrder extends Component
             'supplier_sale_order_no' => $this->supplier_sale_order_no,
             'user_id' => Auth::id(),
             'subtotal' => $this->subtotal,
+            'status' => 'open',
         ];
     }
 

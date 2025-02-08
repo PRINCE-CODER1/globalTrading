@@ -11,6 +11,7 @@ use App\Models\Branch;
 use App\Models\Godown;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderItem;
 
 class PurchaseForm extends Component
 {
@@ -207,6 +208,14 @@ class PurchaseForm extends Component
         if ($product) {
             // Update the stock based on godown_id
             $product->stock()->where('godown_id', $item['godown_id'])->increment('opening_stock', $item['quantity']);
+        }
+        $purchaseOrderItem = PurchaseOrderItem::where('purchase_order_id',$purchase->purchase_order_id)
+                            ->where('product_id',$item['product_id'])
+                            ->first();
+        if($purchaseOrderItem){
+            // dd(purchaseOrderItem);
+            $purchaseOrderItem->quantity = $purchaseOrderItem->quantity - $item['quantity'];
+            $purchaseOrderItem->save();
         }
     }
 

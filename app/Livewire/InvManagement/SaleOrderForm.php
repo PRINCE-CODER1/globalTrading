@@ -23,6 +23,7 @@ class SaleOrderForm extends Component
 
     public $saleOrderNo;
     public $date;
+    public $expected_date;
     public $customer_id;
     public $agent_id;
     public $segment_id;
@@ -75,24 +76,25 @@ class SaleOrderForm extends Component
         $this->productsList = Product::all(); 
         $this->applications = Application::all(); 
         $this->date = now()->format('Y-m-d'); 
+        $this->expected_date = now()->format('Y-m-d'); 
         $this->products[] = $this->createEmptyProduct();
         $this->generateSaleOrderNo();
     }
     public function selectProduct($index, $productId)
-{
-    // Fetch the product from the products list by its ID
-    $product = $this->productsList->firstWhere('id', $productId);
-    
-    // If the product exists, update the properties
-    if ($product) {
-        // Set the product ID and name
-        $this->products[$index]['product_id'] = $productId;
-        $this->products[$index]['product_name'] = $product->product_name;
+    {
+        // Fetch the product from the products list by its ID
+        $product = $this->productsList->firstWhere('id', $productId);
+        
+        // If the product exists, update the properties
+        if ($product) {
+            // Set the product ID and name
+            $this->products[$index]['product_id'] = $productId;
+            $this->products[$index]['product_name'] = $product->product_name;
 
-        // Set the price of the selected product
-        $this->products[$index]['price'] = $product->price;
+            // Set the price of the selected product
+            $this->products[$index]['price'] = $product->price;
+        }
     }
-}
 
     
     public function updatedProductSearch()

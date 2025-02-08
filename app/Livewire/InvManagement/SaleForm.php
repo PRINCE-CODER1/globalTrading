@@ -10,6 +10,7 @@ use App\Models\Branch;
 use App\Models\Godown;
 use App\Models\Product;
 use App\Models\SaleOrder;
+use App\Models\SaleOrderItem;
 use App\Models\Stock;
 
 class SaleForm extends Component
@@ -155,7 +156,14 @@ class SaleForm extends Component
                 toastr()->error('Insufficient stock for product: ' . Product::find($item['product_id'])->name);
                 return;
             }
-
+            $saleOrderItem = SaleOrderItem::where('sale_order_id',$sale->sale_order_id)
+                                ->where('product_id',$item['product_id'])
+                                ->first();
+            if($saleOrderItem){
+                // dd(saleOrderItem);
+                $saleOrderItem->quantity = $saleOrderItem->quantity - $item['quantity'];
+                $saleOrderItem->save();
+            }
             $stock->decrement('opening_stock', $item['quantity']);
         }
 
