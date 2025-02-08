@@ -118,7 +118,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($items as $index => $item)
+                                
+                                    @foreach($items as $index => $item)
+                                    
+                                @if($item['quantity'] > 0)
                                         <tr>
                                             <td>
                                                 <select wire:model="items.{{ $index }}.product_id" class="form-control" wire:change="selectProduct({{ $index }}, $event.target.value)">
@@ -144,8 +147,8 @@
                                             </td>
                                             <td>
                                                 <select wire:model="items.{{$index}}.godown_id" class="form-control">
-                                                    <option value="">Select Godown</option>
-                                                    @foreach($filteredGodowns as $godown)
+                                                    {{-- <option value="">Select Godown</option> --}}
+                                                    @foreach($godowns as $godown)
                                                         <option value="{{ $godown->id }}">{{ $godown->godown_name }}</option>
                                                     @endforeach
                                                 </select>
@@ -162,11 +165,13 @@
                                                 <button type="button" wire:click="removeItem({{ $index }})" class="btn btn-danger btn-sm"><i class="ri-delete-bin-line"></i></button>
                                             </td>
                                         </tr>
-                                        @empty 
+                                        {{-- @empty 
                                         <tr>
                                             <td colspan="8" class="text-center">No sales found.</td>
-                                        </tr>
-                                    @endforelse
+                                        </tr> --}}
+                                        
+                                @endif
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

@@ -82,7 +82,7 @@
                 </div>
             </div>
             <!-- Supplier Sale Order Number -->
-            {{-- <div class="mb-3">
+            <div class="mb-3">
                 <label for="supplier_sale_order_no" class="form-label">Supplier Sale Order No</label>
                 <select wire:model.live="supplier_sale_order_no" class="form-select" id="supplier_sale_order_no">
                     <option value="">Select Supplier Sale Order</option>
@@ -91,22 +91,10 @@
                     @endforeach
                 </select>
                 @error('supplier_sale_order_no') <span class="text-danger">{{ $message }}</span> @enderror
-            </div> --}}
+            </div>
             
 
-            <!-- Reference No -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="ref_no" class="form-label">Reference No</label>
-                    <div class="input-group">
-                        <div class="input-group-text"><i class="ri-hashtag"></i></div>
-                        <input type="text" wire:model="ref_no" id="ref_no" class="form-control  ">
-                    </div>
-                    @error('ref_no')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
+            
         </div>
 
         <!-- Purchase Items -->
@@ -128,6 +116,8 @@
                         </thead>
                         <tbody>
                             @foreach ($items as $index => $item)
+                            
+                                @if($item['quantity'] > 0)
                                 <tr>
                                     <td>
                                         <div class="input-group">
@@ -175,7 +165,7 @@
                                     </td>
                                     <td>
                                         <select wire:model="items.{{ $index }}.godown_id" class="form-control">
-                                            <option value="">Select Godown</option>
+                                            {{-- <option value="">Select Godown</option> --}}
                                             @foreach($godowns as $godown)
                                                 <option value="{{ $godown->id }}">{{ $godown->godown_name }}</option>
                                             @endforeach
@@ -187,6 +177,8 @@
                                         </button>
                                     </td>
                                 </tr>
+                                @endif
+                                
                             @endforeach
                         </tbody>
                     </table>

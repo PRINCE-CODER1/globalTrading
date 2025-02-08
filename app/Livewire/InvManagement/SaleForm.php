@@ -143,8 +143,17 @@ class SaleForm extends Component
             'sale_order_id' => $this->sale_order_id,
             'user_id' => Auth::id(),
         ]);
-
+        $this->items = array_filter($this->items,function($item){
+            return isset($item['quantity']) && $item['quantity'] > 0;
+        });
+        if(empty($this->items)){
+            toastr()->error('no valid items to save');
+            return;
+        }
         foreach ($this->items as $item) {
+            if(empty($item['quantity']) || $item['quantity'] <= 0){
+                continue;
+            }
             $item['user_id'] = Auth::id(); 
             $sale->items()->create($item);
 
@@ -170,12 +179,29 @@ class SaleForm extends Component
         toastr()->success('Sale created successfully.');
         return redirect()->route('sales.index');
     }
-    public function getFilteredGodownsProperty()
+    // public function getFilteredGodownsProperty()
+    // {
+    //     return $this->branch_id 
+    //         ? $this->godowns->where('branch_id', $this->branch_id) 
+    //         : collect([]);
+    // }
+    public function updatedBranchId($branchId)
     {
-        return $this->branch_id 
-            ? $this->godowns->where('branch_id', $this->branch_id) 
-            : collect([]);
+        // Fetch the godowns related to the selected branch
+        $this->godowns = Godown::where('branch_id', $branchId)->get();
+        
+        if($this->godowns->isNotEmpty()){
+            $firstGodownId = $this->godowns->first()->id;
+            foreach ($this->items as &$item) {
+                $item['godown_id'] = $firstGodownId;
+            }
+        }else{
+            foreach ($this->items as &$item) {
+                $item['godown_id'] = null;
+            }
+        }
     }
+
     public function render()
     {
         return view('livewire.inv-management.sale-form', [
@@ -183,7 +209,7 @@ class SaleForm extends Component
             'customers' => $this->customers,
             'branches' => $this->branches,
             'godowns' => $this->godowns,
-            'filteredGodowns' => $this->filteredGodowns,
+            // 'filteredGodowns' => $this->filteredGodowns,
             'saleOrders' => $this->saleOrders,
         ]);
     }

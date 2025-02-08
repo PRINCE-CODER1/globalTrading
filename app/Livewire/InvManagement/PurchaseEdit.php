@@ -10,6 +10,7 @@ use App\Models\Branch;
 use App\Models\Godown;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderItem;
 use Illuminate\Support\Facades\Auth;
 
 class PurchaseEdit extends Component
@@ -166,7 +167,7 @@ class PurchaseEdit extends Component
             'purchase_order_id' => 'nullable|exists:purchase_orders,id',
             // 'supplier_sale_order_no' => 'nullable|exists:purchase_orders,supplier_sale_order_no',
             'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|numeric|min:1',
+            'items.*.quantity' => 'required|numeric|min:0',
             'items.*.price' => 'required|numeric|min:0',
             'items.*.discount' => 'nullable|numeric|min:0|max:100',
             'items.*.godown_id' => 'required|exists:godowns,id',
@@ -176,7 +177,13 @@ class PurchaseEdit extends Component
             toastr()->closeButton(true)->success('Either Supplier Sale Order Number or Purchase Order ID must be filled.');
             return;
         }
-
+    $this->items = array_filter($this->items,function($item){
+        return isset($item['quantity']) && $item['quantity'] > 0;
+    });
+    if(empty($this->items)){
+        toastr()->error('no valid items to save');
+        return;
+    }
         // Update the purchase record
         $this->purchase->update([
             'supplier_id' => $this->supplier_id,
@@ -190,6 +197,10 @@ class PurchaseEdit extends Component
 
         // Update purchase items
         foreach ($this->items as $item) {
+            if(empty($item['quantity']) || $item['quantity'] <= 0){
+            unset($this->items[$key]);
+            continue;
+        }
             // Add user_id to item data
             $item['user_id'] = Auth::id();
 
@@ -204,6 +215,14 @@ class PurchaseEdit extends Component
             if ($product) {
                 // Update the stock based on godown_id
                 $product->stock()->where('godown_id', $item['godown_id'])->increment('opening_stock', $item['quantity']);
+            }
+            $purchaseOrderItem = PurchaseOrderItem::where('purchase_order_id',$purchase->purchase_order_id)
+                            ->where('product_id',$item['product_id'])
+                            ->first();
+            if($purchaseOrderItem){
+                // dd(purchaseOrderItem);
+                $purchaseOrderItem->quantity = $purchaseOrderItem->quantity - $item['quantity'];
+                $purchaseOrderItem->save();
             }
         }
 

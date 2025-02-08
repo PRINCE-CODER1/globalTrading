@@ -103,7 +103,7 @@
                                             </td>
                                             
                                             <td>
-                                                <a href="{{ route('sales.edit', $sale->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a>
+                                                {{-- <a href="{{ route('sales.edit', $sale->id) }}" class="btn btn-link text-info"><i class="ri-edit-line"></i></a> --}}
                                                 <button wire:click="confirmDelete({{ $sale->id }})" class="btn btn-link text-danger fs-14 lh-1 p-0" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="ri-delete-bin-5-line"></i></button>
                                             </td>
                                         </tr>

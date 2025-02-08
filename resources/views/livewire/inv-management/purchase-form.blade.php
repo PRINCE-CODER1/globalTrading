@@ -93,19 +93,7 @@
             
 
 
-            <!-- Reference No -->
-            {{-- <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="ref_no" class="form-label"><i class="ri-hashtag"></i> Reference No</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="ri-hashtag"></i></span>
-                        <input type="text" wire:model="ref_no" id="ref_no" class="form-control">
-                    </div>
-                    @error('ref_no')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div> --}}
+            
             <input type="hidden" wire:model="user_id" value="{{ auth()->user()->id }}">
         </div>
 
@@ -128,6 +116,7 @@
                         </thead>
                         <tbody>
                             @foreach ($items as $index => $item)
+                                @if($item['quantity'] > 0)
                                 <tr>
                                     <td>
                                         <select wire:model="items.{{ $index }}.product_id" class="form-control" wire:change="selectProduct({{ $index }}, $event.target.value)">
@@ -161,7 +150,7 @@
                                     </td>
                                     <td>
                                         <select wire:model="items.{{ $index }}.godown_id" class="form-select" required>
-                                            <option value="">Select Godown</option>
+                                            {{-- <option value="">Select Godown</option> --}}
                                             @foreach ($godowns as $godown)
                                                 <option value="{{ $godown->id }}">{{ $godown->godown_name }}</option>
                                             @endforeach
@@ -176,6 +165,7 @@
                                         </button>
                                     </td>
                                 </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>

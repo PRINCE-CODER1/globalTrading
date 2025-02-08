@@ -115,9 +115,15 @@ class PurchaseForm extends Component
         // Fetch the godowns related to the selected branch
         $this->godowns = Godown::where('branch_id', $branchId)->get();
         
-        // Reset godown selection in items to ensure consistency
-        foreach ($this->items as &$item) {
-            $item['godown_id'] = null;
+        if($this->godowns->isNotEmpty()){
+            $firstGodownId = $this->godowns->first()->id;
+            foreach ($this->items as &$item) {
+                $item['godown_id'] = $firstGodownId;
+            }
+        }else{
+            foreach ($this->items as &$item) {
+                $item['godown_id'] = null;
+            }
         }
     }
 
@@ -161,7 +167,12 @@ class PurchaseForm extends Component
             $this->items = array_values($this->items); // Re-index the array
         }
     }
-
+    // public function updatedItems($value , $index){
+    //     if (isset($this->items[$index]) && empty($value) || $value <= 0) {
+    //         unset($this->items[$index]);
+    //         $this->items = array_values($this->items);
+    //     }
+    // }
     // Save the purchase and its items
     public function save()
 {
@@ -172,7 +183,7 @@ class PurchaseForm extends Component
         'purchase_order_id' => 'nullable|exists:purchase_orders,id', // Allow null for purchase_order_id
         'supplier_sale_order_no' => 'nullable', // Allow null for supplier_sale_order_no
         'items.*.product_id' => 'required|exists:products,id',
-        'items.*.quantity' => 'required|numeric|min:1',
+        'items.*.quantity' => 'required|numeric|min:0',
         'items.*.price' => 'required|numeric|min:0',
         'items.*.discount' => 'nullable|numeric|min:0|max:100',
         'items.*.godown_id' => 'required|exists:godowns,id',
@@ -183,7 +194,13 @@ class PurchaseForm extends Component
         toastr()->closeButton(true)->error('Either Supplier Sale Order Number or Purchase Order ID must be filled.');
         return;
     }
-
+    $this->items = array_filter($this->items,function($item){
+        return isset($item['quantity']) && $item['quantity'] > 0;
+    });
+    if(empty($this->items)){
+        toastr()->error('no valid items to save');
+        return;
+    }
     // Create the purchase record
     $purchase = Purchase::create([
         'supplier_id' => $this->supplier_id,
@@ -195,8 +212,12 @@ class PurchaseForm extends Component
         'user_id' => auth()->id(),
     ]);
 
+    // $validItems = [];
     // Create or update purchase items
-    foreach ($this->items as $item) {
+    foreach ($this->items as $key => $item) {
+        if(empty($item['quantity']) || $item['quantity'] <= 0){
+            continue;
+        }
         // Add user_id to item data
         $item['user_id'] = Auth::id();
 
@@ -217,8 +238,9 @@ class PurchaseForm extends Component
             $purchaseOrderItem->quantity = $purchaseOrderItem->quantity - $item['quantity'];
             $purchaseOrderItem->save();
         }
+        // $validItems[]    = $items;
     }
-
+    // $this->items = $validItems;
     toastr()->closeButton(true)->success('Purchase saved successfully!');
     return redirect()->route('purchase.index'); // Ensure the route is correct
 }
