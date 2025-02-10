@@ -37,12 +37,12 @@
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" wire:model.live="selectAll"></th>
-                                        <th scope="col">Order No</th>
-                                        <th scope="col">GTE_PO_NO</th>
+                                        <th scope="col">Purchase Order No</th>
+                                        <th scope="col">GTE_PO_NO</th> 
                                         <th scope="col">Order Date</th>
                                         <th scope="col">Customer Name</th>
                                         <th scope="col">Created By</th>
-                                        <th scope="col">Sup Sale Order No</th>
+                                        <th scope="col">Supplier Order No</th>
                                         <th scope="col">Created On</th>
                                         <th scope="col">Product Detail</th>
                                         <th scope="col">Actions</th>

@@ -59,6 +59,9 @@
                                         <th>
                                             GTE PO NO
                                         </th>
+                                        <th>
+                                            Supplier Sale Order No
+                                        </th>
                                         <th scope="col" wire:click="setSortBy('date')">Date
                                             @if ($sortBy === 'date')
                                                 @if ($sortDir === 'asc')
@@ -86,20 +89,10 @@
                                         <tr wire:key="{{ $order->id }}">
                                             <td><input type="checkbox" wire:model.live="selectedOrders" value="{{ $order->id }}"></td>
                                             <td>{{ $order->purchase_order_no }}</td>
+                                            <td>{{ $order->supplier_sale_order_no }}</td>
                                             <td>{{ $order->GTE_PO_NO }}</td>
                                             <td>{{ $order->date }}</td>
                                             <td>{{ $order->supplier->name ?? 'N/A' }}</td>
-                                            {{-- <td>
-                                            @if($order->status == 'open')
-                                                <span class="badge bg-warning">open</span>
-                                            @elseif($order->status == 'partial')
-                                                <span class="badge bg-warning">open</span>
-                                            @elseif($order->status == 'completed')
-                                                <span class="badge bg-warning">completed</span>
-                                            @else
-                                                <span class="badge bg-warning">cancelled</span>
-                                            @endif
-                                            </td> --}}
                                             <td class="text-center">
                                                 <!-- View Button -->
                                                 <div class="d-flex justify-content-center">

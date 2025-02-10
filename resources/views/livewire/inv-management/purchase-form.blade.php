@@ -64,6 +64,7 @@
                 </div>
             </div>
 
+            @if(!empty($purchaseOrders))
             <!-- Purchase Order -->
             <div class="col-md-6">
                 <div class="mb-3">
@@ -73,23 +74,37 @@
                         <select wire:model.live="purchase_order_id" id="purchase_order_id" class="form-select">
                             <option value="">Choose a purchase order</option>
                             @foreach ($purchaseOrders as $order)
-                                <option value="{{ $order->id }}">{{ $order->GTE_PO_NO }}</option>
+                                @if(!empty($order['GTE_PO_NO']))
+                                    <option value="{{ $order['id'] }}">{{ $order['GTE_PO_NO'] }}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
                 </div>
             </div>
+        @endif
 
+        @if(!empty($supplierSaleOrderNos))
             <!-- Supplier Sale Order Number -->
-            <div class="form-group">
-                <label for="supplier_sale_order_no" class="form-label">Supplier Sale Order No</label>
-                <select id="supplier_sale_order_no" class="form-select" wire:model.live="supplier_sale_order_no" >
-                    <option value="">Select Supplier Sale Order No</option>
-                    @foreach ($supplierSaleOrderNos as $id => $orderNo)
-                        <option value="{{ $id }}">{{ $orderNo }}</option>
-                    @endforeach
-                </select>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="supplier_sale_order_no" class="form-label"><i class="ri-clipboard-line"></i> Supplier Sale Order No</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="ri-clipboard-line"></i></span>
+                        <select id="supplier_sale_order_no" class="form-select" wire:model.live="supplier_sale_order_no">
+                            <option value="">Select Supplier Sale Order No</option>
+                            @foreach ($supplierSaleOrderNos as $id => $orderNo)
+                                @if(!empty($orderNo))
+                                    <option value="{{ $id }}">{{ $orderNo }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
             </div>
+        @endif
+
+
             
 
 

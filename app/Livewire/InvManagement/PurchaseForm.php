@@ -167,84 +167,142 @@ class PurchaseForm extends Component
             $this->items = array_values($this->items); // Re-index the array
         }
     }
-    // public function updatedItems($value , $index){
-    //     if (isset($this->items[$index]) && empty($value) || $value <= 0) {
-    //         unset($this->items[$index]);
-    //         $this->items = array_values($this->items);
-    //     }
-    // }
+    public function updatedItems($value , $index){
+        if (isset($this->items[$index]) && empty($value) || $value <= 0) {
+            unset($this->items[$index]);
+            $this->items = array_values($this->items);
+        }
+    }
     // Save the purchase and its items
     public function save()
-{
-    $this->validate([
-        'supplier_id' => 'required|exists:customer_suppliers,id',
-        'purchase_date' => 'required|date',
-        'branch_id' => 'required|exists:branches,id',
-        'purchase_order_id' => 'nullable|exists:purchase_orders,id', // Allow null for purchase_order_id
-        'supplier_sale_order_no' => 'nullable', // Allow null for supplier_sale_order_no
-        'items.*.product_id' => 'required|exists:products,id',
-        'items.*.quantity' => 'required|numeric|min:0',
-        'items.*.price' => 'required|numeric|min:0',
-        'items.*.discount' => 'nullable|numeric|min:0|max:100',
-        'items.*.godown_id' => 'required|exists:godowns,id',
-    ]);
+    {
+        $this->validate([
+            'supplier_id' => 'required|exists:customer_suppliers,id',
+            'purchase_date' => 'required|date',
+            'branch_id' => 'required|exists:branches,id',
+            'purchase_order_id' => 'nullable|exists:purchase_orders,id', // Allow null for purchase_order_id
+            'supplier_sale_order_no' => 'nullable', // Allow null for supplier_sale_order_no
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|numeric|min:0',
+            'items.*.price' => 'required|numeric|min:0',
+            'items.*.discount' => 'nullable|numeric|min:0|max:100',
+            'items.*.godown_id' => 'required|exists:godowns,id',
+        ]);
 
-    // Ensure that at least one of the order fields (purchase_order_id or supplier_sale_order_no) is filled
-    if (!$this->supplier_sale_order_no && !$this->purchase_order_id) {
-        toastr()->closeButton(true)->error('Either Supplier Sale Order Number or Purchase Order ID must be filled.');
-        return;
-    }
-    $this->items = array_filter($this->items,function($item){
-        return isset($item['quantity']) && $item['quantity'] > 0;
-    });
-    if(empty($this->items)){
-        toastr()->error('no valid items to save');
-        return;
-    }
-    // Create the purchase record
-    $purchase = Purchase::create([
-        'supplier_id' => $this->supplier_id,
-        'purchase_date' => $this->purchase_date,
-        'branch_id' => $this->branch_id,
-        'purchase_order_id' => $this->purchase_order_id ?? null,  // Only set purchase_order_id if it's available
-        'supplier_sale_order_no' => $this->supplier_sale_order_no ?? null,  // Only set supplier_sale_order_no if it's available
-        'ref_no' => $this->ref_no,
-        'user_id' => auth()->id(),
-    ]);
-
-    // $validItems = [];
-    // Create or update purchase items
-    foreach ($this->items as $key => $item) {
-        if(empty($item['quantity']) || $item['quantity'] <= 0){
-            continue;
+        // Ensure that at least one of the order fields (purchase_order_id or supplier_sale_order_no) is filled
+        if (!$this->supplier_sale_order_no && !$this->purchase_order_id) {
+            toastr()->closeButton(true)->error('Either Supplier Sale Order Number or Purchase Order ID must be filled.');
+            return;
         }
-        // Add user_id to item data
-        $item['user_id'] = Auth::id();
-
-        // Create purchase item
-        $purchaseItem = $purchase->items()->create($item);
-
-        // Update the product's stock in the specific godown
-        $product = Product::find($item['product_id']);
-        if ($product) {
-            // Update the stock based on godown_id
-            $product->stock()->where('godown_id', $item['godown_id'])->increment('opening_stock', $item['quantity']);
+        $this->items = array_filter($this->items,function($item){
+            return isset($item['quantity']) && $item['quantity'] > 0;
+        });
+        if(empty($this->items)){
+            toastr()->error('no valid items to save');
+            return;
         }
-        $purchaseOrderItem = PurchaseOrderItem::where('purchase_order_id',$purchase->purchase_order_id)
-                            ->where('product_id',$item['product_id'])
-                            ->first();
-        if($purchaseOrderItem){
-            // dd(purchaseOrderItem);
-            $purchaseOrderItem->quantity = $purchaseOrderItem->quantity - $item['quantity'];
-            $purchaseOrderItem->save();
+        // Create the purchase record
+        $purchase = Purchase::create([
+            'supplier_id' => $this->supplier_id,
+            'purchase_date' => $this->purchase_date,
+            'branch_id' => $this->branch_id,
+            'purchase_order_id' => $this->purchase_order_id ?: null,  // Only set purchase_order_id if it's available
+            'supplier_sale_order_no' => $this->supplier_sale_order_no ?: null, 
+            'user_id' => auth()->id(),
+        ]);
+
+        // $validItems = [];
+        // Create or update purchase items
+        foreach ($this->items as $key => $item) {
+            if(empty($item['quantity']) || $item['quantity'] <= 0){
+                continue;
+            }
+            // Add user_id to item data
+            $item['user_id'] = Auth::id();
+
+            // Create purchase item
+            $purchaseItem = $purchase->items()->create($item);
+
+            // Update the product's stock in the specific godown
+            $product = Product::find($item['product_id']);
+            if ($product) {
+                // Update the stock based on godown_id
+                $product->stock()->where('godown_id', $item['godown_id'])->increment('opening_stock', $item['quantity']);
+            }
+            $purchaseOrderItem = PurchaseOrderItem::where('purchase_order_id',$purchase->purchase_order_id)
+                                ->where('product_id',$item['product_id'])
+                                ->first();
+            if($purchaseOrderItem){
+                // dd(purchaseOrderItem);
+                $purchaseOrderItem->quantity = $purchaseOrderItem->quantity - $item['quantity'];
+                $purchaseOrderItem->save();
+            }
+            // $validItems[]    = $items;
         }
-        // $validItems[]    = $items;
+        // $this->items = $validItems;
+        toastr()->closeButton(true)->success('Purchase saved successfully!');
+        return redirect()->route('purchase.index'); // Ensure the route is correct
     }
-    // $this->items = $validItems;
-    toastr()->closeButton(true)->success('Purchase saved successfully!');
-    return redirect()->route('purchase.index'); // Ensure the route is correct
-}
-
+    // public function save()
+    // {
+    //     $this->validate([
+    //         'supplier_id' => 'required|exists:customer_suppliers,id',
+    //         'purchase_date' => 'required|date',
+    //         'branch_id' => 'required|exists:branches,id',
+    //         'purchase_order_id' => 'nullable|exists:purchase_orders,id',
+    //         'supplier_sale_order_no' => 'nullable',
+    //         'items.*.product_id' => 'required|exists:products,id',
+    //         'items.*.quantity' => 'required|numeric|min:0',
+    //         'items.*.price' => 'required|numeric|min:0',
+    //         'items.*.discount' => 'nullable|numeric|min:0|max:100',
+    //         'items.*.godown_id' => 'required|exists:godowns,id',
+    //     ]);
+    
+    //     // Ensure at least one order identifier is provided
+    //     if (!$this->supplier_sale_order_no && !$this->purchase_order_id) {
+    //         toastr()->closeButton(true)->error('Either Supplier Sale Order Number or Purchase Order ID must be filled.');
+    //         return;
+    //     }
+    
+    //     // Filter out items with zero quantity
+    //     $this->items = array_filter($this->items, fn($item) => !empty($item['quantity']) && $item['quantity'] > 0);
+    
+    //     if (empty($this->items)) {
+    //         toastr()->error('No valid items to save.');
+    //         return;
+    //     }
+    
+    //     // Create the purchase record
+    //     $purchase = Purchase::create([
+    //         'supplier_id' => $this->supplier_id,
+    //         'purchase_date' => $this->purchase_date,
+    //         'branch_id' => $this->branch_id,
+    //         'purchase_order_id' => $this->purchase_order_id ?? null,
+    //         'supplier_sale_order_no' => $this->supplier_sale_order_no ?? null,
+    //         'ref_no' => $this->ref_no,
+    //         'user_id' => auth()->id(),
+    //     ]);
+    
+    //     foreach ($this->items as $item) {
+    //         $item['user_id'] = auth()->id();
+        
+    //         $purchase->items()->create($item);
+        
+    //         \DB::table('stocks')
+    //             ->where('product_id', $item['product_id'])
+    //             ->where('godown_id', $item['godown_id'])
+    //             ->increment('opening_stock', $item['quantity']);
+        
+    //         PurchaseOrderItem::where('purchase_order_id', $purchase->purchase_order_id)
+    //             ->where('product_id', $item['product_id'])
+    //             ->decrement('quantity', $item['quantity']);
+    //     }
+        
+    
+    //     toastr()->closeButton(true)->success('Purchase saved successfully!');
+    //     return redirect()->route('purchase.index');
+    // }
+    
 
 
 
